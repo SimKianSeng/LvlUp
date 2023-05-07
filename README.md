@@ -1,2 +1,2 @@
 # LvlUp
-A study app
+A gamified study app
