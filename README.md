@@ -2,24 +2,25 @@
 ## Level of Achievement
 Apollo 11
 
-<br>
-
-## Project Scope
-A gamified study mobile application. (one sentence version)
-
-LvlUp is a mobile application intended for students who finds difficulty in committing to their study schedules and managing their workloads. We intend to create LvlUp such that it can help these students in better planning their weekly study plans and sticking to it by utilising gamification elements in our core features. To further support our target audience in sticking to their study schedule, we will also allow them to review their past and overall study sessions and see how much time they spend studying and idling.
-(longer descriptive version)
 
 <br>
-
 
 ## Project Motivation
 Have you ever promised yourselves that you will accomplish so and so revision and assignments but at the end of the day you realised that you failed to accomplish them as you lack the motivation to do so? Well, procrastination and a low motivation to study are amongst the main causes of this issue that we students tend to experience. At the root level of these causes, we realised that it is also attributed to students not having a well-thought-out study schedule for them to adhere to, and even if they have, there is little incentive for them to follow their schedule. 
 
 Technology has been and still is being used to solve our daily problems in life, surely it can also help us to solve this problem too, especially when today’s students are generally more interested in online gaming.
 
+
 <br>
 
+## Project Scope
+A gamified study mobile application. (one sentence version)
+
+LvlUp is a mobile application intended for students who finds difficulty committing to their study schedules and managing their workloads. We intend to create LvlUp such that it can help these students better plan their weekly study plans and adhere to it by integrating gamification elements into our application. To further support our target audience in committing to their study schedule, we will also implement a feature for them to review their past and overall study sessions to see how much time they have spent studying and idling.
+(longer descriptive version)
+
+
+<br>
 
 ## User Stories
 1. As a student with many ongoing stuffs in my life, I can make use of the app’s schedule generation feature based on how strong I am in my respective modules and my available time in a week to quickly and optimally plan my schedules so that I can balance my study time and other aspects of life.
@@ -28,8 +29,8 @@ Technology has been and still is being used to solve our daily problems in life,
 
 3. As a student who has low motivation to study as it is rather dry as compared to playing online games and socialising, the gamified experience of this app helps keep me motivated to study so that I can focus better on my studies.
 
-<br>
 
+<br>
 
 ## Proposed Core Features
 
@@ -74,15 +75,29 @@ Technology has been and still is being used to solve our daily problems in life,
 
 - Watch your adventurer evolve and grow as its appearance changes at higher levels, unlocking cool and funky titles and skills as you climb the ladder of levels. There are 24 different possible evolutions to explore with 11 different titles to obtain.
 
+<br>
+
 ### Study Statistics
 - Weekly summary showing the latest quest statistics (how much studying the user had done in the week).
 
 - Overall summary of the amount of studying done by the user.  
 
+
 <br>
 
 ## Design and plan
-Architecture diagrams - ks
-Figma UI prototype images - seb
 
-Plan refers to?
+<!-- Plan refers to? -->
+
+### Architecture diagrams
+
+<br>
+
+### Figma UI prototype images
+
+
+![Login page](/screenshots/Login%20page.png)
+![Main page](/screenshots/Main%20page.png)
+![Schedule input page](/screenshots/Schedule%20input%20page.png)
+![Schedule page](/screenshots/Schedule%20page.png)
+![Study summary page](/screenshots/Study%20summary%20page.png)
