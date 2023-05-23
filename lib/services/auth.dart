@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
+/// Handles the logic of the different authentication cases to modularise the project
 class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 

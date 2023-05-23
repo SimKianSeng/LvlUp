@@ -1,4 +1,4 @@
-import 'package:lvlup/auth.dart';
+import 'package:lvlup/services/auth.dart';
 import 'package:lvlup/pages/home_page.dart';
 import 'package:lvlup/pages/login_register_page.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +11,8 @@ class WidgetTree extends StatefulWidget {
 }
 
 class _WidgetTreeState extends State<WidgetTree> {
+  
+  /// Return either home or login page depending on authentication status
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(

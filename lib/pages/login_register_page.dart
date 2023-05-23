@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../auth.dart';
+import '../services/auth.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -42,6 +42,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  //TODO: Update title of login page
   Widget _title() {
     return const Text('Firebase Auth');
   }
@@ -88,6 +89,18 @@ class _LoginPageState extends State<LoginPage> {
         title: _title(),
       ),
       body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin:Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF7B5EFE),
+              Color(0xFFB88CED),
+              // Color(0xFFCF9EE7),
+              Color(0xFFE4AEE1),
+            ]
+          )
+        ),
         height: double.infinity,
         width: double.infinity,
         padding: const EdgeInsets.all(20),
