@@ -6,6 +6,7 @@ class Auth {
 
   User? get currentUser => _firebaseAuth.currentUser;
 
+  //authStateChanges() returns a stream of User; 'get' keyword is to declare as a getter
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
   Future<void> signInWithEmailAndPassword({
@@ -14,7 +15,7 @@ class Auth {
   }) async {
     await _firebaseAuth.signInWithEmailAndPassword(
       email: email,
-      password: password,
+      password: password  ,
     );
   }
 

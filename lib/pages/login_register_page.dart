@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lvlup/constants.dart';
 import '../services/auth.dart';
 
 class LoginPage extends StatefulWidget {
@@ -89,18 +90,7 @@ class _LoginPageState extends State<LoginPage> {
         title: _title(),
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin:Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF7B5EFE),
-              Color(0xFFB88CED),
-              // Color(0xFFCF9EE7),
-              Color(0xFFE4AEE1),
-            ]
-          )
-        ),
+        decoration: bgColour,
         height: double.infinity,
         width: double.infinity,
         padding: const EdgeInsets.all(20),
@@ -109,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             _entryField('email', _controllerEmail),
-            _entryField('password', _controllerPassword),
+            _entryField('password', _controllerPassword), //TODO: Add in true for obscureText property
             _errorMessage(),
             _submitButton(),
             _loginOrRegisterButton(),
