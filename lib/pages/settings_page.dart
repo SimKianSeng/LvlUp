@@ -17,17 +17,26 @@ import '../services/auth.dart';
   }
 
   Widget _resetPasswordButton() {
-    return ElevatedButton(
-      onPressed: () {},
-      child: const Text('Reset Password'),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        ElevatedButton(
+          onPressed: () {},
+          child: const Text('Reset Password'),
+        ),
+      ]
     );
   }
 
   Widget _deleteAccountButton() {
-    return ElevatedButton(
-      onPressed: () {},
-      child: const Text('Delete Account'),
-    );
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget> [
+        ElevatedButton(
+          onPressed: () {},
+          child: const Text('Delete Account'),
+        ),
+      ]);
   }
 
 class Settings extends StatelessWidget {

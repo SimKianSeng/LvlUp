@@ -10,6 +10,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
+//TODO: Register page should also ask user for their account name?
 class _LoginPageState extends State<LoginPage> {
   String? errorMessage = '';
   bool isLogin = true;
@@ -99,7 +100,8 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             _entryField('email', _controllerEmail),
-            _entryField('password', _controllerPassword), //TODO: Add in true for obscureText property
+            _entryField('password',
+                _controllerPassword), //TODO: Add in true for obscureText property
             _errorMessage(),
             _submitButton(),
             _loginOrRegisterButton(),

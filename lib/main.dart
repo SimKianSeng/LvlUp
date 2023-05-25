@@ -1,6 +1,6 @@
-import 'package:lvlup/pages/scheduleGen_page.dart';
+import 'package:lvlup/pages/schedule_gen_page.dart';
 import 'package:lvlup/pages/settings_page.dart';
-import 'package:lvlup/pages/studyStats_page.dart';
+import 'package:lvlup/pages/study_stats_page.dart';
 import 'package:lvlup/widget_tree.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
