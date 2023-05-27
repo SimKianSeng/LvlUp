@@ -11,6 +11,8 @@ class LoginPage extends StatefulWidget {
 }
 
 //TODO: Register page should also ask user for their account name?
+//TODO: Make password obscure while typing in
+//TODO: Ensure that only valid emails are used to create an account
 class _LoginPageState extends State<LoginPage> {
   String? errorMessage = '';
   bool isLogin = true;
@@ -57,7 +59,17 @@ class _LoginPageState extends State<LoginPage> {
       controller: controller,
       decoration: InputDecoration(
         labelText: title,
+        labelStyle: TextStyle(color: Colors.black),
+        filled: true,
+        fillColor: Colors.white38,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        )
       ),
+      obscureText: title == 'password' ? true : false, //Hide password if textfield is for password
     );
   }
 
@@ -87,21 +99,26 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: _title(),
-      ),
+      // appBar: AppBar(
+      //   title: _title(),
+      // ),
       body: Container(
         decoration: bgColour,
-        height: double.infinity,
-        width: double.infinity,
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            ClipOval(
+              child: SizedBox(
+                width: 500.0, height: 150.0,
+                child: Image.asset("assets/AppTitle.png"),
+              ),
+            ),
             _entryField('email', _controllerEmail),
+            const SizedBox(height: 25.0,),
             _entryField('password',
-                _controllerPassword), //TODO: Add in true for obscureText property
+                _controllerPassword),
             _errorMessage(),
             _submitButton(),
             _loginOrRegisterButton(),

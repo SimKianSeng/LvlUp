@@ -8,6 +8,9 @@ import '../services/auth.dart';
 
   Widget _signOutButton(BuildContext context) {
     return ElevatedButton(
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)))
+      ),
       onPressed: () async {
         signOut();
         Navigator.pop(context);
@@ -17,33 +20,35 @@ import '../services/auth.dart';
   }
 
   Widget _resetPasswordButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        ElevatedButton(
-          onPressed: () {},
+    return SizedBox(
+      width: 250.0,
+      child: ElevatedButton(
+        style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)))),
+          onPressed: () {print("Reset Passsword");},
           child: const Text('Reset Password'),
         ),
-      ]
     );
   }
 
   Widget _deleteAccountButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget> [
-        ElevatedButton(
-          onPressed: () {},
+    return SizedBox(
+      width: 250.0,
+      child: ElevatedButton(
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)))),
+          onPressed: () {print("Delete account");},
           child: const Text('Delete Account'),
         ),
-      ]);
+      );
   }
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
 
 //TODO Implement reset pwd and delete account option
-//TODO Fix the UI
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,9 +60,10 @@ class Settings extends StatelessWidget {
       body: Container(
         decoration: bgColour,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _resetPasswordButton(),
+            SizedBox(width: double.infinity, height: 50.0,),
             _deleteAccountButton(),
           ],
         ),

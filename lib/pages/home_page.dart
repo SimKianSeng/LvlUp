@@ -9,10 +9,8 @@ class HomePage extends StatelessWidget {
 
   final User? user = Auth().currentUser;
 
-  
-
-  Widget _title() {
-    return const Text('Home');
+  Image _avatar() {
+    return Image.asset("assets/Avatars/Basic Sprite.png");
   }
 
   //TODO: change this to reflect the user account name not their email
@@ -64,27 +62,29 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: _title(),
-        actions: <Widget>[
-
-        ], //Buttons on appbar right
-      ),
       body: Container(
         decoration: bgColour,
-        height: double.infinity,
         width: double.infinity,
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.only(top: 30.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _userUid(),
-            // _signOutButton(),
+            Expanded(child: _avatar()),
+            Expanded(
+              flex: 3,
+              child: Container(
+                color: Colors.white60,
+                width: double.infinity,
+                child: Column(
+                  children: <Widget>[
+                    _userUid(),
+                  ],
+                ),))
           ],
         ),
       ),
       bottomNavigationBar: NavigationBar(
+        height: 50.0,
+        backgroundColor: Colors.white30,
         destinations: [
           _startSessionButton(context),
           _scheduleGenButton(context),

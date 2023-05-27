@@ -19,6 +19,7 @@ class Auth {
     );
   }
 
+  //Todo: Create user also allows for accountname input
   Future<void> createUserWithEmailAndPassword({
     required String email,
     required String password,
@@ -27,9 +28,15 @@ class Auth {
       email: email,
       password: password,
     );
+
+    await currentUser?.sendEmailVerification(
+      
+    ); //Sends verification email, but never wait for user to verify before letting them enter
   }
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
   }
+
+  //TODO: Reset password
 }
