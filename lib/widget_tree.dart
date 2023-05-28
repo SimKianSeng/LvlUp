@@ -1,5 +1,4 @@
 import 'package:lvlup/pages/authentication/authentication.dart';
-import 'package:lvlup/services/auth.dart';
 import 'package:lvlup/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

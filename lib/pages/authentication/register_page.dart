@@ -18,6 +18,7 @@ class _registerPageState extends State<registerPage> {
   @override
   Widget build(BuildContext context) {
     String? errorMessage = '';
+    bool loading = false;
 
     final TextEditingController _controllerEmail = TextEditingController();
     final TextEditingController _controllerPassword = TextEditingController();
@@ -31,6 +32,7 @@ class _registerPageState extends State<registerPage> {
       } on FirebaseAuthException catch (e) {
         setState(() {
           errorMessage = e.message;
+          loading = false;
         });
       }
     }
@@ -63,21 +65,32 @@ class _registerPageState extends State<registerPage> {
     }
 
     Widget submitButton() {
-      return ElevatedButton(
-        onPressed: createUserWithEmailAndPassword,
-        child: Text('Register'),
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () async {
+              setState(() {
+                loading = true;
+              });
+              await createUserWithEmailAndPassword();
+            },
+            child: Text('Register'),
+          ),
+          loading ? CircularProgressIndicator() : SizedBox(width: 0.0,),
+        ],
       );
     }
 
     Widget loginButton() {
       return TextButton(
-        onPressed: () {
-          setState(() {
-            widget.switchPage();
-          });
-        },
-        child: const Text('Login instead'),
-      );
+            onPressed: () {
+              setState(() {
+                widget.switchPage();
+              });
+            },
+            child: const Text('Login instead'),
+          );
     }
 
     return Scaffold(

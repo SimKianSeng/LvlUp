@@ -31,7 +31,7 @@ class HomePage extends StatelessWidget {
                 await Navigator.pushNamed(context, '/timer');
               }
             }, 
-            icon: study ? Icon(Icons.play_arrow, color: Colors.greenAccent[400],) : Icon(Icons.play_arrow, color: Colors.grey,),
+            icon: study ? Icon(Icons.play_arrow, color: Colors.greenAccent[400],) : const Icon(Icons.play_arrow, color: Colors.grey,),
           );  
   }
 
@@ -65,7 +65,7 @@ class HomePage extends StatelessWidget {
       body: Container(
         decoration: bgColour,
         width: double.infinity,
-        padding: EdgeInsets.only(top: 30.0),
+        padding: const EdgeInsets.only(top: 30.0),
         child: Column(
           children: <Widget>[
             Expanded(child: _avatar()),

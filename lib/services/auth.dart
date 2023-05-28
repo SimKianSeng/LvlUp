@@ -45,7 +45,7 @@ class Auth {
       .sendPasswordResetEmail(email: email);
   }
 
-  //TODO: Delete User
+
   Future<void> deleteUser() async {
     await currentUser?.delete();
   }

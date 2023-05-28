@@ -14,6 +14,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   String? errorMessage = '';
+  bool loading = false;
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
@@ -27,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message;
+        loading = false;
       });
     }
   }
@@ -47,10 +49,18 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget submitButton() {
-    return ElevatedButton(
-      onPressed:
-          signInWithEmailAndPassword,
-      child: const Text('Log in'),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        ElevatedButton(
+          onPressed: () {
+              signInWithEmailAndPassword();
+              loading = true;
+          },
+          child: const Text('Log in'),
+        ),
+        loading ? CircularProgressIndicator() : SizedBox(width: 0.0,),
+      ],
     );
   }
 

@@ -19,7 +19,7 @@ BoxDecoration bgColour = const BoxDecoration(
 InputDecoration customTextField(String initText) {
   return InputDecoration(
     labelText: initText,
-    labelStyle: TextStyle(color: Colors.black),
+    labelStyle: const TextStyle(color: Colors.black),
             filled: true,
             fillColor: Colors.white38,
             enabledBorder: OutlineInputBorder(
