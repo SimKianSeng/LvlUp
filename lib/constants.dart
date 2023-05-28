@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+///Provides the decoration property of a container
 BoxDecoration bgColour = const BoxDecoration(
                           gradient: LinearGradient(
                             begin:Alignment.topCenter,
@@ -12,3 +13,20 @@ BoxDecoration bgColour = const BoxDecoration(
                             ]
                           )
                         );
+
+
+///Provides the decoration property for a textfield
+InputDecoration customTextField(String initText) {
+  return InputDecoration(
+    labelText: initText,
+    labelStyle: TextStyle(color: Colors.black),
+            filled: true,
+            fillColor: Colors.white38,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            )
+  );
+}

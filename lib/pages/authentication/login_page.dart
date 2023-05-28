@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lvlup/constants.dart';
-import '../services/auth.dart';
+import '../../services/auth.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  final Function switchPage;
+  
+  const LoginPage({required this.switchPage});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
-//TODO: Register page should also ask user for their account name?
-//TODO: Make password obscure while typing in
-//TODO: Ensure that only valid emails are used to create an account
 class _LoginPageState extends State<LoginPage> {
   String? errorMessage = '';
-  bool isLogin = true;
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
@@ -33,42 +31,13 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<void> createUserWithEmailAndPassword() async {
-    try {
-      await Auth().createUserWithEmailAndPassword(
-        email: _controllerEmail.text,
-        password: _controllerPassword.text,
-      );
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        errorMessage = e.message;
-      });
-    }
-  }
-
-  //TODO: Update title of login page
-  Widget _title() {
-    return const Text('Firebase Auth');
-  }
-
-  Widget _entryField(
+  Widget entryField(
     String title,
     TextEditingController controller,
   ) {
     return TextField(
       controller: controller,
-      decoration: InputDecoration(
-        labelText: title,
-        labelStyle: TextStyle(color: Colors.black),
-        filled: true,
-        fillColor: Colors.white38,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        )
-      ),
+      decoration: customTextField(title),
       obscureText: title == 'password' ? true : false, //Hide password if textfield is for password
     );
   }
@@ -77,31 +46,28 @@ class _LoginPageState extends State<LoginPage> {
     return Text(errorMessage == '' ? '' : 'Humm ? $errorMessage');
   }
 
-  Widget _submitButton() {
+  Widget submitButton() {
     return ElevatedButton(
       onPressed:
-          isLogin ? signInWithEmailAndPassword : createUserWithEmailAndPassword,
-      child: Text(isLogin ? 'Login' : 'Register'),
+          signInWithEmailAndPassword,
+      child: const Text('Log in'),
     );
   }
 
-  Widget _loginOrRegisterButton() {
+  Widget registerButton() {
     return TextButton(
       onPressed: () {
         setState(() {
-          isLogin = !isLogin;
+          widget.switchPage();
         });
       },
-      child: Text(isLogin ? 'Register instead' : 'Login instead'),
+      child: const Text('Register instead'),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: _title(),
-      // ),
       body: Container(
         decoration: bgColour,
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -115,13 +81,12 @@ class _LoginPageState extends State<LoginPage> {
                 child: Image.asset("assets/AppTitle.png"),
               ),
             ),
-            _entryField('email', _controllerEmail),
+            entryField('email', _controllerEmail),
             const SizedBox(height: 25.0,),
-            _entryField('password',
-                _controllerPassword),
+            entryField('password', _controllerPassword),
             _errorMessage(),
-            _submitButton(),
-            _loginOrRegisterButton(),
+            submitButton(),
+            registerButton(),
           ],
         ),
       ),

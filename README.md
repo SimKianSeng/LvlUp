@@ -87,14 +87,18 @@ LvlUp is a mobile application intended for students who finds difficulty committ
 
 ## Design and plan
 
-<!-- Plan refers to? -->
-
 ### Architecture diagrams
 
 <br>
 
-### Figma UI prototype images
+### Activity diagram
 
+![activity diagram](/screenshots/LvlUp%20Activity%20Diagram.png)
+
+<br>
+
+### Figma UI prototype images
+<br>
 
 ![Login page](/screenshots/Login%20page.png)
 ![Main page](/screenshots/Main%20page.png)
