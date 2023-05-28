@@ -23,10 +23,10 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => WidgetTree(),
-        '/settings': (context) => Settings(),
-        '/scheduleGen':(context) => ScheduleGen(),
-        '/studyStats':(context) => StudyStats(),
+        '/': (context) => const WidgetTree(),
+        '/settings': (context) => const Settings(),
+        '/scheduleGen': (context) => const ScheduleGen(),
+        '/studyStats': (context) => const StudyStats(),
       },
     );
   }

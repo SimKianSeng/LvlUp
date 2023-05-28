@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lvlup/constants.dart';
 import '../../services/auth.dart';
+import 'package:lvlup/pages/authentication/email_verification_page.dart';
 
 class registerPage extends StatefulWidget {
   final Function switchPage;
@@ -22,12 +23,28 @@ class _registerPageState extends State<registerPage> {
     final TextEditingController _controllerEmail = TextEditingController();
     final TextEditingController _controllerPassword = TextEditingController();
 
-    Future<void> createUserWithEmailAndPassword() async {
+    // Future<void> createUserWithEmailAndPassword() async {
+    //   try {
+    //     await Auth().createUserWithEmailAndPassword(
+    //       email: _controllerEmail.text,
+    //       password: _controllerPassword.text,
+    //       context: context,
+    //     );
+    //   } on FirebaseAuthException catch (e) {
+    //     setState(() {
+    //       errorMessage = e.message;
+    //     });
+    //   }
+    // }
+
+    Future<User?> createUserWithEmailAndPassword() async {
       try {
-        await Auth().createUserWithEmailAndPassword(
+        User? user = await Auth().createUserWithEmailAndPassword(
           email: _controllerEmail.text,
           password: _controllerPassword.text,
+          context: context,
         );
+        return user;
       } on FirebaseAuthException catch (e) {
         setState(() {
           errorMessage = e.message;
@@ -62,9 +79,29 @@ class _registerPageState extends State<registerPage> {
       return Text(errorMessage == '' ? '' : 'Humm ? $errorMessage');
     }
 
+    // Widget submitButton() {
+    //   return ElevatedButton(
+    //     onPressed: createUserWithEmailAndPassword,
+    //     child: Text('Register'),
+    //   );
+    // }
+
     Widget submitButton() {
       return ElevatedButton(
-        onPressed: createUserWithEmailAndPassword,
+        onPressed: () async {
+          await Auth().createUserWithEmailAndPassword(
+            email: _controllerEmail.text,
+            password: _controllerPassword.text,
+            context: context,
+          );
+          if (Auth().currentUser != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (ctx) => const EmailVerificationScreen()),
+            );
+          }
+        },
         child: Text('Register'),
       );
     }
