@@ -62,13 +62,16 @@ class Auth {
     }
   }
 
-  //   await currentUser
-  //       ?.sendEmailVerification(); //Sends verification email, but never wait for user to verify before letting them enter
-  // }
-
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
   }
 
-  //TODO: Reset password
+  //Works on emulator, not phone
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
+  Future<void> deleteUser() async {
+    await currentUser?.delete();
+  }
 }

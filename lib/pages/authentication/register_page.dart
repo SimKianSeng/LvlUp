@@ -87,23 +87,27 @@ class _registerPageState extends State<registerPage> {
     // }
 
     Widget submitButton() {
-      return ElevatedButton(
-        onPressed: () async {
-          await Auth().createUserWithEmailAndPassword(
-            email: _controllerEmail.text,
-            password: _controllerPassword.text,
-            context: context,
-          );
-          if (Auth().currentUser != null) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (ctx) => const EmailVerificationScreen()),
-            );
-          }
-        },
-        child: Text('Register'),
-      );
+      return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            ElevatedButton(
+              onPressed: () async {
+                await Auth().createUserWithEmailAndPassword(
+                  email: _controllerEmail.text,
+                  password: _controllerPassword.text,
+                  context: context,
+                );
+                if (Auth().currentUser != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (ctx) => const EmailVerificationScreen()),
+                  );
+                }
+              },
+              child: Text('Register'),
+            )
+          ]);
     }
 
     Widget loginButton() {

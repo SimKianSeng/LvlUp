@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
 import '../services/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final User? user = Auth().currentUser;
 
 Future<void> signOut() async {
   await Auth().signOut();
@@ -28,14 +31,15 @@ Widget _resetPasswordButton() {
               RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25.0)))),
       onPressed: () {
-        print("Reset Passsword");
+        Auth().sendPasswordResetEmail(email: user?.email ?? "");
+        print("Email sent");
       },
       child: const Text('Reset Password'),
     ),
   );
 }
 
-Widget _deleteAccountButton() {
+Widget _deleteAccountButton(BuildContext context) {
   return SizedBox(
     width: 250.0,
     child: ElevatedButton(
@@ -43,8 +47,10 @@ Widget _deleteAccountButton() {
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25.0)))),
-      onPressed: () {
-        print("Delete account");
+      onPressed: () async {
+        await Auth().deleteUser();
+        print("Deleted account");
+        Navigator.pop(context);
       },
       child: const Text('Delete Account'),
     ),
@@ -54,7 +60,6 @@ Widget _deleteAccountButton() {
 class Settings extends StatelessWidget {
   const Settings({super.key});
 
-//TODO Implement reset pwd and delete account option
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +78,7 @@ class Settings extends StatelessWidget {
               width: double.infinity,
               height: 50.0,
             ),
-            _deleteAccountButton(),
+            _deleteAccountButton(context),
           ],
         ),
       ),
