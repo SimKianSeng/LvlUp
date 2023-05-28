@@ -87,6 +87,9 @@ LvlUp is a mobile application intended for students who finds difficulty committ
 
 ## Design and plan
 
+### Design decisions
+Instead of using StreamBuilder to listen to the authentication status of the user, we decided to listen to the status using StreamProvider instead as it allows us to access the data in all the descendent widgets of the streamProvider whereas streamBuilder only limits the access of that data to the current widget, making the app harder to work on in future implementations.
+
 ### Architecture diagrams
 
 <br>

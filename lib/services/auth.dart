@@ -9,6 +9,8 @@ class Auth {
   //authStateChanges() returns a stream of User; 'get' keyword is to declare as a getter
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
+
+//TODO: Error encountered after typing in wrong pwd and entering, need reload app to retype
   Future<void> signInWithEmailAndPassword({
     required String email,
     required String password,
@@ -38,5 +40,14 @@ class Auth {
     await _firebaseAuth.signOut();
   }
 
-  //TODO: Reset password
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    await _firebaseAuth
+      .sendPasswordResetEmail(email: email);
+  }
+
+  //TODO: Delete User
+  Future<void> deleteUser() async {
+    await currentUser?.delete();
+  }
+
 }
