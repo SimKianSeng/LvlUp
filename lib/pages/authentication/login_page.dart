@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lvlup/constants.dart';
+import 'package:lvlup/pages/authentication/authentication.dart';
 import '../../services/auth.dart';
 
-class LoginPage extends StatefulWidget {
-  final Function switchPage;
-
-  const LoginPage({required this.switchPage});
+class LoginPage extends parent {
+  LoginPage(switchPage) : super(switchPage: switchPage);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  parentState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  String? errorMessage = '';
+class _LoginPageState extends parentState {
   bool loading = false;
 
   final TextEditingController _controllerEmail = TextEditingController();
@@ -33,23 +31,11 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Widget entryField(
-    String title,
-    TextEditingController controller,
-  ) {
-    return TextField(
-      controller: controller,
-      decoration: customTextField(title),
-      obscureText: title == 'password'
-          ? true
-          : false, //Hide password if textfield is for password
-    );
-  }
-
   Widget _errorMessage() {
     return Text(errorMessage == '' ? '' : 'Humm ? $errorMessage');
   }
 
+  @override
   Widget submitButton() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -66,16 +52,17 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget registerButton() {
-    return TextButton(
-      onPressed: () {
-        setState(() {
-          widget.switchPage();
-        });
-      },
-      child: const Text('Register instead'),
-    );
-  }
+  Widget forgotPasswordButton() {
+  return Container(
+    height: 45.0,
+    child: TextButton(
+        onPressed: () async {
+          await Auth().sendPasswordResetEmail(email: _controllerEmail.text, context: context);
+        },
+        child: const Text('Forgot password'),
+    ),
+  );
+}
 
     @override
   Widget build(BuildContext context) {
@@ -98,7 +85,8 @@ class _LoginPageState extends State<LoginPage> {
             entryField('password', _controllerPassword),
             _errorMessage(),
             submitButton(),
-            registerButton(),
+            forgotPasswordButton(),
+            switchButton("Register instead"),
           ],
         ),
       ),

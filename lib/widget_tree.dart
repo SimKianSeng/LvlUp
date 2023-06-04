@@ -17,6 +17,6 @@ class _WidgetTreeState extends State<WidgetTree> {
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
 
-    return user == null ? const authentication() : HomePage();
+    return user == null ? const Authentication() : HomePage();
   }
 }

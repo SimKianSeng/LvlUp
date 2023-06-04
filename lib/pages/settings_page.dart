@@ -10,19 +10,22 @@ Future<void> signOut() async {
 }
 
 Widget _signOutButton(BuildContext context) {
-  return ElevatedButton(
-    style: ButtonStyle(
-        shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)))),
-    onPressed: () async {
-      signOut();
-      Navigator.pop(context);
-    },
-    child: const Text('Sign Out'),
+  return SizedBox(
+    width: 250,
+    child: ElevatedButton(
+      style: ButtonStyle(
+          shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)))),
+      onPressed: () async {
+        signOut();
+        Navigator.pop(context);
+      },
+      child: const Text('Sign Out'),
+    ),
   );
 }
 
-Widget _resetPasswordButton() {
+Widget _resetPasswordButton(BuildContext context) {
   return SizedBox(
     width: 250.0,
     child: ElevatedButton(
@@ -31,7 +34,8 @@ Widget _resetPasswordButton() {
               RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25.0)))),
       onPressed: () {
-        Auth().sendPasswordResetEmail(email: user?.email ?? "");
+        Auth().sendPasswordResetEmail(email: user?.email ?? "", context: context);
+        
         print("Email sent");
       },
       child: const Text('Reset Password'),
@@ -40,21 +44,45 @@ Widget _resetPasswordButton() {
 }
 
 Widget _deleteAccountButton(BuildContext context) {
-  return SizedBox(
-    width: 250.0,
-    child: ElevatedButton(
+  return ElevatedButton(
       style: ButtonStyle(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25.0)))),
       onPressed: () async {
-        await Auth().deleteUser();
-        print("Deleted account");
-        Navigator.pop(context);
+        _deleteAccountConfirmation(context);
       },
       child: const Text('Delete Account'),
-    ),
   );
+}
+
+void _deleteAccountConfirmation(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text("Delete Account"),
+        content: const Text("All progress will be lost"),
+        actions: [
+          FloatingActionButton(
+            shape: CircleBorder(),
+            onPressed: () async {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              await Auth().deleteUser();
+              print("Deleted account");
+            },
+            child: const Text("Yes"),
+            ),
+          FloatingActionButton(
+            shape: CircleBorder(),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Cancel"),),
+        ],
+      );
+    });
 }
 
 class Settings extends StatelessWidget {
@@ -73,16 +101,18 @@ class Settings extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _resetPasswordButton(),
-            SizedBox(
+            _resetPasswordButton(context),
+            const SizedBox(
               width: double.infinity,
               height: 50.0,
             ),
-            _deleteAccountButton(context),
+            _signOutButton(context),
           ],
         ),
       ),
-      floatingActionButton: _signOutButton(context),
+      floatingActionButton: _deleteAccountButton(context),
     );
+
+
   }
 }
