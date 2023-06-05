@@ -46,6 +46,7 @@ Widget _resetPasswordButton(BuildContext context) {
 Widget _deleteAccountButton(BuildContext context) {
   return ElevatedButton(
       style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.redAccent[100]),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25.0)))),
@@ -64,8 +65,7 @@ void _deleteAccountConfirmation(BuildContext context) {
         title: const Text("Delete Account"),
         content: const Text("All progress will be lost"),
         actions: [
-          FloatingActionButton(
-            shape: CircleBorder(),
+          TextButton(
             onPressed: () async {
               Navigator.pop(context);
               Navigator.pop(context);
@@ -74,8 +74,7 @@ void _deleteAccountConfirmation(BuildContext context) {
             },
             child: const Text("Yes"),
             ),
-          FloatingActionButton(
-            shape: CircleBorder(),
+          TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
