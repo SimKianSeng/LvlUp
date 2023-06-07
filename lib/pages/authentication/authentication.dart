@@ -4,12 +4,11 @@ import 'package:lvlup/pages/authentication/register_page.dart';
 import '../../constants.dart';
 
 class Authentication extends StatefulWidget {
-  const Authentication({super.key});
+  const Authentication({Key? key}) : super(key: key);
 
   @override
   State<Authentication> createState() => _AuthenticationState();
 }
-
 
 class _AuthenticationState extends State<Authentication> {
   bool signingIn = true;
@@ -22,21 +21,19 @@ class _AuthenticationState extends State<Authentication> {
 
   @override
   Widget build(BuildContext context) {
-    return signingIn ? LoginPage(switchPage) : RegisterPage(switchPage);
+    return signingIn ? LoginPage() : RegisterPage();
   }
 }
 
 ///Supertype of both login and register page, contains shared components
-abstract class parent extends StatefulWidget {
-  final Function switchPage;
-
-  const parent({required this.switchPage});
+abstract class Parent extends StatefulWidget {
+  Parent({Key? key}) : super(key: key);
 
   @override
-  State<parent> createState() => parentState();
+  State<Parent> createState() => ParentState();
 }
 
-class parentState<T extends parent> extends State<parent> {
+class ParentState<T extends Parent> extends State<Parent> {
   String? errorMessage = '';
 
   Widget entryField(
@@ -57,16 +54,16 @@ class parentState<T extends parent> extends State<parent> {
     return const Placeholder();
   }
 
-  Widget switchButton(String text) {
-    return TextButton(
-      onPressed: () {
-        setState(() {
-          widget.switchPage();
-        });
-      },
-      child: Text(text),
-    );
-  }
+  // Widget switchButton(String text) {
+  //   return TextButton(
+  //     onPressed: () {
+  //       setState(() {
+  //         widget.switchPage();
+  //       });
+  //     },
+  //     child: Text(text),
+  //   );
+  // }
 
   ///Will be overriden by LoginPage and registerPage respectively
   @override

@@ -4,24 +4,23 @@ import 'package:lvlup/pages/authentication/authentication.dart';
 import '../../services/auth.dart';
 import 'package:lvlup/pages/authentication/email_verification_page.dart';
 
-class RegisterPage extends parent {
-  RegisterPage(switchPage) : super(switchPage: switchPage);
+class RegisterPage extends Parent {
+  RegisterPage({Key? key}) : super(key: key);
 
   @override
-  parentState createState() => _RegisterPageState();
+  ParentState createState() => _RegisterPageState();
 }
 
 //TODO: Register page should also ask user for their account name?
 //TODO: Ensure that only valid emails are used to create an account
-class _RegisterPageState extends parentState {
-
+class _RegisterPageState extends ParentState {
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
-  final TextEditingController _controllerPasswordConfirmation = TextEditingController();
+  final TextEditingController _controllerPasswordConfirmation =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
     Widget title() {
       return const Text(
         "Create an account",
@@ -80,7 +79,11 @@ class _RegisterPageState extends parentState {
             ),
             entryField('confirm password', _controllerPasswordConfirmation),
             submitButton(),
-            switchButton("Login instead"),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("login instead")),
           ],
         ),
       ),
