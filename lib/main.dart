@@ -1,4 +1,5 @@
-import 'package:lvlup/pages/schedule_gen_page.dart';
+import 'package:lvlup/pages/schedule/schedule_gen_page.dart';
+import 'package:lvlup/pages/schedule/schedule_input.dart';
 import 'package:lvlup/pages/settings_page.dart';
 import 'package:lvlup/pages/study_stats_page.dart';
 import 'package:lvlup/widget_tree.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
           '/settings': (context) => const Settings(),
           '/scheduleGen': (context) => const ScheduleGen(),
           '/studyStats': (context) => const StudyStats(),
+          '/scheduleInput': (context) => const ScheduleInput(),
         },
       ),
     );

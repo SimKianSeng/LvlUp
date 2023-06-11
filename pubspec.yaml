@@ -36,6 +36,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.5
+  time_planner: ^0.1.1
 
 dev_dependencies:
   flutter_lints: ^2.0.0

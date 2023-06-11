@@ -8,24 +8,24 @@ class ScheduleGen extends StatefulWidget {
   State<ScheduleGen> createState() => _ScheduleGenState();
 }
 
-Widget _GeneratorButton() {
+class _ScheduleGenState extends State<ScheduleGen> {
+
+  Widget _generatorButton() {
   return ElevatedButton(
     style: ButtonStyle(
           shape: MaterialStateProperty.all(
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)))),
     onPressed: () {
-
+      Navigator.pushNamed(context, '/scheduleInput');
     },
     child: const Text("Generator"),);
 }
 
-class _ScheduleGenState extends State<ScheduleGen> {
-
   Widget _editButton() {
     return ElevatedButton(
     style: ButtonStyle(
-          shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)))),
+      shape: MaterialStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)))),
     onPressed: () {
 
     },
@@ -35,7 +35,9 @@ class _ScheduleGenState extends State<ScheduleGen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Schedule")),
+      appBar: AppBar(
+        title: Text("Quest"),
+        centerTitle: true,),
       body: Container(
         decoration: bgColour,
       ),
@@ -43,7 +45,7 @@ class _ScheduleGenState extends State<ScheduleGen> {
         height: 50.0,
         backgroundColor: Colors.white30,
         destinations: [
-          _GeneratorButton(),
+          _generatorButton(),
           _editButton(),
         ],
       ),
