@@ -54,20 +54,9 @@ class ParentState<T extends Parent> extends State<Parent> {
     return const Placeholder();
   }
 
-  // Widget switchButton(String text) {
-  //   return TextButton(
-  //     onPressed: () {
-  //       setState(() {
-  //         widget.switchPage();
-  //       });
-  //     },
-  //     child: Text(text),
-  //   );
-  // }
-
   ///Will be overriden by LoginPage and registerPage respectively
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const Scaffold();
   }
 }

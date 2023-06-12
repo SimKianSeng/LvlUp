@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:lvlup/pages/authentication/register_page.dart';
 import 'package:lvlup/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     await FirebaseAuth.instance.currentUser?.reload();
 
     setState(() {
+      // isEmailVerified =
+      //     FirebaseAuth.instance.currentUser?.emailVerified ?? false;
       isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
     });
 
@@ -57,6 +60,21 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          leading: BackButton(
+            onPressed: () async {
+              timer?.cancel();
+              await Auth().deleteUser();
+              // Navigator.pop(context);
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (ctx) => RegisterPage(),
+                  ));
+            },
+          ),
           title: Text("Verify email"),
         ),
         body: SingleChildScrollView(

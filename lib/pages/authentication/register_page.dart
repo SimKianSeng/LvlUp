@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/pages/authentication/authentication.dart';
+import 'package:lvlup/pages/authentication/login_page.dart';
 import '../../services/auth.dart';
 import 'package:lvlup/pages/authentication/email_verification_page.dart';
 
@@ -44,12 +45,20 @@ class _RegisterPageState extends ParentState {
                   passwordConfirmation: _controllerPasswordConfirmation.text,
                   context: context,
                 );
+
+                // if (Auth().currentUser != null) {
+                //   Navigator.restorablePush(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (ctx) => EmailVerificationScreen()),
+                //   );
+                // }
                 if (Auth().currentUser != null) {
                   Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (ctx) => const EmailVerificationScreen()),
-                  );
+                      context,
+                      MaterialPageRoute(
+                        builder: (ctx) => EmailVerificationScreen(),
+                      ));
                 }
               },
               child: Text('Register'),
@@ -81,7 +90,12 @@ class _RegisterPageState extends ParentState {
             submitButton(),
             ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (ctx) => LoginPage(),
+                      ));
                 },
                 child: Text("login instead")),
           ],
