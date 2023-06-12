@@ -15,7 +15,7 @@ class _ScheduleInputState extends State<ScheduleInput> {
   Generator generator = Generator();
   // Schedule schedule = Schedule();
   static int _moduleCount = 1;
-  int _intensity = 1;
+  int _intensity = 5;
 
   Slider _intensityScale() {
     return Slider(
@@ -55,7 +55,7 @@ class _ScheduleInputState extends State<ScheduleInput> {
               flex: 6,
               child: ListView.builder(
                 itemCount: _moduleCount,
-                itemBuilder: (context, index) => ModuleRow(index: index + 1, generator: generator,)),
+                itemBuilder: (context, index) => ModuleRow(index: index + 1,)),
             ),
             Expanded(
               child: _addModule()

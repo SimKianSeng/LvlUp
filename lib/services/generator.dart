@@ -7,9 +7,10 @@ import 'dart:math';
 class Generator {
 
   static final Generator _instance = Generator._internal();
+  static const FREEPERIOD = 'free';
 
   List<String> modules = [];
-  late int intensity;
+  int intensity = 5;
   late List<DateTime> sessions;
   List<String> allocations = [];
 
@@ -23,20 +24,19 @@ class Generator {
     return modules.contains(module);
   }
 
-  void addModuleRanked(String module, int rank) {
-    print('added');
-    modules.insert(rank - 1, module);
+  void updateModule(String module, int rank) {
+    if (modules.length < rank) {
+      modules.insert(rank - 1, module);
+    } else if (modules.elementAt(rank - 1) != module) {
+      modules.removeAt(rank - 1);
+      modules.insert(rank - 1, module);
+    }
   }
 
   bool isAdded(int rank) {
     bool moduleAdded = modules.length != rank;
     
     return moduleAdded;
-  }
-
-  void removeModule(String module) {
-    print('removed');
-    modules.remove(module);
   }
 
   // void addSessions(List<DateTime> sessions) {
@@ -48,7 +48,10 @@ class Generator {
   }
 
   List<String> generateSchedule() {
-    int numberOfFreeSessions = 5; //sessions.length;
+    int numberOfFreeSessions = sessions.length;
+
+    //Reset allocations for each generateSchedule call
+    allocations = [];
 
 
     while (numberOfFreeSessions != 0) {
@@ -64,26 +67,36 @@ class Generator {
 
   
   String selectModule() {
-    //Save the need to compute everytime if there is no modules
-    if (modules.isEmpty) {
+    //Save the need to compute everytime if there are no modules or zero intensity
+    if (modules.isEmpty || intensity == 0) {
       return 'free';
     }
 
-    if (!modules.contains('free')) {
-      modules.add('free');
+    if (modules.contains(FREEPERIOD)) {
+      modules.remove(FREEPERIOD);
     }
 
-    //Corresponds to modules index
+    int moduleWeightage = ((modules.length + 1) * modules.length) * 5; // (/ 2 * 10)
+    int totalWeightage = 0; // will increment as we iterate through
+
     List<int> prefixSum = [];
-    
-    for (int i = 1; i <= modules.length; i++) {
+
+
+    for (int i = 0; i < modules.length; i++) {
       int rank = modules.length - i;
-      prefixSum.add((rank * rank) ~/ 2);
+      rank *= 10;
+      totalWeightage += rank;
+      prefixSum.add(totalWeightage);
     }
 
-    int totalPriorities = (((1 + modules.length) * (modules.length)) ~/ 2) ~/ (1 - (intensity / 10));
+    if (intensity != 10) {
+      int freePeriodWeightage = (moduleWeightage * (10 - intensity)) ~/ intensity;
+      modules.add(FREEPERIOD);
+      prefixSum.add(freePeriodWeightage + moduleWeightage);
+    }
 
-    int target = 1 + Random().nextInt(totalPriorities);
+    int target = 1 + Random().nextInt(prefixSum.last);
+
 
     //Binary search to find smallest index corresponding to prefix sum greater than target
     int start = 0;
