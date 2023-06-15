@@ -15,7 +15,7 @@ class ModuleRow extends StatefulWidget {
 class _ModuleRowState extends State<ModuleRow> {
   String module = '';
 
-  void updateModule(String module) {
+ void updateModule(String module) {
     if (widget.generator.alreadyInput(module)) {
       //module has been input, do not update
       const message = SnackBar(
@@ -25,15 +25,14 @@ class _ModuleRowState extends State<ModuleRow> {
       ScaffoldMessenger.of(context).showSnackBar(message);
     } else if (module != '' && this.module != module) {
       //module has not been previously input, update
-
       this.module = module;
-      widget.generator.updateModule(module, widget.index);  
     }
+    
+    widget.generator.updateModule(module, widget.index);  
   }
 
-  //TODO
-  ///To move up and down the rank column and delete the module
-  // Widget _additionalStuff() {
+  //TODO removing the module input
+  // Widget _removeModuleInput() {
   //   return GestureDetector(
   //     child: const Icon(Icons.menu, color: Colors.black,),
   //   );
@@ -46,7 +45,6 @@ class _ModuleRowState extends State<ModuleRow> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          const Icon(Icons.menu, color: Colors.black,),
           SizedBox(width: widget.index == 1 ? 68.0 : 135.0,),
           widget.index == 1 ? const Text('Module 1 (Weakest):') : Text('Module ${widget.index}:'),
           const SizedBox(width: 25.0,),
@@ -54,9 +52,9 @@ class _ModuleRowState extends State<ModuleRow> {
             width: 100.0,
             height: 35.0,
             child: TextField(
-              decoration: customTextField(''),
               textAlign: TextAlign.center,
               onChanged: (value) => updateModule(value),
+              decoration: customTextField(''),
             ),
           ),
         ],

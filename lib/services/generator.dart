@@ -1,4 +1,8 @@
 import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:lvlup/models/session.dart';
+
+import 'package:time_planner/time_planner.dart';
 
 ///Generator is a singleton class that takes in the input for the schedule consisting:
 ///modules (ranked), intensity and free sessions.
@@ -7,12 +11,17 @@ import 'dart:math';
 class Generator {
 
   static final Generator _instance = Generator._internal();
-  static const FREEPERIOD = 'free';
+  static const freePeriod = 'free';
+  static const duplicate = 'duplicate';
 
-  List<String> modules = [];
-  int intensity = 5;
-  late List<DateTime> sessions;
-  List<String> allocations = [];
+  List<String> _modules = [];
+
+  List<String> _modulesNoDup = [];
+  int _intensity = 5;
+  //TODO ensure that sessions can only be in blocks of 30minutes and start on xx00 or xx30
+  List<List<Session>> _sessions = List.generate(7, (index) => []);
+
+  List<String> _allocations = [];
 
   factory Generator() {
     return _instance;
@@ -21,77 +30,97 @@ class Generator {
   Generator._internal();
 
   bool alreadyInput(String module) {
-    return modules.contains(module);
+    return _modules.contains(module.toUpperCase());
   }
 
   void updateModule(String module, int rank) {
-    if (modules.length < rank) {
-      modules.insert(rank - 1, module);
-    } else if (modules.elementAt(rank - 1) != module) {
-      modules.removeAt(rank - 1);
-      modules.insert(rank - 1, module);
+    if (alreadyInput(module)) {
+      //Removed the partially filled module
+      _modules.replaceRange(rank - 1, rank, [duplicate]);
+      return;
     }
+
+    //Module at current ranking is another module
+    if (_modules.length >= rank && _modules.elementAt(rank - 1) != module.toUpperCase()) {
+      _modules.removeAt(rank - 1);
+    }
+
+    _modules.insert(rank - 1, module.toUpperCase());
   }
 
-  bool isAdded(int rank) {
-    bool moduleAdded = modules.length != rank;
-    
-    return moduleAdded;
-  }
-
-  // void addSessions(List<DateTime> sessions) {
-  //   this.sessions = sessions;
+  //for reorderablelistview once changed
+  // void swapModules(int oldIndex, int newIndex) {
+  //   String tmp = modules[oldIndex];
+  //   modules[oldIndex] = modules[newIndex];
+  //   modules[newIndex] = tmp;
   // }
 
+  void updateSessions(int index, Session session) {
+    sessions[index].add(session);
+    sessions[index].sort((a, b) => a.compareTo(b));
+  }
+
   void updateIntensity(int intensity) {
-    this.intensity = intensity;
+    _intensity = intensity;
+  }
+
+  List<List<Session>> get sessions {
+    return _sessions;
+  }
+
+  List<TimePlannerTask> periods() {
+    return _sessions.expand(
+      (daySessions) => daySessions.map(
+        (session) => TimePlannerTask(
+          color: Colors.green,
+          minutesDuration: session.minutesDuration, 
+          dateTime: TimePlannerDateTime(day: session.day, hour: session.startTime.hour, minutes: session.startTime.minute)))
+      ).toList();
   }
 
   List<String> generateSchedule() {
-    int numberOfFreeSessions = sessions.length;
+    int numberOfFreeSessions = 10; //sessions.length;
 
     //Reset allocations for each generateSchedule call
-    allocations = [];
+    _allocations = [];
+    _modulesNoDup = List.from(_modules);
+    _modulesNoDup.removeWhere((element) => element == duplicate || element == freePeriod);
 
 
     while (numberOfFreeSessions != 0) {
       String module = selectModule();
 
-      allocations.add(module);
+      _allocations.add(module);
 
       numberOfFreeSessions -= 1;
     }
 
-    return allocations;
+    return _allocations;
   }
 
   
   String selectModule() {
     //Save the need to compute everytime if there are no modules or zero intensity
-    if (modules.isEmpty || intensity == 0) {
+    if (_modulesNoDup.isEmpty || _intensity == 0) {
       return 'free';
     }
 
-    if (modules.contains(FREEPERIOD)) {
-      modules.remove(FREEPERIOD);
-    }
-
-    int moduleWeightage = ((modules.length + 1) * modules.length) * 5; // (/ 2 * 10)
+    int moduleWeightage = ((_modulesNoDup.length + 1) * _modulesNoDup.length) * 5; // (/ 2 * 10)
     int totalWeightage = 0; // will increment as we iterate through
 
     List<int> prefixSum = [];
 
 
-    for (int i = 0; i < modules.length; i++) {
-      int rank = modules.length - i;
+    for (int i = 0; i < _modulesNoDup.length; i++) {
+      int rank = _modulesNoDup.length - i;
       rank *= 10;
       totalWeightage += rank;
       prefixSum.add(totalWeightage);
     }
 
-    if (intensity != 10) {
-      int freePeriodWeightage = (moduleWeightage * (10 - intensity)) ~/ intensity;
-      modules.add(FREEPERIOD);
+    if (_intensity != 10) {
+      int freePeriodWeightage = (moduleWeightage * (10 - _intensity)) ~/ _intensity;
+      _modulesNoDup.add(freePeriod);
       prefixSum.add(freePeriodWeightage + moduleWeightage);
     }
 
@@ -115,7 +144,7 @@ class Generator {
     }
 
 
-    String module = modules[start];
+    String module = _modulesNoDup[start];
     return module;
   }
   

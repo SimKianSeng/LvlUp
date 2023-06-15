@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/module_row.dart';
 import 'package:lvlup/services/generator.dart';
+import 'package:time_planner/time_planner.dart';
 
 
 class ScheduleInput extends StatefulWidget {
@@ -12,11 +13,18 @@ class ScheduleInput extends StatefulWidget {
 }
 
 class _ScheduleInputState extends State<ScheduleInput> {
-  Generator generator = Generator();
-  // Schedule schedule = Schedule();
+  final Generator _generator = Generator();
   static int _moduleCount = 1;
   int _intensity = 5;
+  List<TimePlannerTask> sessions = [];
 
+  void _updateSession() {
+      setState(() {
+        sessions.clear();
+        sessions.addAll(_generator.periods());
+      });
+    }
+    
   Slider _intensityScale() {
     return Slider(
       max: 10.0,
@@ -26,7 +34,7 @@ class _ScheduleInputState extends State<ScheduleInput> {
       onChanged: (newIntensity) {
         setState(() {
           _intensity = newIntensity.toInt();
-          generator.updateIntensity(newIntensity.toInt());
+          _generator.updateIntensity(newIntensity.toInt());
         });
       }
     );
@@ -49,13 +57,39 @@ class _ScheduleInputState extends State<ScheduleInput> {
           borderRadius: BorderRadius.all(Radius.circular(25.0)),
           color: Colors.white60,
         ),
+        //todo: after settling other main stuff
+        // child: Column(
+        //   children: [
+        //     Expanded(
+        //       flex: 6,
+        //       child: ReorderableListView.builder(
+        //         itemCount: _moduleCount,
+        //         onReorder: (oldIndex, newIndex) {
+        //           //todo: order is updated in generator, but not in UI
+        //           setState(() {
+        //             if (oldIndex < newIndex) {
+        //               newIndex -= 1;
+        //             }
+        //           });
+        //           generator.swapModules(oldIndex, newIndex);
+        //         },
+        //         itemBuilder: (context, index) => ModuleRow(key: Key(index.toString()), index: index + 1,)),
+        //     ),
+        //     Expanded(
+        //       child: _addModule()
+        //     ),
+        //   ]
+        // ),
         child: Column(
           children: [
             Expanded(
               flex: 6,
               child: ListView.builder(
                 itemCount: _moduleCount,
-                itemBuilder: (context, index) => ModuleRow(index: index + 1,)),
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5.0),
+                  child: ModuleRow(index: index + 1,),
+                )),
             ),
             Expanded(
               child: _addModule()
@@ -74,6 +108,33 @@ class _ScheduleInputState extends State<ScheduleInput> {
         });
       },
       icon: const Icon(Icons.add)
+    );
+  }
+
+  Widget _weeklyInput() {
+    const int startHour = 0;
+    const int lastHour = 23;
+
+    return Expanded(
+      child: Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(25.0)),
+          color: Colors.white60,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TimePlanner(
+            startHour: startHour,
+            endHour: lastHour,
+            headers: ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'].map((day) => TimePlannerTitle(title: day)).toList(),
+            style: TimePlannerStyle(
+              //cellHeight formatting will not align time on left with their respective cells
+              cellWidth: 45,
+            ),
+            tasks: sessions,
+          )
+        )
+      )
     );
   }
 
@@ -97,7 +158,10 @@ class _ScheduleInputState extends State<ScheduleInput> {
                 children: [
                   _heading('Weekly Available Time'),
                   TextButton(
-                    onPressed: () {}, 
+                    onPressed: () async {
+                      await Navigator.pushNamed(context, '/weeklyInput');
+                      _updateSession();
+                    }, 
                     child: Text(
                       'Add free period',
                       style: TextStyle(
@@ -105,7 +169,7 @@ class _ScheduleInputState extends State<ScheduleInput> {
                       ),)),
                 ],
               ),
-              // _weeklyInput(),
+              _weeklyInput(),
               _heading('Intensity'),
               _intensityScale(),
               // _check(),
