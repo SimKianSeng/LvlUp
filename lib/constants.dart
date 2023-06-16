@@ -16,10 +16,10 @@ BoxDecoration bgColour = const BoxDecoration(
 
 
 ///Provides the decoration property for a textfield
-InputDecoration customTextField(String initText) {
+InputDecoration customTextField({String initText = ''}) {
   return InputDecoration(
     labelText: initText,
-    labelStyle: TextStyle(color: Colors.black),
+    labelStyle: const TextStyle(color: Colors.black),
             filled: true,
             fillColor: Colors.white38,
             enabledBorder: OutlineInputBorder(
@@ -29,4 +29,12 @@ InputDecoration customTextField(String initText) {
               borderRadius: BorderRadius.circular(10.0),
             )
   );
+}
+
+ButtonStyle customButtonStyle({Color? color = Colors.purple, double radius = 25.0}) {
+  return ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(color),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(radius))));
 }

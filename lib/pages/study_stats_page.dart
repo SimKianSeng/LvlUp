@@ -7,7 +7,7 @@ class StudyStats extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Study Summary"),
+        title: const Text("Study Summary"),
         centerTitle: true,
       ),
     );

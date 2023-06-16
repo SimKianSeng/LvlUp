@@ -36,7 +36,7 @@ Widget _resetPasswordButton(BuildContext context) {
       onPressed: () {
         Auth().sendPasswordResetEmail(email: user?.email ?? "", context: context);
         
-        print("Email sent");
+        // print("Email sent");
       },
       child: const Text('Reset Password'),
     ),
@@ -45,11 +45,7 @@ Widget _resetPasswordButton(BuildContext context) {
 
 Widget _deleteAccountButton(BuildContext context) {
   return ElevatedButton(
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.redAccent[100]),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.0)))),
+      style: customButtonStyle(color: Colors.redAccent[100]),
       onPressed: () async {
         _deleteAccountConfirmation(context);
       },
@@ -70,7 +66,7 @@ void _deleteAccountConfirmation(BuildContext context) {
               Navigator.pop(context);
               Navigator.pop(context);
               await Auth().deleteUser();
-              print("Deleted account");
+              // print("Deleted account");
             },
             child: const Text("Yes"),
             ),

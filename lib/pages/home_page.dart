@@ -20,6 +20,8 @@ class HomePage extends StatelessWidget {
 
 
   IconButton _startSessionButton (BuildContext context) {
+
+    //TODO: update home page so that it displays the upcoming stuff to study
     bool study = false; 
 
     return IconButton(
@@ -45,7 +47,7 @@ class HomePage extends StatelessWidget {
 
   IconButton _scheduleGenButton(BuildContext context) {
     return IconButton(
-      onPressed: (){
+      onPressed: () {
         Navigator.pushNamed(context, '/scheduleGen');
       }, 
       icon: const Icon(Icons.calendar_month));
@@ -65,7 +67,7 @@ class HomePage extends StatelessWidget {
       body: Container(
         decoration: bgColour,
         width: double.infinity,
-        padding: EdgeInsets.only(top: 30.0),
+        padding: const EdgeInsets.only(top: 30.0),
         child: Column(
           children: <Widget>[
             Expanded(child: _avatar()),

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class Session extends StatelessWidget {
+  //TODO: OOP this
   final int day;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
-  late int minutesDuration;
+  late final int minutesDuration;
+  static const int _interval = 30;
 
   Session({required this.day, required this.startTime, required this.endTime, super.key}) {
     int startTimeInt = (startTime.hour * 60 + startTime.minute);
@@ -19,6 +21,20 @@ class Session extends StatelessWidget {
 
   Widget _endTime(BuildContext context) {
     return Text(endTime.format(context));
+  }
+
+  List<Session> splitIntoBlocks() {
+    //minutesDuration will be in multiples of 30
+    int numOfBlocks = minutesDuration ~/ _interval;
+
+    //TODO issues with splitting
+    List<Session> children = List.generate(numOfBlocks, 
+      (index) => Session(
+        day: day, 
+        startTime: startTime.replacing(hour: startTime.hour, minute: startTime.minute + (_interval * index)), 
+        endTime: endTime.replacing(hour: startTime.hour, minute: startTime.minute + (_interval * index) + _interval)));
+
+    return children;
   }
 
   int compareTo(Session other) {

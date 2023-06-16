@@ -9,7 +9,9 @@ import 'package:time_planner/time_planner.dart';
 ///Using these inputs, generator will utilise 'weighted random selection' algorithm
 ///and distribute the modules across the free sessions based on level of intensity
 class Generator {
-
+  //TODO break the input periods into blocks of 30minutes
+  //TODO link to homepage, timer
+  //TODO link to firebase
   static final Generator _instance = Generator._internal();
   static const freePeriod = 'free';
   static const duplicate = 'duplicate';
@@ -18,10 +20,7 @@ class Generator {
 
   List<String> _modulesNoDup = [];
   int _intensity = 5;
-  //TODO ensure that sessions can only be in blocks of 30minutes and start on xx00 or xx30
   List<List<Session>> _sessions = List.generate(7, (index) => []);
-
-  List<String> _allocations = [];
 
   factory Generator() {
     return _instance;
@@ -68,6 +67,48 @@ class Generator {
     return _sessions;
   }
 
+  ///Insert the generated modules into the respective timeslots available
+  List<TimePlannerTask> _slotTasks(List<String> allocations) {
+    //TODO
+    //split input sessions into blocks of 30minutes interval
+    List<Session> sessionsExpanded = _sessions.expand(
+      (element) => element.expand((session) => session.splitIntoBlocks()))
+      .toList();
+
+    List<TimePlannerTask> slottedTasks = [];
+
+    for (int i = 0; i < allocations.length; i++) {
+      //TODO: find a list method that can combine 2 different lists into a list of different generic type
+
+      // slottedTasks = sessionsExpanded
+      //   .map(
+      //     (session) => TimePlannerTask(
+      //       minutesDuration: session.minutesDuration, 
+      //       dateTime: TimePlannerDateTime(day: session.day, hour: session.startTime.hour, minutes: session.startTime.minute)))
+      //   .toList();
+      if (allocations[i] == freePeriod) {
+        //no need to show freeperiods on the schedule
+        continue;
+      }
+
+      slottedTasks.add(TimePlannerTask(
+        minutesDuration: sessionsExpanded[i].minutesDuration, 
+        dateTime: TimePlannerDateTime(
+          day: sessionsExpanded[i].day, 
+          hour: sessionsExpanded[i].startTime.hour, 
+          minutes: sessionsExpanded[i].startTime.minute),
+        color: Colors.green,
+        child: Text(
+          allocations[i],
+          style: const TextStyle(
+            fontSize: 20.0
+          ),
+        )));
+    }
+
+    return slottedTasks;
+  }
+
   List<TimePlannerTask> periods() {
     return _sessions.expand(
       (daySessions) => daySessions.map(
@@ -78,11 +119,10 @@ class Generator {
       ).toList();
   }
 
-  List<String> generateSchedule() {
-    int numberOfFreeSessions = 10; //sessions.length;
+  List<TimePlannerTask> generateSchedule() {
+    int numberOfFreeSessions = _sessions.expand((element) => element).length;
 
-    //Reset allocations for each generateSchedule call
-    _allocations = [];
+    List<String> allocations = [];
     _modulesNoDup = List.from(_modules);
     _modulesNoDup.removeWhere((element) => element == duplicate || element == freePeriod);
 
@@ -90,12 +130,14 @@ class Generator {
     while (numberOfFreeSessions != 0) {
       String module = selectModule();
 
-      _allocations.add(module);
+      allocations.add(module);
 
       numberOfFreeSessions -= 1;
     }
 
-    return _allocations;
+    List<TimePlannerTask> generatedTask = _slotTasks(allocations);
+
+    return generatedTask;
   }
 
   

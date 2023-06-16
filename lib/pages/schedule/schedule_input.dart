@@ -12,11 +12,21 @@ class ScheduleInput extends StatefulWidget {
   State<ScheduleInput> createState() => _ScheduleInputState();
 }
 
-class _ScheduleInputState extends State<ScheduleInput> {
+class _ScheduleInputState extends State<ScheduleInput>{
   final Generator _generator = Generator();
   static int _moduleCount = 1;
   int _intensity = 5;
   List<TimePlannerTask> sessions = [];
+
+  @override
+  void initState() {
+    // TODO: when enter page, previous inputs should still remain, rn is due to the thing being removed and all
+    //automatickeepclientalivemixin does not seem to solve this
+    super.initState();
+
+    //for debug purpose
+    print('Instanciating schedule_input');
+  }
 
   void _updateSession() {
       setState(() {

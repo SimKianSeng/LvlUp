@@ -54,7 +54,7 @@ class _ModuleRowState extends State<ModuleRow> {
             child: TextField(
               textAlign: TextAlign.center,
               onChanged: (value) => updateModule(value),
-              decoration: customTextField(''),
+              decoration: customTextField(),
             ),
           ),
         ],

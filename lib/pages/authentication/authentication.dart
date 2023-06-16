@@ -27,7 +27,7 @@ class _AuthenticationState extends State<Authentication> {
 
 ///Supertype of both login and register page, contains shared components
 abstract class Parent extends StatefulWidget {
-  Parent({Key? key}) : super(key: key);
+  const Parent({Key? key}) : super(key: key);
 
   @override
   State<Parent> createState() => ParentState();
@@ -42,7 +42,7 @@ class ParentState<T extends Parent> extends State<Parent> {
   ) {
     return TextField(
       controller: controller,
-      decoration: customTextField(title),
+      decoration: customTextField(initText: title),
       obscureText: title == 'password' || title == 'confirm password'
           ? true
           : false, //Hide password if textfield is for password
