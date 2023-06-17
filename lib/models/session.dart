@@ -1,5 +1,25 @@
 import 'package:flutter/material.dart';
 
+//TODO transfer into external file?
+extension on TimeOfDay {
+  TimeOfDay plusMinutes(int minutes) {
+    if (minutes == 0) {
+      return this;
+    } else {
+      int mofd = this.hour * 60 + this.minute;
+      int newMofd = ((minutes % 1440) + mofd + 1440) % 1440;
+      if (mofd == newMofd) {
+        return this;
+      } else {
+        int newHour = newMofd ~/ 60;
+        int newMinute = newMofd % 60;
+        return TimeOfDay(hour: newHour, minute: newMinute);
+      }
+    }
+  }
+}
+
+//Seems very similar to TimePlannerTask, to extend from it?
 class Session extends StatelessWidget {
   //TODO: OOP this
   final int day;
@@ -23,16 +43,15 @@ class Session extends StatelessWidget {
     return Text(endTime.format(context));
   }
 
+  //TODO monitor impact on app
   List<Session> splitIntoBlocks() {
-    //minutesDuration will be in multiples of 30
     int numOfBlocks = minutesDuration ~/ _interval;
 
-    //TODO issues with splitting
     List<Session> children = List.generate(numOfBlocks, 
       (index) => Session(
         day: day, 
-        startTime: startTime.replacing(hour: startTime.hour, minute: startTime.minute + (_interval * index)), 
-        endTime: endTime.replacing(hour: startTime.hour, minute: startTime.minute + (_interval * index) + _interval)));
+        startTime: startTime.plusMinutes(_interval * index),//startTime.replacing(hour: startTime.hour, minute: startTime.minute + (_interval * index)), 
+        endTime: startTime.plusMinutes(_interval * (index + 1))));//endTime.replacing(hour: startTime.hour, minute: startTime.minute + (_interval * index) + _interval)));
 
     return children;
   }
@@ -46,8 +65,6 @@ class Session extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return Text('${_startTime()}');
-    
     return Card(
       child: ListTile(
         title: Row(

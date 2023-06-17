@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-///Provides the decoration property of a container
+///Provides the background colour for the app
 BoxDecoration bgColour = const BoxDecoration(
                           gradient: LinearGradient(
                             begin:Alignment.topCenter,
@@ -14,6 +14,16 @@ BoxDecoration bgColour = const BoxDecoration(
                           )
                         );
 
+BoxDecoration contentContainerColour({double tlRadius = 25.0, double trRadius = 25.0, double blRadius = 25.0, double brRadius = 25.0, Color color = Colors.white60}) {
+  return BoxDecoration(
+    borderRadius: BorderRadius.only(
+      topLeft: Radius.circular(tlRadius), 
+      topRight: Radius.circular(trRadius),
+      bottomLeft: Radius.circular(blRadius),
+      bottomRight: Radius.circular(brRadius),),//BorderRadius.all(Radius.circular(radius)),
+    color: color,
+  );
+}
 
 ///Provides the decoration property for a textfield
 InputDecoration customTextField({String initText = ''}) {

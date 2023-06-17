@@ -2,13 +2,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/services/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:time_planner/time_planner.dart';
 
 //TODO: work on homepage to match figma prototype
-class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+//TODO: update home page so that it displays the upcoming stuff to study
+class _HomePageState extends State<HomePage> {
   final User? user = Auth().currentUser;
+  //TODO how to update from quest page?
+  List<TimePlannerTask>? _daytasks;
 
+  //TODO: based on user account
   Image _avatar() {
     return Image.asset("assets/Avatars/Basic Sprite.png");
   }
@@ -18,10 +28,7 @@ class HomePage extends StatelessWidget {
     return Text(user?.email ?? 'User email');
   }
 
-
   IconButton _startSessionButton (BuildContext context) {
-
-    //TODO: update home page so that it displays the upcoming stuff to study
     bool study = false; 
 
     return IconButton(
@@ -35,6 +42,25 @@ class HomePage extends StatelessWidget {
             }, 
             icon: study ? Icon(Icons.play_arrow, color: Colors.greenAccent[400],) : Icon(Icons.play_arrow, color: Colors.grey,),
           );  
+  }
+
+//TODO: listview to display cards
+///shows the upcoming tasks for today
+  Widget dayTasks() {
+
+    //TODO what does _daytasks contains? Modules, sessions, periods???
+    return Expanded(
+      child: ListView.builder(
+        itemCount: _daytasks?.length?? 0,
+        itemBuilder: (context, index) => Card(
+          child: Row(
+            children: <Widget>[
+              _daytasks?.elementAt(index).child ?? Text('Nothing for today'),
+            ],
+          ),
+        )
+      )
+    );
   }
 
   IconButton _settingsButton(BuildContext context) {
@@ -74,11 +100,12 @@ class HomePage extends StatelessWidget {
             Expanded(
               flex: 3,
               child: Container(
-                color: Colors.white60,
+                decoration: contentContainerColour(brRadius: 0.0, blRadius: 0.0),
                 width: double.infinity,
                 child: Column(
                   children: <Widget>[
                     _userUid(),
+                    dayTasks(),
                   ],
                 ),))
           ],

@@ -4,7 +4,7 @@ import 'package:lvlup/services/generator.dart';
 import 'package:time_range_picker/time_range_picker.dart';
 
 //TODO make it possible to remove sessions if wrongly input
-//TODO ensure that no overlaps are possible
+//TODO time picking
 class WeeklyInput extends StatefulWidget {
   final List<String> days = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
   final Generator generator = Generator();
@@ -73,6 +73,7 @@ class _WeeklyInputState extends State<WeeklyInput> {
     return FloatingActionButton(
       onPressed: () async {
         //TODO: currently not possible to add 12am as end
+        //TODO: Ensure that unable to choose a timerange that overlaps
         const TimeOfDay defaultTime = TimeOfDay(hour: 0, minute: 0);
         const Duration periodInterval = Duration(minutes: 30);
         final List<ClockLabel> clocklabels = ["12 am", "3 am", "6 am", "9 am", "12 pm", "3 pm", "6 pm", "9 pm"]
@@ -85,7 +86,7 @@ class _WeeklyInputState extends State<WeeklyInput> {
           interval: periodInterval,
           ticks: 24,
           clockRotation: 180,
-          labels: clocklabels
+          labels: clocklabels,
           );
 
           if (period == null) {

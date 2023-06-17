@@ -3,14 +3,15 @@ import 'package:lvlup/constants.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
 
-class ScheduleGen extends StatefulWidget {
-  const ScheduleGen({super.key});
+//TODO: find a way to keep the generated schedule, save / accept feature maybe?
+class Quest extends StatefulWidget {
+  const Quest({super.key});
 
   @override
-  State<ScheduleGen> createState() => _ScheduleGenState();
+  State<Quest> createState() => _QuestState();
 }
 
-class _ScheduleGenState extends State<ScheduleGen> {
+class _QuestState extends State<Quest> {
   List<TimePlannerTask> _task = [];
 
   Widget _generatorButton() {

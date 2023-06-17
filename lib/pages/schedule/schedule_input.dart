@@ -63,10 +63,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
   Widget _moduleInput(BuildContext context, ) {
     return Expanded(
       child: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(25.0)),
-          color: Colors.white60,
-        ),
+        decoration: contentContainerColour(),
         //todo: after settling other main stuff
         // child: Column(
         //   children: [
@@ -124,23 +121,22 @@ class _ScheduleInputState extends State<ScheduleInput>{
   Widget _weeklyInput() {
     const int startHour = 0;
     const int lastHour = 23;
+    final List<TimePlannerTitle> header = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'].map((day) => TimePlannerTitle(title: day)).toList();
+    TimePlannerStyle style = TimePlannerStyle(
+      //cellHeight formatting will not align time on left with their respective cells
+      cellWidth: 45,
+    );
 
     return Expanded(
       child: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(25.0)),
-          color: Colors.white60,
-        ),
+        decoration: contentContainerColour(),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: TimePlanner(
             startHour: startHour,
             endHour: lastHour,
-            headers: ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'].map((day) => TimePlannerTitle(title: day)).toList(),
-            style: TimePlannerStyle(
-              //cellHeight formatting will not align time on left with their respective cells
-              cellWidth: 45,
-            ),
+            headers: header,
+            style: style,
             tasks: sessions,
           )
         )

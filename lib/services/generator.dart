@@ -69,7 +69,7 @@ class Generator {
 
   ///Insert the generated modules into the respective timeslots available
   List<TimePlannerTask> _slotTasks(List<String> allocations) {
-    //TODO
+    //TODO Combines consecutive 30minutes block into 1 big session before returning
     //split input sessions into blocks of 30minutes interval
     List<Session> sessionsExpanded = _sessions.expand(
       (element) => element.expand((session) => session.splitIntoBlocks()))
@@ -77,15 +77,16 @@ class Generator {
 
     List<TimePlannerTask> slottedTasks = [];
 
-    for (int i = 0; i < allocations.length; i++) {
-      //TODO: find a list method that can combine 2 different lists into a list of different generic type
+    //TODO: find a list method that can combine 2 different lists into a list of different generic type
 
-      // slottedTasks = sessionsExpanded
-      //   .map(
-      //     (session) => TimePlannerTask(
-      //       minutesDuration: session.minutesDuration, 
-      //       dateTime: TimePlannerDateTime(day: session.day, hour: session.startTime.hour, minutes: session.startTime.minute)))
-      //   .toList();
+    // slottedTasks = sessionsExpanded
+    //   .map(
+    //     (session) => TimePlannerTask(
+    //       minutesDuration: session.minutesDuration, 
+    //       dateTime: TimePlannerDateTime(day: session.day, hour: session.startTime.hour, minutes: session.startTime.minute)))
+    //   .toList();
+    
+    for (int i = 0; i < allocations.length; i++) {
       if (allocations[i] == freePeriod) {
         //no need to show freeperiods on the schedule
         continue;
@@ -101,7 +102,7 @@ class Generator {
         child: Text(
           allocations[i],
           style: const TextStyle(
-            fontSize: 20.0
+            fontSize: 10.0
           ),
         )));
     }
@@ -120,7 +121,7 @@ class Generator {
   }
 
   List<TimePlannerTask> generateSchedule() {
-    int numberOfFreeSessions = _sessions.expand((element) => element).length;
+    int numberOfFreeSessions = _sessions.expand((element) => element.expand((session) => session.splitIntoBlocks())).length;
 
     List<String> allocations = [];
     _modulesNoDup = List.from(_modules);
