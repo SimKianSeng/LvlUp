@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/generator.dart';
+import 'package:time_planner/time_planner.dart';
 import 'package:time_range_picker/time_range_picker.dart';
 
 //TODO make it possible to remove sessions if wrongly input
@@ -60,13 +61,39 @@ class _WeeklyInputState extends State<WeeklyInput> {
               child: ListView.builder(
                 itemCount: sessions.length,
                 itemBuilder: (context, index) {
-                  return sessions[index];
+                  return sessions[index].displayTime(context);
                 },
               ),
             ),
           ),
       ],
     );
+  }
+
+  void _add(TimeRange? period) {
+    if (period == null) {
+      return;
+    }
+
+    TimeOfDay newTime = period.startTime;
+    TimeOfDay endTime = period.endTime;
+
+    int startTimeInt = newTime.hour * 60 + newTime.minute;
+    int endTimeInt = endTime.hour * 60 + endTime.minute;
+
+    if (endTimeInt <= startTimeInt) {
+      const message = SnackBar(
+        content: Text('End time must be after Start time!'),
+      );
+      
+      ScaffoldMessenger.of(context).showSnackBar(message);
+    } else {
+      setState(() { 
+        widget.generator.updateSessions(_index, Session(
+          dateTime: TimePlannerDateTime(day: _index, hour: newTime.hour, minutes: newTime.minute),
+          minutesDuration: endTimeInt - startTimeInt));
+      });
+    }
   }
 
   Widget _addSession() {
@@ -89,27 +116,7 @@ class _WeeklyInputState extends State<WeeklyInput> {
           labels: clocklabels,
           );
 
-          if (period == null) {
-            return;
-          }
-
-          TimeOfDay newTime = period.startTime;
-          TimeOfDay endTime = period.endTime;
-
-          int startTimeInt = (newTime.hour * 60 + newTime.minute) * 60;
-          int endTimeInt = (endTime.hour * 60 + endTime.minute) * 60;
-
-        if (endTimeInt <= startTimeInt) {
-          const message = SnackBar(
-            content: Text('End time must be after Start time!'),
-          );
-          
-          ScaffoldMessenger.of(context).showSnackBar(message);
-        } else {
-          setState(() { 
-            widget.generator.updateSessions(_index, Session(day: _index,startTime: newTime, endTime: endTime,));
-          });
-        }
+        _add(period);
       },
         child: const Icon(Icons.add_alarm),
       );

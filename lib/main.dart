@@ -1,6 +1,6 @@
 import 'package:lvlup/pages/schedule/quest_page.dart';
 import 'package:lvlup/pages/schedule/schedule_input.dart';
-import 'package:lvlup/pages/schedule/weekly_input_page.dart';
+import 'package:lvlup/pages/schedule/available_time_input_page.dart';
 import 'package:lvlup/pages/settings_page.dart';
 import 'package:lvlup/pages/study_stats_page.dart';
 import 'package:lvlup/widget_tree.dart';

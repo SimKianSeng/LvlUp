@@ -8,6 +8,7 @@ import 'package:time_planner/time_planner.dart';
 ///modules (ranked), intensity and free sessions.
 ///Using these inputs, generator will utilise 'weighted random selection' algorithm
 ///and distribute the modules across the free sessions based on level of intensity
+
 class Generator {
   //TODO break the input periods into blocks of 30minutes
   //TODO link to homepage, timer
@@ -18,7 +19,6 @@ class Generator {
 
   List<String> _modules = [];
 
-  List<String> _modulesNoDup = [];
   int _intensity = 5;
   List<List<Session>> _sessions = List.generate(7, (index) => []);
 
@@ -69,67 +69,41 @@ class Generator {
 
   ///Insert the generated modules into the respective timeslots available
   List<TimePlannerTask> _slotTasks(List<String> allocations) {
-    //TODO Combines consecutive 30minutes block into 1 big session before returning
     //split input sessions into blocks of 30minutes interval
     List<Session> sessionsExpanded = _sessions.expand(
       (element) => element.expand((session) => session.splitIntoBlocks()))
       .toList();
 
-    List<TimePlannerTask> slottedTasks = [];
-
-    //TODO: find a list method that can combine 2 different lists into a list of different generic type
-
-    // slottedTasks = sessionsExpanded
-    //   .map(
-    //     (session) => TimePlannerTask(
-    //       minutesDuration: session.minutesDuration, 
-    //       dateTime: TimePlannerDateTime(day: session.day, hour: session.startTime.hour, minutes: session.startTime.minute)))
-    //   .toList();
+    List<Session> slottedTasks = [];
     
+
     for (int i = 0; i < allocations.length; i++) {
       if (allocations[i] == freePeriod) {
         //no need to show freeperiods on the schedule
         continue;
       }
-
-      slottedTasks.add(TimePlannerTask(
-        minutesDuration: sessionsExpanded[i].minutesDuration, 
-        dateTime: TimePlannerDateTime(
-          day: sessionsExpanded[i].day, 
-          hour: sessionsExpanded[i].startTime.hour, 
-          minutes: sessionsExpanded[i].startTime.minute),
-        color: Colors.green,
-        child: Text(
-          allocations[i],
-          style: const TextStyle(
-            fontSize: 10.0
-          ),
-        )));
+      slottedTasks.add(sessionsExpanded[i].assignTask(allocations[i]));  
     }
-
+    //TODO combine consecutive 30minutes block of the same subject into 1 big session 
     return slottedTasks;
   }
 
   List<TimePlannerTask> periods() {
     return _sessions.expand(
-      (daySessions) => daySessions.map(
-        (session) => TimePlannerTask(
-          color: Colors.green,
-          minutesDuration: session.minutesDuration, 
-          dateTime: TimePlannerDateTime(day: session.day, hour: session.startTime.hour, minutes: session.startTime.minute)))
-      ).toList();
+      (daySessions) => daySessions)
+      .toList();
   }
 
   List<TimePlannerTask> generateSchedule() {
     int numberOfFreeSessions = _sessions.expand((element) => element.expand((session) => session.splitIntoBlocks())).length;
 
     List<String> allocations = [];
-    _modulesNoDup = List.from(_modules);
-    _modulesNoDup.removeWhere((element) => element == duplicate || element == freePeriod);
+    List<String> modulesNoDup = List.from(_modules);
+    modulesNoDup.removeWhere((element) => element == duplicate || element == freePeriod);
 
 
     while (numberOfFreeSessions != 0) {
-      String module = selectModule();
+      String module = selectModule(modulesNoDup);
 
       allocations.add(module);
 
@@ -142,20 +116,20 @@ class Generator {
   }
 
   
-  String selectModule() {
+  String selectModule(List<String> modulesNoDup) {
     //Save the need to compute everytime if there are no modules or zero intensity
-    if (_modulesNoDup.isEmpty || _intensity == 0) {
+    if (_modules.isEmpty || _intensity == 0) {
       return 'free';
     }
 
-    int moduleWeightage = ((_modulesNoDup.length + 1) * _modulesNoDup.length) * 5; // (/ 2 * 10)
+    int moduleWeightage = ((modulesNoDup.length + 1) * modulesNoDup.length) * 5; // (/ 2 * 10)
     int totalWeightage = 0; // will increment as we iterate through
 
     List<int> prefixSum = [];
 
 
-    for (int i = 0; i < _modulesNoDup.length; i++) {
-      int rank = _modulesNoDup.length - i;
+    for (int i = 0; i < modulesNoDup.length; i++) {
+      int rank = modulesNoDup.length - i;
       rank *= 10;
       totalWeightage += rank;
       prefixSum.add(totalWeightage);
@@ -163,7 +137,7 @@ class Generator {
 
     if (_intensity != 10) {
       int freePeriodWeightage = (moduleWeightage * (10 - _intensity)) ~/ _intensity;
-      _modulesNoDup.add(freePeriod);
+      modulesNoDup.add(freePeriod);
       prefixSum.add(freePeriodWeightage + moduleWeightage);
     }
 
@@ -187,7 +161,7 @@ class Generator {
     }
 
 
-    String module = _modulesNoDup[start];
+    String module = modulesNoDup[start];
     return module;
   }
   

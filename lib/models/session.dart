@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:time_planner/time_planner.dart';
 
 //TODO transfer into external file?
 extension on TimeOfDay {
@@ -19,65 +20,65 @@ extension on TimeOfDay {
   }
 }
 
-//Seems very similar to TimePlannerTask, to extend from it?
-class Session extends StatelessWidget {
-  //TODO: OOP this
-  final int day;
-  final TimeOfDay startTime;
-  final TimeOfDay endTime;
-  late final int minutesDuration;
+class Session extends TimePlannerTask {
   static const int _interval = 30;
+  final String? task;
 
-  Session({required this.day, required this.startTime, required this.endTime, super.key}) {
-    int startTimeInt = (startTime.hour * 60 + startTime.minute);
-    int endTimeInt = (endTime.hour * 60 + endTime.minute);
+  Session({super.key, super.minutesDuration = _interval, required super.dateTime, super.color = Colors.green, super.daysDuration, super.onTap, this.task, super.child}) {}
 
-    minutesDuration = endTimeInt - startTimeInt;    
+  TimeOfDay _startTime() {
+    return TimeOfDay(hour: super.dateTime.hour, minute: super.dateTime.minutes);
   }
 
-  Widget _startTime(BuildContext context) {
-    return Text(startTime.format(context).toString());
+  TimeOfDay _endTime() {
+    return TimeOfDay(hour: super.dateTime.hour, minute: super.dateTime.minutes).plusMinutes(super.minutesDuration);
   }
 
-  Widget _endTime(BuildContext context) {
-    return Text(endTime.format(context));
+  Session assignTask(String task) {
+    //unable to set child field in TimePlannerTask after instanciating
+    return Session(dateTime: dateTime, minutesDuration: minutesDuration, task: task, child: Text(task, style: const TextStyle(fontSize: 10.0),),);
   }
 
-  //TODO monitor impact on app
+  int compareTo(Session other) {
+    int otherStartInt = (other._startTime().hour * 60 + other._startTime().minute) * 60;
+    int startTimeInt = (_startTime().hour * 60 + _startTime().minute) * 60;
+
+    return startTimeInt - otherStartInt;
+  }
+
   List<Session> splitIntoBlocks() {
     int numOfBlocks = minutesDuration ~/ _interval;
 
     List<Session> children = List.generate(numOfBlocks, 
       (index) => Session(
-        day: day, 
-        startTime: startTime.plusMinutes(_interval * index),//startTime.replacing(hour: startTime.hour, minute: startTime.minute + (_interval * index)), 
-        endTime: startTime.plusMinutes(_interval * (index + 1))));//endTime.replacing(hour: startTime.hour, minute: startTime.minute + (_interval * index) + _interval)));
+        minutesDuration: _interval,
+        dateTime: TimePlannerDateTime(
+          day: super.dateTime.day, 
+          hour: _startTime().plusMinutes(_interval * index).hour, 
+          minutes: _startTime().plusMinutes(_interval * index).minute),
+      ));
 
     return children;
   }
 
-  int compareTo(Session other) {
-    int otherStartInt = (other.startTime.hour * 60 + other.startTime.minute) * 60;
-    int startTimeInt = (startTime.hour * 60 + startTime.minute) * 60;
+  ///For weekly_input_page
+  Widget displayTime(BuildContext context) {
+    TimeOfDay start = _startTime();
+    TimeOfDay end = _endTime();
 
-    return startTimeInt - otherStartInt;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
+    return GestureDetector(
       child: ListTile(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-          const Text('Start:'),
-          _startTime(context),
-          const SizedBox(width: 50.0,),
-          const Text('End:'),
-          _endTime(context),
+            const Text('Start:'),
+            Text(start.format(context)),
+            const SizedBox(width: 50.0,),
+            const Text('End:'),
+            Text(end.format(context)),
           ],
-        )
-      ) 
+        ),
+      ),
     );
   }
 }
