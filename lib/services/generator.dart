@@ -10,7 +10,6 @@ import 'package:time_planner/time_planner.dart';
 ///and distribute the modules across the free sessions based on level of intensity
 
 class Generator {
-  //TODO break the input periods into blocks of 30minutes
   //TODO link to homepage, timer
   //TODO link to firebase
   static final Generator _instance = Generator._internal();
@@ -68,8 +67,9 @@ class Generator {
   }
 
   ///Insert the generated modules into the respective timeslots available
-  List<TimePlannerTask> _slotTasks(List<String> allocations) {
-    //split input sessions into blocks of 30minutes interval
+  List<Session> _slotTasks(List<String> allocations) {
+
+    //split input sessions into blocks of 30minutes interval and chain into a single list instead of nesting them
     List<Session> sessionsExpanded = _sessions.expand(
       (element) => element.expand((session) => session.splitIntoBlocks()))
       .toList();
@@ -84,8 +84,36 @@ class Generator {
       }
       slottedTasks.add(sessionsExpanded[i].assignTask(allocations[i]));  
     }
-    //TODO combine consecutive 30minutes block of the same subject into 1 big session 
+    
+    //Note: slottedTasks only contains Session instances that are allocated tasks
+    //Sessions that are free periods are not inside slottedTasks
     return slottedTasks;
+  }
+
+  void _mergeConsecutiveSessions(List<Session> allocatedTasks) {
+    int current = 0;
+    int next = 1;
+
+    // Check through the allocated Tasks
+    while(next < allocatedTasks.length) {
+      TimeOfDay currentStart = TimeOfDay(hour: allocatedTasks[current].dateTime.hour, minute: allocatedTasks[current].dateTime.minutes);
+      TimeOfDay nextStart = TimeOfDay(hour: allocatedTasks[next].dateTime.hour, minute: allocatedTasks[next].dateTime.minutes);
+
+      bool hasDifferentTask = (allocatedTasks[current].task != allocatedTasks[next].task);
+      bool notConsecutiveTasks = (nextStart != currentStart.plusMinutes(allocatedTasks[current].minutesDuration));
+      
+      if (hasDifferentTask || notConsecutiveTasks) {
+        current++;
+        next++;
+        continue;
+      }
+
+      //Merging of consecutive tasks that have same task assigned
+      allocatedTasks[current] = allocatedTasks[current].mergeWith(allocatedTasks[next]);
+      allocatedTasks.removeAt(next);
+    }
+
+    // return allocatedTasks;
   }
 
   List<TimePlannerTask> periods() {
@@ -110,7 +138,8 @@ class Generator {
       numberOfFreeSessions -= 1;
     }
 
-    List<TimePlannerTask> generatedTask = _slotTasks(allocations);
+    List<Session> generatedTask = _slotTasks(allocations);
+    _mergeConsecutiveSessions(generatedTask);
 
     return generatedTask;
   }

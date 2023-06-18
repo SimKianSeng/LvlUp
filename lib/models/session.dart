@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:time_planner/time_planner.dart';
 
 //TODO transfer into external file?
-extension on TimeOfDay {
+extension plus on TimeOfDay {
   TimeOfDay plusMinutes(int minutes) {
     if (minutes == 0) {
       return this;
@@ -59,6 +59,10 @@ class Session extends TimePlannerTask {
       ));
 
     return children;
+  }
+
+  Session mergeWith(Session other) {
+    return Session(dateTime: dateTime, minutesDuration: minutesDuration + other.minutesDuration, task: task, child: child);
   }
 
   ///For weekly_input_page
