@@ -49,6 +49,11 @@ class Session extends TimePlannerTask {
   List<Session> splitIntoBlocks() {
     int numOfBlocks = minutesDuration ~/ _interval;
 
+    if (minutesDuration % _interval == 29) {
+      //For sessions that end at 2359h
+      numOfBlocks++;
+    }
+
     List<Session> children = List.generate(numOfBlocks, 
       (index) => Session(
         minutesDuration: _interval,
@@ -65,24 +70,41 @@ class Session extends TimePlannerTask {
     return Session(dateTime: dateTime, minutesDuration: minutesDuration + other.minutesDuration, task: task, child: child);
   }
 
-  ///For weekly_input_page
+  ///For home_page
+  Widget displayDayTask(BuildContext context) {
+    TimeOfDay start = _startTime();
+    TimeOfDay end = _endTime();
+
+    String todo = "Study $task";
+    String timePeriod = "${start.format(context)} - ${end.format(context)}";
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5.0),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(todo, style: const TextStyle(fontSize: 20.0)),
+            const SizedBox(width: 25.0,),
+            Text(timePeriod, style: const TextStyle(fontSize: 20.0)),
+          ],
+        ),
+    );
+  }
+
+  ///For available_time_input_page
   Widget displayTime(BuildContext context) {
     TimeOfDay start = _startTime();
     TimeOfDay end = _endTime();
 
-    return GestureDetector(
-      child: ListTile(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('Start:'),
-            Text(start.format(context)),
-            const SizedBox(width: 50.0,),
-            const Text('End:'),
-            Text(end.format(context)),
-          ],
-        ),
-      ),
-    );
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Text('Start:'),
+          Text(start.format(context)),
+          const SizedBox(width: 50.0,),
+          const Text('End:'),
+          Text(end.format(context)),
+        ],
+      );
   }
 }

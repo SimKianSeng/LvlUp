@@ -4,8 +4,7 @@ import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
 import 'package:time_range_picker/time_range_picker.dart';
 
-//TODO make it possible to remove sessions if wrongly input
-//TODO time picking
+//TODO: additional feature - edit sessions time if wrongly input, rn can just delete
 class WeeklyInput extends StatefulWidget {
   final List<String> days = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
   final Generator generator = Generator();
@@ -56,16 +55,26 @@ class _WeeklyInputState extends State<WeeklyInput> {
             ),
           ),
         Expanded(
-            flex: 9,
-            child: Container(
-              child: ListView.builder(
-                itemCount: sessions.length,
-                itemBuilder: (context, index) {
-                  return sessions[index].displayTime(context);
-                },
-              ),
+          flex: 9,
+          child: ListView.builder(
+              itemCount: sessions.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: sessions[index].displayTime(context),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    tooltip: "Tap to remove input session",
+                    onPressed: () {
+                      setState(() {
+                        widget.generator.removeSession(_index, sessions[index]);
+                      });
+                    },
+                  ),
+                );
+                // return sessions[index].displayTime(context);
+              },
             ),
-          ),
+        ),
       ],
     );
   }
@@ -77,6 +86,11 @@ class _WeeklyInputState extends State<WeeklyInput> {
 
     TimeOfDay newTime = period.startTime;
     TimeOfDay endTime = period.endTime;
+
+    if (endTime.format(context) == "12:00 AM") {
+      //To allow us to add from xxxxH to 0000H
+      endTime = const TimeOfDay(hour: 23, minute: 59);
+    }
 
     int startTimeInt = newTime.hour * 60 + newTime.minute;
     int endTimeInt = endTime.hour * 60 + endTime.minute;
@@ -99,7 +113,6 @@ class _WeeklyInputState extends State<WeeklyInput> {
   Widget _addSession() {
     return FloatingActionButton(
       onPressed: () async {
-        //TODO: currently not possible to add 12am as end
         //TODO: Ensure that unable to choose a timerange that overlaps
         const TimeOfDay defaultTime = TimeOfDay(hour: 0, minute: 0);
         const Duration periodInterval = Duration(minutes: 30);

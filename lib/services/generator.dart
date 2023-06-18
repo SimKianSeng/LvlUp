@@ -58,6 +58,10 @@ class Generator {
     sessions[index].sort((a, b) => a.compareTo(b));
   }
 
+  void removeSession(int dayIndex, Session session) {
+    sessions[dayIndex].remove(session);
+  }
+
   void updateIntensity(int intensity) {
     _intensity = intensity;
   }
@@ -112,8 +116,6 @@ class Generator {
       allocatedTasks[current] = allocatedTasks[current].mergeWith(allocatedTasks[next]);
       allocatedTasks.removeAt(next);
     }
-
-    // return allocatedTasks;
   }
 
   List<TimePlannerTask> periods() {

@@ -21,6 +21,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
   @override
   void initState() {
     // TODO: when enter page, previous inputs should still remain, rn is due to the thing being removed and all
+    // TODO: and able to edit the current saved inputs in generator also
     //automatickeepclientalivemixin does not seem to solve this
     super.initState();
 

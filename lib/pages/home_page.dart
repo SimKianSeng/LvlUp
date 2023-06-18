@@ -1,10 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lvlup/constants.dart';
+import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:time_planner/time_planner.dart';
 
-//TODO: work on homepage to match figma prototype
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -12,11 +11,9 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-//TODO: update home page so that it displays the upcoming stuff to study
 class _HomePageState extends State<HomePage> {
   final User? user = Auth().currentUser;
-  //TODO how to update from quest page?
-  List<TimePlannerTask>? _daytasks;
+  List<Session>? _daytasks;
 
   //TODO: based on user account
   Image _avatar() {
@@ -44,20 +41,34 @@ class _HomePageState extends State<HomePage> {
           );  
   }
 
-//TODO: listview to display cards
+//TODO: update _dayTasks to show day remaining task
+  void _updateDayTask() {
+
+  }
+
+
 ///shows the upcoming tasks for today
   Widget dayTasks() {
+    _updateDayTask();
 
-    //TODO what does _daytasks contains? Modules, sessions, periods???
+    if (_daytasks == null) {
+      return Center(
+        child: Text("There are no tasks for today",
+          style: TextStyle(
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[800],
+          ),),
+      );
+    }
+
     return Expanded(
       child: ListView.builder(
-        itemCount: _daytasks?.length?? 0,
+        itemCount: _daytasks?.length,
         itemBuilder: (context, index) => Card(
-          child: Row(
-            children: <Widget>[
-              _daytasks?.elementAt(index).child ?? Text('Nothing for today'),
-            ],
-          ),
+          elevation: 0,
+          color: Colors.transparent,
+          child: _daytasks?[index].displayDayTask(context)
         )
       )
     );
@@ -104,7 +115,8 @@ class _HomePageState extends State<HomePage> {
                 width: double.infinity,
                 child: Column(
                   children: <Widget>[
-                    _userUid(),
+                    _userUid(), 
+                    const Text('Task', style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold)),
                     dayTasks(),
                   ],
                 ),))
