@@ -1,3 +1,4 @@
+import 'package:lvlup/models/user.dart';
 import 'package:lvlup/pages/schedule/quest_page.dart';
 import 'package:lvlup/pages/schedule/schedule_input.dart';
 import 'package:lvlup/pages/schedule/available_time_input_page.dart';

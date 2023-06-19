@@ -62,7 +62,7 @@ class _QuestState extends State<Quest> {
         actions: [
           TextButton(
             onPressed: () {
-              //TODO
+              //TODO change to user
               Generator().acceptQuest(_task);
             }, 
             child: const Text('Accept quest', style: TextStyle(color: Colors.black),))

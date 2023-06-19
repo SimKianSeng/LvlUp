@@ -73,6 +73,7 @@ class Generator {
     return _sessions;
   }
 
+  //Shifted to user
   void acceptQuest(List<Session> quest) {
     this.quest = quest;
   }
