@@ -6,7 +6,7 @@ import 'package:lvlup/pages/authentication/register_page.dart';
 import '../../services/auth.dart';
 
 class LoginPage extends Parent {
-  LoginPage({Key? key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   ParentState createState() => _LoginPageState();
@@ -49,8 +49,8 @@ class _LoginPageState extends ParentState {
           child: const Text('Log in'),
         ),
         loading
-            ? CircularProgressIndicator()
-            : SizedBox(
+            ? const CircularProgressIndicator()
+            : const SizedBox(
                 width: 0.0,
               ),
       ],
@@ -95,14 +95,14 @@ class _LoginPageState extends ParentState {
             _errorMessage(),
             submitButton(),
             forgotPasswordButton(),
-            ElevatedButton(
+            TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => RegisterPage()),
                   );
                 },
-                child: Text("register instead")),
+                child: const Text("Register instead")),
           ],
         ),
       ),

@@ -1,6 +1,9 @@
-import 'package:lvlup/pages/schedule_gen_page.dart';
+import 'package:lvlup/pages/schedule/quest_page.dart';
+import 'package:lvlup/pages/schedule/schedule_input.dart';
+import 'package:lvlup/pages/schedule/available_time_input_page.dart';
 import 'package:lvlup/pages/settings_page.dart';
 import 'package:lvlup/pages/study_stats_page.dart';
+import 'package:lvlup/pages/timer_page.dart';
 import 'package:lvlup/widget_tree.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +34,11 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => const WidgetTree(),
           '/settings': (context) => const Settings(),
-          '/scheduleGen': (context) => const ScheduleGen(),
+          '/scheduleGen': (context) => const Quest(),
           '/studyStats': (context) => const StudyStats(),
+          '/scheduleInput': (context) => const ScheduleInput(),
+          '/weeklyInput': (context) => WeeklyInput(),
+          '/timer': (context) => Timer()
         },
       ),
     );

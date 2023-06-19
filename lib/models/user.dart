@@ -1,12 +1,18 @@
+import 'package:lvlup/models/session.dart';
+
+//TODO: instanciation and passing of data into and retrieving data from
+//TODO connect to realtime database
 class User {
   final BigInt id;
   final String username;
-  final String characterName;
-  final String tierName;
-  final BigInt xp;
-  final int evoState;
-  final String evoImage;
+  String characterName;
+  String tierName;
+  BigInt xp;
+  int evoState;
+  String evoImage;
+  List<Session>? quest;
 
+  //TODO retrieve user from sign in?
   User(this.id, this.username, this.characterName, this.tierName, this.xp,
       this.evoState, this.evoImage);
 
@@ -30,4 +36,8 @@ class User {
         'evoState': evoState,
         'evoImage': evoImage,
       };
+
+  set updateQuest(List<Session> acceptedQuest) {
+    quest = acceptedQuest;
+  }
 }

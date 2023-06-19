@@ -19,6 +19,7 @@ class _WidgetTreeState extends State<WidgetTree> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
+    //TODO obtain user profile from realtime database based on uuid
 
     if (user == null) {
       return Authentication();
