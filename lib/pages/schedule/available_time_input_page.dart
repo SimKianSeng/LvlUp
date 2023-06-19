@@ -79,6 +79,7 @@ class _WeeklyInputState extends State<WeeklyInput> {
     );
   }
 
+  
   void _add(TimeRange? period) {
     if (period == null) {
       return;
@@ -94,10 +95,20 @@ class _WeeklyInputState extends State<WeeklyInput> {
 
     int startTimeInt = newTime.hour * 60 + newTime.minute;
     int endTimeInt = endTime.hour * 60 + endTime.minute;
+    int minutesDuration = endTimeInt - startTimeInt;
 
-    if (endTimeInt <= startTimeInt) {
+    //TODO: Prevent us from adding sessions that are subset of previously added time
+    bool overlaps = false;
+
+    if (minutesDuration <= 0) {
       const message = SnackBar(
         content: Text('End time must be after Start time!'),
+      );
+      
+      ScaffoldMessenger.of(context).showSnackBar(message);
+    } else if (overlaps) {
+      const message = SnackBar(
+        content: Text('Time overlaps with previously added session!'),
       );
       
       ScaffoldMessenger.of(context).showSnackBar(message);
@@ -105,7 +116,7 @@ class _WeeklyInputState extends State<WeeklyInput> {
       setState(() { 
         widget.generator.updateSessions(_index, Session(
           dateTime: TimePlannerDateTime(day: _index, hour: newTime.hour, minutes: newTime.minute),
-          minutesDuration: endTimeInt - startTimeInt));
+          minutesDuration: minutesDuration));
       });
     }
   }

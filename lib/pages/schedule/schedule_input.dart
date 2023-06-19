@@ -24,9 +24,6 @@ class _ScheduleInputState extends State<ScheduleInput>{
     // TODO: and able to edit the current saved inputs in generator also
     //automatickeepclientalivemixin does not seem to solve this
     super.initState();
-
-    //for debug purpose
-    print('Instanciating schedule_input');
   }
 
   void _updateSession() {

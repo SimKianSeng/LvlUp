@@ -21,6 +21,9 @@ class Generator {
   int _intensity = 5;
   List<List<Session>> _sessions = List.generate(7, (index) => []);
 
+  //TODO transfer to user class
+  List<Session>? quest;
+
   factory Generator() {
     return _instance;
   }
@@ -68,6 +71,10 @@ class Generator {
 
   List<List<Session>> get sessions {
     return _sessions;
+  }
+
+  void acceptQuest(List<Session> quest) {
+    this.quest = quest;
   }
 
   ///Insert the generated modules into the respective timeslots available
@@ -124,7 +131,7 @@ class Generator {
       .toList();
   }
 
-  List<TimePlannerTask> generateSchedule() {
+  List<Session> generateSchedule() {
     int numberOfFreeSessions = _sessions.expand((element) => element.expand((session) => session.splitIntoBlocks())).length;
 
     List<String> allocations = [];

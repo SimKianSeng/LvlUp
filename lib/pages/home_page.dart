@@ -3,6 +3,7 @@ import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lvlup/services/generator.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   IconButton _startSessionButton (BuildContext context) {
-    bool study = false; 
+    bool study = true; 
 
     return IconButton(
             iconSize: 30.0, 
@@ -41,16 +42,20 @@ class _HomePageState extends State<HomePage> {
           );  
   }
 
-//TODO: update _dayTasks to show day remaining task
+//TODO: update _dayTasks to show day remaining task and not all task in the day
   void _updateDayTask() {
+    final now = DateTime.now();
 
+    //TODO: .hour bool not working as intended, seems like it looks at PM and AM not 24h format
+    _daytasks = Generator().quest?.where((session) => 
+      session.dateTime.day == now.weekday - 1 && 
+      session.dateTime.hour >= now.hour)
+    .toList();
   }
 
 
 ///shows the upcoming tasks for today
   Widget dayTasks() {
-    _updateDayTask();
-
     if (_daytasks == null) {
       return Center(
         child: Text("There are no tasks for today",
@@ -84,8 +89,14 @@ class _HomePageState extends State<HomePage> {
 
   IconButton _scheduleGenButton(BuildContext context) {
     return IconButton(
-      onPressed: () {
-        Navigator.pushNamed(context, '/scheduleGen');
+      onPressed: () async {
+        await Navigator.pushNamed(context, '/scheduleGen');
+
+        setState(() {
+          print(_daytasks);
+          _updateDayTask();
+          print(_daytasks);
+        });
       }, 
       icon: const Icon(Icons.calendar_month));
   }

@@ -95,14 +95,14 @@ class _LoginPageState extends ParentState {
             _errorMessage(),
             submitButton(),
             forgotPasswordButton(),
-            ElevatedButton(
+            TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => RegisterPage()),
                   );
                 },
-                child: const Text("register instead")),
+                child: const Text("Register instead")),
           ],
         ),
       ),

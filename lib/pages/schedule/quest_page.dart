@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
+import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
 
@@ -12,7 +13,7 @@ class Quest extends StatefulWidget {
 }
 
 class _QuestState extends State<Quest> {
-  List<TimePlannerTask> _task = [];
+  List<Session> _task = [];
 
   Widget _generatorButton() {
   return ElevatedButton(
@@ -57,7 +58,16 @@ class _QuestState extends State<Quest> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Quest"),
-        centerTitle: true,),
+        centerTitle: true,
+        actions: [
+          TextButton(
+            onPressed: () {
+              //TODO
+              Generator().acceptQuest(_task);
+            }, 
+            child: const Text('Accept quest', style: TextStyle(color: Colors.black),))
+        ],
+        ),
       body: Container(
         decoration: bgColour,
         child: _schedule(),
