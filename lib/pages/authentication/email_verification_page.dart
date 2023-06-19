@@ -4,9 +4,11 @@ import 'package:lvlup/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lvlup/pages/home_page.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
-  const EmailVerificationScreen({Key? key}) : super(key: key);
+  final String username;
+  const EmailVerificationScreen({Key? key, required this.username}) : super(key: key);
 
   @override
   State<EmailVerificationScreen> createState() =>
@@ -16,13 +18,17 @@ class EmailVerificationScreen extends StatefulWidget {
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   bool isEmailVerified = false;
   Timer? timer;
+  DatabaseReference? dbRef;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    // FirebaseAuth.instance.currentUser?.sendEmailVerification();
     FirebaseAuth.instance.currentUser?.sendEmailVerification();
     timer =
         Timer.periodic(const Duration(seconds: 3), (_) => checkEmailVerified());
+    dbRef = FirebaseDatabase.instance.ref().child('users');
   }
 
   checkEmailVerified() async {
@@ -38,12 +44,24 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       // TODO: implement your code after email verification
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(SnackBar(content: Text("Email Successfully Verified")));
+      Map<String, dynamic> contact = {
+        widget.username!: {
+          'characterName': "default",
+          'tierName': "Noob",
+          'xp': 0,
+          'evoState': 0,
+          'evoImage': "default",
+        }
+      };
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
-
+      dbRef!.set(contact).whenComplete(() {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (ctx) => HomePage(),
+          ),
+        );
+      });
       timer?.cancel();
     }
   }

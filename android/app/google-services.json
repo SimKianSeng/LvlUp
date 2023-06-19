@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "619110747711",
+    "firebase_url": "https://lvlup-backend-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "lvlup-backend",
     "storage_bucket": "lvlup-backend.appspot.com"
   },

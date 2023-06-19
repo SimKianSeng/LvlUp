@@ -15,6 +15,7 @@ class RegisterPage extends Parent {
 //TODO: Register page should also ask user for their account name?
 //TODO: Ensure that only valid emails are used to create an account
 class _RegisterPageState extends ParentState {
+  final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
   final TextEditingController _controllerPasswordConfirmation =
@@ -46,18 +47,12 @@ class _RegisterPageState extends ParentState {
                   context: context,
                 );
 
-                // if (Auth().currentUser != null) {
-                //   Navigator.restorablePush(
-                //     context,
-                //     MaterialPageRoute(
-                //         builder: (ctx) => EmailVerificationScreen()),
-                //   );
-                // }
                 if (Auth().currentUser != null) {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (ctx) => EmailVerificationScreen(),
+                        builder: (ctx) => EmailVerificationScreen(
+                            username: _controllerUsername.text),
                       ));
                 }
               },
@@ -77,6 +72,10 @@ class _RegisterPageState extends ParentState {
             title(),
             const SizedBox(
               height: 45.0,
+            ),
+            entryField('username', _controllerUsername),
+            const SizedBox(
+              height: 25.0,
             ),
             entryField('email', _controllerEmail),
             const SizedBox(
