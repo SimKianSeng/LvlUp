@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-///Provides the decoration property of a container
+///Provides the background colour for the app
 BoxDecoration bgColour = const BoxDecoration(
                           gradient: LinearGradient(
                             begin:Alignment.topCenter,
@@ -14,12 +14,22 @@ BoxDecoration bgColour = const BoxDecoration(
                           )
                         );
 
+BoxDecoration contentContainerColour({double tlRadius = 25.0, double trRadius = 25.0, double blRadius = 25.0, double brRadius = 25.0, Color color = Colors.white60}) {
+  return BoxDecoration(
+    borderRadius: BorderRadius.only(
+      topLeft: Radius.circular(tlRadius), 
+      topRight: Radius.circular(trRadius),
+      bottomLeft: Radius.circular(blRadius),
+      bottomRight: Radius.circular(brRadius),),//BorderRadius.all(Radius.circular(radius)),
+    color: color,
+  );
+}
 
 ///Provides the decoration property for a textfield
-InputDecoration customTextField(String initText) {
+InputDecoration customTextField({String initText = ''}) {
   return InputDecoration(
     labelText: initText,
-    labelStyle: TextStyle(color: Colors.black),
+    labelStyle: const TextStyle(color: Colors.black),
             filled: true,
             fillColor: Colors.white38,
             enabledBorder: OutlineInputBorder(
@@ -29,4 +39,12 @@ InputDecoration customTextField(String initText) {
               borderRadius: BorderRadius.circular(10.0),
             )
   );
+}
+
+ButtonStyle customButtonStyle({Color? color = Colors.purple, double radius = 25.0}) {
+  return ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(color),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(radius))));
 }

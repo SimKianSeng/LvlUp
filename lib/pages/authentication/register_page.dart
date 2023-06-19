@@ -6,7 +6,7 @@ import '../../services/auth.dart';
 import 'package:lvlup/pages/authentication/email_verification_page.dart';
 
 class RegisterPage extends Parent {
-  RegisterPage({Key? key}) : super(key: key);
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
   ParentState createState() => _RegisterPageState();
@@ -61,7 +61,7 @@ class _RegisterPageState extends ParentState {
                       ));
                 }
               },
-              child: Text('Register'),
+              child: const Text('Register'),
             )
           ]);
     }
@@ -97,7 +97,7 @@ class _RegisterPageState extends ParentState {
                         builder: (ctx) => LoginPage(),
                       ));
                 },
-                child: Text("login instead")),
+                child: const Text("login instead")),
           ],
         ),
       ),
