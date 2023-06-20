@@ -1,4 +1,3 @@
-import 'package:lvlup/models/user.dart';
 import 'package:lvlup/pages/schedule/quest_page.dart';
 import 'package:lvlup/pages/schedule/schedule_input.dart';
 import 'package:lvlup/pages/schedule/available_time_input_page.dart';
@@ -39,7 +38,7 @@ class MyApp extends StatelessWidget {
           '/studyStats': (context) => const StudyStats(),
           '/scheduleInput': (context) => const ScheduleInput(),
           '/weeklyInput': (context) => WeeklyInput(),
-          '/timer': (context) => Timer()
+          '/timer': (context) => TimerPage()
         },
       ),
     );

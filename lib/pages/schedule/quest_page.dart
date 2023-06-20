@@ -4,7 +4,7 @@ import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
 
-//TODO: find a way to keep the generated schedule, save / accept feature maybe?
+//TODO: find a way to keep the saved schedule
 class Quest extends StatefulWidget {
   const Quest({super.key});
 
@@ -26,14 +26,15 @@ class _QuestState extends State<Quest> {
 
   Widget _editButton() {
     return ElevatedButton(
-    style: customButtonStyle(),
-    onPressed: () {
-      setState(() {
-        _task.clear();
-        _task.addAll(Generator().generateSchedule());
-      });
-    },
-    child: const Text("Generate"),);
+      style: customButtonStyle(),
+      onPressed: () {
+        setState(() {
+          _task.clear();
+          _task.addAll(Generator().generateSchedule());
+        });
+      },
+      child: const Text("Generate"),
+    );
   }
 
   Widget _schedule() {

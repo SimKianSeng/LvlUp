@@ -97,18 +97,11 @@ class _WeeklyInputState extends State<WeeklyInput> {
     int endTimeInt = endTime.hour * 60 + endTime.minute;
     int minutesDuration = endTimeInt - startTimeInt;
 
-    //TODO: Prevent us from adding sessions that are subset of previously added time
-    bool overlaps = false;
+    //TODO: Prevent us from adding sessions that are subset of previously added time. Alternatively, can handle overlapping sessions in the generator
 
     if (minutesDuration <= 0) {
       const message = SnackBar(
         content: Text('End time must be after Start time!'),
-      );
-      
-      ScaffoldMessenger.of(context).showSnackBar(message);
-    } else if (overlaps) {
-      const message = SnackBar(
-        content: Text('Time overlaps with previously added session!'),
       );
       
       ScaffoldMessenger.of(context).showSnackBar(message);
