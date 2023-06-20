@@ -1,6 +1,10 @@
 # LvlUp
 Apk link: https://drive.google.com/file/d/12Jpfyi2_aGgETgN3eH8Tte5n8dwyYa7s/view?usp=share_link
 
+## Team Members
+Sebastian Tay Yong Xun
+Sim Kian Seng
+
 ## Level of Achievement
 Apollo 11
 
@@ -24,6 +28,13 @@ LvlUp is a mobile application intended for students who finds difficulty committ
 
 <br>
 
+## Tech Stacks
+1. Dart - The main language used in Flutter.
+2. Flutter - A software development tool used to build our app.
+3. Firebase - A backend service for authentication and store user specific data.
+4. Git - A version control software to allow us to collaborate on the project.
+5. GitHub - A platform for version control using Git.
+
 ## User Stories
 1. As a student with many ongoing stuffs in my life, I can make use of the app’s schedule generation feature based on how strong I am in my respective modules and my available time in a week to quickly and optimally plan my schedules so that I can balance my study time and other aspects of life.
 
@@ -40,6 +51,7 @@ LvlUp is a mobile application intended for students who finds difficulty committ
 - User authentication and user accounts.
     * Email verification when creating a new account.
     * Email reset password.
+    * Do not allow user to proceed if email is not verified.
 
 <br>
 
