@@ -27,26 +27,61 @@ class _HomePageState extends State<HomePage> {
   }
 
   IconButton _startSessionButton (BuildContext context) {
-    bool study = true; 
+    DateTime currentTime = DateTime.now();
+
+    //Edge case: _dayTasks is empty
+    bool taskAvail = _daytasks != null && _daytasks!.isNotEmpty;
+
+    Session? nextSession;
+    
+    if (taskAvail) {
+      nextSession = _daytasks![0];
+    }
+    
+    DateTime startTime = taskAvail 
+      ? DateTime(currentTime.year, currentTime.month, currentTime.day, nextSession!.startTime().hour, nextSession.startTime().minute) 
+      : DateTime(currentTime.year, currentTime.month, currentTime.day, 0, 0);
+
+    DateTime endTime = taskAvail 
+      ? DateTime(currentTime.year, currentTime.month, currentTime.day, nextSession!.endTime().hour, nextSession.endTime().minute) 
+      : DateTime(currentTime.year, currentTime.month, currentTime.day, 0, 0);
+
+    bool isStudyTime = currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
+
+    Stream timer = Stream.periodic(const Duration(seconds: 1), (i) {
+      currentTime = currentTime.add(const Duration(seconds: 1));
+      return currentTime;
+    });
+
+    final timerSubscriber = timer.listen((data) {
+      setState(() {
+        isStudyTime = currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
+      });
+    });
+
+    if (!taskAvail) {
+      //No need for us to time, allow us to save resources
+      timerSubscriber.cancel();
+    }
+
+    Duration duration = endTime.difference(currentTime);
 
     return IconButton(
             iconSize: 30.0, 
-            onPressed: () async {
+            onPressed: isStudyTime ? () async {
               //todo: Implement time tracker and link to schedule
-              //todo: Create timer page and add to route in main.dart
-              if (study) {
-                await Navigator.pushNamed(context, '/timer');
-              }
-            }, 
-            icon: study ? Icon(Icons.play_arrow, color: Colors.greenAccent[400],) : Icon(Icons.play_arrow, color: Colors.grey,),
+              await Navigator.pushNamed(context, '/timer', arguments: duration);
+            } : null, 
+            icon: const Icon(Icons.play_arrow),
+            color: Colors.greenAccent[400],
+            disabledColor: Colors.grey,
           );  
   }
 
-//TODO: update _dayTasks to show day remaining task and not all task in the day
   void _updateDayTask() {
+    //For android emulator, take note that DateTime.now() is based on the virtual device
     final now = DateTime.now();
 
-    //TODO: .hour bool not working as intended, seems like it looks at PM and AM not 24h format
     _daytasks = Generator().quest?.where((session) => 
       session.dateTime.day == now.weekday - 1 && 
       session.dateTime.hour >= now.hour)
@@ -93,9 +128,7 @@ class _HomePageState extends State<HomePage> {
         await Navigator.pushNamed(context, '/scheduleGen');
 
         setState(() {
-          print(_daytasks);
           _updateDayTask();
-          print(_daytasks);
         });
       }, 
       icon: const Icon(Icons.calendar_month));

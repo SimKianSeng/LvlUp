@@ -1,7 +1,8 @@
+import 'package:lvlup/models/user.dart';
 import 'package:lvlup/pages/authentication/authentication.dart';
-import 'package:lvlup/pages/authentication/email_verification_page.dart';
+// import 'package:lvlup/pages/authentication/email_verification_page.dart';
 import 'package:lvlup/pages/authentication/register_page.dart';
-import 'package:lvlup/services/auth.dart';
+// import 'package:lvlup/services/auth.dart';
 import 'package:lvlup/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
           '/studyStats': (context) => const StudyStats(),
           '/scheduleInput': (context) => const ScheduleInput(),
           '/weeklyInput': (context) => WeeklyInput(),
-          '/timer': (context) => Timer()
+          '/timer': (context) => const TimerPage()
         },
       ),
     );
