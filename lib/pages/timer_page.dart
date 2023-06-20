@@ -15,6 +15,8 @@ class TimerPage extends StatefulWidget {
 class _TimerState extends State<TimerPage> {
   Duration? _duration;
   Timer? _timer;
+  Duration? _breakDuration = Duration(seconds: 0);
+  bool resting = false;
 
   void _startTimer() {
     _timer ??= Timer.periodic(const Duration(seconds: 1), (_) {
@@ -28,18 +30,19 @@ class _TimerState extends State<TimerPage> {
         _stopTimer();
       } else {
         _duration = Duration(seconds: _duration!.inSeconds - 1);
+        _breakDuration = resting ? Duration(seconds: _breakDuration!.inSeconds + 1) : _breakDuration;
       }
     });
   }
 
   //Toggle break mode
   void _pauseResumeTimer() {
-    // TODO pause timer and start grace period timer
-
+    resting = !resting;
   }
 
+
   void _stopTimer() {
-    //TODO end the study session and remove it from study sessions for the day in home?
+    //TODO end the study session and remove it from study sessions for the day in home
     //TODO factor in exp changes
     setState(() => _timer!.cancel());
     Navigator.pop(context);
@@ -55,13 +58,23 @@ class _TimerState extends State<TimerPage> {
     );
   }
 
+  Widget breakTime() {
+    int hour = _breakDuration!.inHours % 24;
+    int min = _breakDuration!.inMinutes % 60;
+    int seconds = _breakDuration!.inSeconds % 60;
+
+    return Text("Time spent on break: ${hour.toString().padLeft(2, '0')} : ${min.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')}",
+      style: const TextStyle(fontSize: 25.0)
+    );
+  }
+
   Widget pauseButton() {
     return IconButton(
       onPressed: _pauseResumeTimer, 
       icon: const Icon(Icons.pause_circle_rounded, size: 75.0,));
   }
 
-  
+  //TODO monitor, does not seem entirely responsive
   Widget stopButton() {
     return IconButton(
       onPressed: _stopTimer, 
@@ -85,6 +98,7 @@ class _TimerState extends State<TimerPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             time(),
+            breakTime(),
             const SizedBox(width: double.infinity,height: 150.0,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -64,13 +64,11 @@ class _HomePageState extends State<HomePage> {
       timerSubscriber.cancel();
     }
 
-    // Duration duration = endTime.difference(currentTime);
-    Duration duration = Duration(seconds: 5);
+    Duration duration = endTime.difference(currentTime);
 
-  //TODO revert back
     return IconButton(
             iconSize: 30.0, 
-            onPressed: true ? () async {
+            onPressed: isStudyTime ? () async {
               //todo: Implement time tracker and link to schedule
               await Navigator.pushNamed(context, '/timer', arguments: duration);
             } : null, 
