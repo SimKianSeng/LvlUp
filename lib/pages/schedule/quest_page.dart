@@ -4,7 +4,8 @@ import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
 
-//TODO: find a way to keep the saved schedule
+//TODO: edit generated quest functionality
+//TODO update firebase on schedule and modules
 class Quest extends StatefulWidget {
   const Quest({super.key});
 
@@ -15,6 +16,13 @@ class Quest extends StatefulWidget {
 class _QuestState extends State<Quest> {
   List<Session> _task = [];
 
+  @override
+  void initState() {
+    super.initState();
+    _task = Generator().getSavedQuest();
+  }
+
+  ///Provides a button that brings user to the generator input page
   Widget _generatorButton() {
   return ElevatedButton(
     style: customButtonStyle(),
@@ -24,7 +32,8 @@ class _QuestState extends State<Quest> {
     child: const Text("Generator"),);
 }
 
-  Widget _editButton() {
+  ///Provides a button for user to generate a schedule based on previous input to the generator
+  Widget _generateButton() {
     return ElevatedButton(
       style: customButtonStyle(),
       onPressed: () {
@@ -78,7 +87,7 @@ class _QuestState extends State<Quest> {
         backgroundColor: Colors.white30,
         destinations: [
           _generatorButton(),
-          _editButton(),
+          _generateButton(),
         ],
       ),
     );

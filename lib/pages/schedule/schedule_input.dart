@@ -14,24 +14,22 @@ class ScheduleInput extends StatefulWidget {
 
 class _ScheduleInputState extends State<ScheduleInput>{
   final Generator _generator = Generator();
-  static int _moduleCount = 1;
+  int _moduleCount = 1;
   int _intensity = 5;
   List<TimePlannerTask> sessions = [];
 
   @override
   void initState() {
-    // TODO: when enter page, previous inputs should still remain, rn is due to the thing being removed and all
-    // TODO: and able to edit the current saved inputs in generator also
-    //automatickeepclientalivemixin does not seem to solve this
     super.initState();
+    _generator.reset();
   }
 
   void _updateSession() {
-      setState(() {
-        sessions.clear();
-        sessions.addAll(_generator.periods());
-      });
-    }
+    setState(() {
+      sessions.clear();
+      sessions.addAll(_generator.periods());
+    });
+  }
     
   Slider _intensityScale() {
     return Slider(
@@ -62,7 +60,8 @@ class _ScheduleInputState extends State<ScheduleInput>{
     return Expanded(
       child: Container(
         decoration: contentContainerColour(),
-        //todo: after settling other main stuff
+        //TODO: after settling other main stuff
+        
         // child: Column(
         //   children: [
         //     Expanded(

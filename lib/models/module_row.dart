@@ -3,7 +3,7 @@ import 'package:lvlup/constants.dart';
 import 'package:lvlup/services/generator.dart';
 
 class ModuleRow extends StatefulWidget {
-  int index;
+  final int index;
   final Generator generator = Generator();
 
   ModuleRow({required this.index, super.key});

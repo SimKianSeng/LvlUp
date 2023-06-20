@@ -85,9 +85,7 @@ class _TimerState extends State<TimerPage> {
   Widget build(BuildContext context) {
 
     _duration ??= ModalRoute.of(context)!.settings.arguments as Duration;
-
     _startTimer();
-
 
     return Scaffold(
       appBar: AppBar(elevation: 0.0, title: const Text('Timer'), centerTitle: true,),

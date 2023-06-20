@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:time_planner/time_planner.dart';
 
 //TODO transfer into external file?
-extension plus on TimeOfDay {
+extension Plus on TimeOfDay {
   TimeOfDay plusMinutes(int minutes) {
     if (minutes == 0) {
       return this;

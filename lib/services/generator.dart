@@ -17,7 +17,6 @@ class Generator {
   static const duplicate = 'duplicate';
 
   List<String> _modules = [];
-
   int _intensity = 5;
   List<List<Session>> _sessions = List.generate(7, (index) => []);
 
@@ -29,6 +28,12 @@ class Generator {
   }
 
   Generator._internal();
+
+  void reset() {
+    _modules = [];
+    _intensity = 5;
+    _sessions = List.generate(7, (index) => []);
+  }
 
   bool alreadyInput(String module) {
     return _modules.contains(module.toUpperCase());
@@ -73,9 +78,13 @@ class Generator {
     return _sessions;
   }
 
-  //Shifted to user
+  //TODO: Shift quest and functionalities to user class
   void acceptQuest(List<Session> quest) {
     this.quest = quest;
+  }
+
+  List<Session> getSavedQuest() {
+    return quest??[];
   }
 
   ///Insert the generated modules into the respective timeslots available
@@ -84,7 +93,7 @@ class Generator {
     //split input sessions into blocks of 30minutes interval and chain into a single list instead of nesting them
     List<Session> sessionsExpanded = _sessions.expand(
       (element) => element.expand((session) => session.splitIntoBlocks()))
-      .toList();
+      .toSet().toList();
 
     List<Session> slottedTasks = [];
     
@@ -133,8 +142,8 @@ class Generator {
   }
 
   List<Session> generateSchedule() {
-    int numberOfFreeSessions = _sessions.expand((element) => element.expand((session) => session.splitIntoBlocks())).length;
-
+    int numberOfFreeSessions = _sessions.expand((element) => element.expand((session) => session.splitIntoBlocks())).toSet().toList().length;
+    print(numberOfFreeSessions);
     List<String> allocations = [];
     List<String> modulesNoDup = List.from(_modules);
     modulesNoDup.removeWhere((element) => element == duplicate || element == freePeriod);

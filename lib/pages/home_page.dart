@@ -128,9 +128,7 @@ class _HomePageState extends State<HomePage> {
         await Navigator.pushNamed(context, '/scheduleGen');
 
         setState(() {
-          print(_daytasks);
           _updateDayTask();
-          print(_daytasks);
         });
       }, 
       icon: const Icon(Icons.calendar_month));
