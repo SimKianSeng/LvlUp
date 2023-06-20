@@ -1,72 +1,149 @@
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/auth.dart';
-import 'package:flutter/material.dart';
 import 'package:lvlup/services/generator.dart';
+import 'package:lvlup/models/app_user.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
+  AppUser? currentAppUser;
   final User? user = Auth().currentUser;
-  List<Session>? _daytasks;
-  // DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('users');
 
-  //TODO: based on user account
-  Image _avatar() {
-    return Image.asset("assets/Avatars/Basic Sprite.png");
+  List<Session>? _daytasks;
+
+  @override
+  void initState() {
+    super.initState();
+    _activateListners();
+    _updateDayTask();
   }
 
-  //TODO: change this to reflect the user account name not their email
-  Widget _userUid() {
+  void _activateListners() {
+    //TODO error accessing function to update currentAppUser
+    _dbRef.child('/users/${Auth().currentUser!.uid}').get().then((value) {
+      currentAppUser = AppUser.fromJson(value.value as Map<String, dynamic>);
+    });
+  }
+
+  Image _avatar() {
+    return Image.asset("assets/Avatars/Basic Sprite.png");
+    // return Image.asset(currentAppUser!.imagePath);
+  }
+
+  //TODO: check if working as intended
+  Widget _userData() {
     return Text(user?.email ?? 'User email');
+    // const maxExp = 1000;
+
+    // Widget names = Column(
+    //   children: <Widget>[
+    //     Text(currentAppUser!.username),
+    //     Text(currentAppUser!.tierName),
+    //     Text(currentAppUser!.characterName),
+    //   ],
+    // );
+
+    // Widget exp = Column(
+    //   children: <Widget>[
+    //     Text("${currentAppUser!.exp} / $maxExp"),
+    //     LinearProgressIndicator(
+    //       value: currentAppUser!.exp / maxExp,
+    //       color: Colors.greenAccent,
+    //       minHeight: 5.00,
+    //     ),
+    //   ],
+    // );
+
+    // return Row(
+    //   children: <Widget>[
+    //     names,
+    //     const SizedBox(width: 25.0),
+    //     exp,
+    //   ],
+    // );
   }
 
   IconButton _startSessionButton(BuildContext context) {
-    bool study = true;
+    DateTime currentTime = DateTime.now();
+
+    //Edge case: _dayTasks is empty
+    bool taskAvail = _daytasks != null && _daytasks!.isNotEmpty;
+
+    Session? nextSession;
+
+    if (taskAvail) {
+      nextSession = _daytasks![0];
+    }
+
+    DateTime startTime = taskAvail
+        ? DateTime(currentTime.year, currentTime.month, currentTime.day,
+            nextSession!.startTime().hour, nextSession.startTime().minute)
+        : DateTime(currentTime.year, currentTime.month, currentTime.day, 0, 0);
+
+    DateTime endTime = taskAvail
+        ? DateTime(currentTime.year, currentTime.month, currentTime.day,
+            nextSession!.endTime().hour, nextSession.endTime().minute)
+        : DateTime(currentTime.year, currentTime.month, currentTime.day, 0, 0);
+
+    bool isStudyTime =
+        currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
+
+    Stream timer = Stream.periodic(const Duration(seconds: 1), (i) {
+      currentTime = currentTime.add(const Duration(seconds: 1));
+      return currentTime;
+    });
+
+    final timerSubscriber = timer.listen((data) {
+      setState(() {
+        isStudyTime =
+            currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
+      });
+    });
+
+    if (!taskAvail) {
+      //No need for us to time, allow us to save resources
+      timerSubscriber.cancel();
+    }
+
+    Duration duration = endTime.difference(currentTime);
 
     return IconButton(
       iconSize: 30.0,
-      onPressed: () async {
-        //todo: Implement time tracker and link to schedule
-        //todo: Create timer page and add to route in main.dart
-        // dbRef.update({
-        //   "hello123": {
-        //     "characterName": "bye",
-        //     "evoImage": "default",
-        //     "evoState": 0,
-        //     "tierName": "Noob",
-        //     "xp": 0,
-        //   }
-        // });
+      onPressed: isStudyTime
+          ? () async {
+              //TODO: update exp, level up if hit 1000xp, evolution etc as required
+              //TODO: remove the task
+              final timeStudied = await Navigator.pushNamed(context, '/timer',
+                  arguments: duration) as Duration;
 
-        if (study) {
-          await Navigator.pushNamed(context, '/timer');
-        }
-      },
-      icon: study
-          ? Icon(
-              Icons.play_arrow,
-              color: Colors.greenAccent[400],
-            )
-          : Icon(
-              Icons.play_arrow,
-              color: Colors.grey,
-            ),
+              setState(() {
+                //TODO how am i going to test this feature without spending 25minutes
+                //Perhaps can add in some sort of cheat code? Unit testing perhaps
+                currentAppUser!.updateXP(timeStudied);
+              });
+            }
+          : null,
+      icon: const Icon(Icons.play_arrow),
+      color: Colors.greenAccent[400],
+      disabledColor: Colors.grey,
     );
   }
 
-//TODO: update _dayTasks to show day remaining task and not all task in the day
   void _updateDayTask() {
+    //For android emulator, take note that DateTime.now() is based on the virtual device
     final now = DateTime.now();
 
-    //TODO: .hour bool not working as intended, seems like it looks at PM and AM not 24h format
+    //TODO change to app_user
     _daytasks = Generator()
         .quest
         ?.where((session) =>
@@ -110,7 +187,8 @@ class _HomePageState extends State<HomePage> {
   IconButton _scheduleGenButton(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          await Navigator.pushNamed(context, '/scheduleGen');
+          await Navigator.pushNamed(context, '/scheduleGen',
+              arguments: currentAppUser!.quest);
 
           setState(() {
             _updateDayTask();
@@ -145,7 +223,8 @@ class _HomePageState extends State<HomePage> {
                     width: double.infinity,
                     child: Column(
                       children: <Widget>[
-                        _userUid(),
+                        _userData(),
+                        const SizedBox(height: 25.0),
                         const Text('Task',
                             style: TextStyle(
                                 fontSize: 25.0, fontWeight: FontWeight.bold)),

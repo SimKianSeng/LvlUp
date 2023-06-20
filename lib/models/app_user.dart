@@ -53,5 +53,12 @@ class AppUser {
     quest = acceptedQuest;
   }
 
+  void updateXP(Duration duration) {
+    const rate = 100; //100 exp per hour
+    const unitTime = 25; //25mins per unit Time
+
+    xp += (duration.inMinutes ~/ unitTime) * rate;
+  }
+
   void test() {}
 }

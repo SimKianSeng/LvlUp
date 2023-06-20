@@ -26,11 +26,11 @@ class Session extends TimePlannerTask {
 
   Session({super.key, super.minutesDuration = _interval, required super.dateTime, super.color = Colors.green, super.daysDuration, super.onTap, this.task, super.child}) {}
 
-  TimeOfDay _startTime() {
+  TimeOfDay startTime() {
     return TimeOfDay(hour: super.dateTime.hour, minute: super.dateTime.minutes);
   }
 
-  TimeOfDay _endTime() {
+  TimeOfDay endTime() {
     return TimeOfDay(hour: super.dateTime.hour, minute: super.dateTime.minutes).plusMinutes(super.minutesDuration);
   }
 
@@ -40,8 +40,8 @@ class Session extends TimePlannerTask {
   }
 
   int compareTo(Session other) {
-    int otherStartInt = (other._startTime().hour * 60 + other._startTime().minute) * 60;
-    int startTimeInt = (_startTime().hour * 60 + _startTime().minute) * 60;
+    int otherStartInt = (other.startTime().hour * 60 + other.startTime().minute) * 60;
+    int startTimeInt = (startTime().hour * 60 + startTime().minute) * 60;
 
     return startTimeInt - otherStartInt;
   }
@@ -54,13 +54,13 @@ class Session extends TimePlannerTask {
       numOfBlocks++;
     }
 
-    List<Session> children = List.generate(numOfBlocks, 
+    List<Session> children = List.generate(numOfBlocks,
       (index) => Session(
         minutesDuration: _interval,
         dateTime: TimePlannerDateTime(
-          day: super.dateTime.day, 
-          hour: _startTime().plusMinutes(_interval * index).hour, 
-          minutes: _startTime().plusMinutes(_interval * index).minute),
+          day: super.dateTime.day,
+          hour: startTime().plusMinutes(_interval * index).hour,
+          minutes: startTime().plusMinutes(_interval * index).minute),
       ));
 
     return children;
@@ -72,8 +72,8 @@ class Session extends TimePlannerTask {
 
   ///For home_page
   Widget displayDayTask(BuildContext context) {
-    TimeOfDay start = _startTime();
-    TimeOfDay end = _endTime();
+    TimeOfDay start = startTime();
+    TimeOfDay end = endTime();
 
     String todo = "Study $task";
     String timePeriod = "${start.format(context)} - ${end.format(context)}";
@@ -93,8 +93,8 @@ class Session extends TimePlannerTask {
 
   ///For available_time_input_page
   Widget displayTime(BuildContext context) {
-    TimeOfDay start = _startTime();
-    TimeOfDay end = _endTime();
+    TimeOfDay start = startTime();
+    TimeOfDay end = endTime();
 
     return Row(
         mainAxisAlignment: MainAxisAlignment.center,
