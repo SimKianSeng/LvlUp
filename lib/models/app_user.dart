@@ -18,7 +18,7 @@ class AppUser {
     this.tierName = 'Noob',
     this.xp = 0,
     this.evoState = 0,
-    this.evoImage = 'default',
+    this.evoImage = "assets/Avatars/Basic Sprite.png",
   });
 
   //TODO retrieve user from sign in?
@@ -34,7 +34,7 @@ class AppUser {
   ///Constructor for logging in
 
   // Consumes JSON
-  AppUser.fromJson(Map<String, dynamic> json)
+  AppUser.fromJson(Map<dynamic, dynamic> json)
       : username = json['username'],
         characterName = json['characterName'],
         tierName = json['tierName'],
@@ -54,6 +54,10 @@ class AppUser {
 
   set acceptQuest(List<Session> acceptedQuest) {
     quest = acceptedQuest;
+  }
+
+  String get imagePath {
+    return evoImage;
   }
 
   void updateXP(Duration duration) {

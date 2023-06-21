@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/pages/authentication/register_page.dart';
 import 'package:lvlup/services/auth.dart';
 import 'package:lvlup/pages/home_page.dart';
@@ -45,16 +46,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(SnackBar(content: Text("Email Successfully Verified")));
       Map<String, dynamic> contact = {
-        FirebaseAuth.instance.currentUser!.uid: {
-          'username': widget.username,
-          'characterName': "default",
-          'tierName': "Noob",
-          'xp': 0,
-          'evoState': 0,
-          'evoImage': "default",
-        }
+        FirebaseAuth.instance.currentUser!.uid: AppUser.newUser(username: widget.username).toJson()
       };
-      // DatabaseReference userRef = dbRef.child("users").push();
 
       dbRef!.update(contact).whenComplete(() {
         Navigator.push(

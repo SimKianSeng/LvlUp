@@ -24,15 +24,29 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // _activateListners();
+    _activateListeners();
     _updateDayTask();
+
+    // print(currentAppUser?.characterName);
+    // print(currentAppUser?.imagePath);
   }
 
-  void _activateListners() {
-    //TODO error accessing function to update currentAppUser
-    _dbRef.child('/users/${Auth().currentUser!.uid}').get().then((value) {
-      currentAppUser = AppUser.fromJson(value.value as Map<String, dynamic>);
+  void _activateListeners() {
+    _dbRef.child('users').child(user!.uid).onValue.listen((event) {
+      final Map<dynamic, dynamic> userData = event.snapshot.value as Map<dynamic,dynamic>;
+      // print("listen ran");
+      currentAppUser = AppUser.fromJson(userData);
+      print('currentAppUser = ${currentAppUser}');
+      print('username: ${currentAppUser?.username}');
     });
+
+    
+    // _dbRef.child(databaseUserPath).get().then((value) {
+    //   //TODO issue accessing function to update currentAppUser
+    //   //Unhandled Exception: type '_Map<Object?, Object?>' is not a subtype of type 'Map<String, dynamic>' in type cast
+      
+    //   currentAppUser = AppUser.fromJson(value.value as Map<String, dynamic>);
+    // });
   }
 
   Image _avatar() {
