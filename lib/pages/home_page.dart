@@ -32,25 +32,32 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _activateListeners() {
-    _dbRef.child('users').child(user!.uid).onValue.listen((event) {
-      final Map<dynamic, dynamic> userData = event.snapshot.value as Map<dynamic,dynamic>;
-      // print("listen ran");
-      currentAppUser = AppUser.fromJson(userData);
-      print('currentAppUser = ${currentAppUser}');
-      print('username: ${currentAppUser?.username}');
-    });
+    _dbRef.child('/users/${user!.uid}').get();
+    // _dbRef.child('users').child(user!.uid).onValue.listen((event) {
+    //   final Map<dynamic, dynamic> userData = event.snapshot.value as Map<dynamic,dynamic>;
+    //   // print("listen ran");
+    //   currentAppUser = AppUser.fromJson(userData);
+    // });
 
-    
     // _dbRef.child(databaseUserPath).get().then((value) {
     //   //TODO issue accessing function to update currentAppUser
     //   //Unhandled Exception: type '_Map<Object?, Object?>' is not a subtype of type 'Map<String, dynamic>' in type cast
-      
+
     //   currentAppUser = AppUser.fromJson(value.value as Map<String, dynamic>);
     // });
   }
 
-  Image _avatar() {
-    return Image.asset("assets/Avatars/Basic Sprite.png");
+  Image _avatar(String imagePath) {
+    // return FutureBuilder<DataSnapshot>(
+    //     future: _dbRef.child('/users/${user!.uid}').get(),
+    //     builder: (BuildContext context, AsyncSnapshot<DataSnapshot> snapshot) {
+    //       if (snapshot.hasData) {
+    //         return Image.asset(snapshot.data!.data);
+    //       } else {
+    //         return Image.asset("assets/Avatars/Basic Sprite.png");
+    //       }
+    //     });
+    return Image.asset(imagePath);
     // return Image.asset(currentAppUser!.imagePath);
   }
 
@@ -203,8 +210,10 @@ class _HomePageState extends State<HomePage> {
   IconButton _scheduleGenButton(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          await Navigator.pushNamed(context, '/scheduleGen',
-              /*arguments: currentAppUser!.quest*/);
+          await Navigator.pushNamed(
+            context,
+            '/scheduleGen', /*arguments: currentAppUser!.quest*/
+          );
 
           setState(() {
             _updateDayTask();
@@ -221,45 +230,60 @@ class _HomePageState extends State<HomePage> {
         icon: const Icon(Icons.wysiwyg));
   }
 
+  FutureBuilder<DataSnapshot> futureBuild() {
+    return FutureBuilder<DataSnapshot>(
+        future: _dbRef.child('/users/${user!.uid}').get(),
+        builder: (BuildContext context, AsyncSnapshot<DataSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            AppUser currentUser =
+                AppUser.fromJson(snapshot.data!.value as Map<dynamic, dynamic>);
+            return Scaffold(
+                body: Container(
+                  decoration: bgColour,
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(top: 30.0),
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(child: _avatar(currentUser.imagePath)),
+                      Expanded(
+                          flex: 3,
+                          child: Container(
+                            decoration: contentContainerColour(
+                                brRadius: 0.0, blRadius: 0.0),
+                            width: double.infinity,
+                            child: Column(
+                              children: <Widget>[
+                                _userData(),
+                                const SizedBox(height: 25.0),
+                                const Text('Task',
+                                    style: TextStyle(
+                                        fontSize: 25.0,
+                                        fontWeight: FontWeight.bold)),
+                                dayTasks(),
+                              ],
+                            ),
+                          ))
+                    ],
+                  ),
+                ),
+                bottomNavigationBar: NavigationBar(
+                  height: 50.0,
+                  backgroundColor: Colors.white30,
+                  destinations: [
+                    _startSessionButton(context),
+                    _scheduleGenButton(context),
+                    _studyStatsButton(context),
+                    _settingsButton(context),
+                  ],
+                ));
+          } else {
+            return CircularProgressIndicator();
+          }
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Container(
-          decoration: bgColour,
-          width: double.infinity,
-          padding: const EdgeInsets.only(top: 30.0),
-          child: Column(
-            children: <Widget>[
-              Expanded(child: _avatar()),
-              Expanded(
-                  flex: 3,
-                  child: Container(
-                    decoration:
-                        contentContainerColour(brRadius: 0.0, blRadius: 0.0),
-                    width: double.infinity,
-                    child: Column(
-                      children: <Widget>[
-                        _userData(),
-                        const SizedBox(height: 25.0),
-                        const Text('Task',
-                            style: TextStyle(
-                                fontSize: 25.0, fontWeight: FontWeight.bold)),
-                        dayTasks(),
-                      ],
-                    ),
-                  ))
-            ],
-          ),
-        ),
-        bottomNavigationBar: NavigationBar(
-          height: 50.0,
-          backgroundColor: Colors.white30,
-          destinations: [
-            _startSessionButton(context),
-            _scheduleGenButton(context),
-            _studyStatsButton(context),
-            _settingsButton(context),
-          ],
-        ));
+    return futureBuild();
   }
 }

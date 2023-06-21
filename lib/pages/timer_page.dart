@@ -31,7 +31,7 @@ class _TimerState extends State<TimerPage> {
       _countDown();
     });
   }
-  
+
   void _countDown() {
     setState(() {
       if (_duration!.inSeconds <= 0) {
@@ -78,14 +78,14 @@ class _TimerState extends State<TimerPage> {
 
   Widget pauseButton() {
     return IconButton(
-      onPressed: _pauseResumeTimer, 
+      onPressed: _pauseResumeTimer,
       icon: const Icon(Icons.pause_circle_rounded, size: 75.0,));
   }
 
   //TODO monitor, does not seem entirely responsive
   Widget stopButton() {
     return IconButton(
-      onPressed: _stopTimer, 
+      onPressed: _stopTimer,
       icon: const Icon(Icons.stop_circle_rounded, size: 75.0,));
   }
 
