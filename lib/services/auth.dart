@@ -28,7 +28,7 @@ class Auth {
   // }
 
   // Stream<UserApp?> get user {
-  //   return _firebaseAuth.authStateChanges().map((user) => _userFromFirebase(user));   
+  //   return _firebaseAuth.authStateChanges().map((user) => _userFromFirebase(user));
   // }
 
   //TODO instanciate user account
@@ -123,7 +123,6 @@ class Auth {
     }
     // await DatabaseService(uid: currentUser?.uid)
     //     .deleteuser(); // called from database class
-
     _dbUsersRef.child(currentUser?.uid ?? "").remove();
     await currentUser?.delete();
 
