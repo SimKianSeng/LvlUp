@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _activateListners();
+    // _activateListners();
     _updateDayTask();
   }
 
@@ -129,6 +129,8 @@ class _HomePageState extends State<HomePage> {
               setState(() {
                 //TODO how am i going to test this feature without spending 25minutes
                 //Perhaps can add in some sort of cheat code? Unit testing perhaps
+
+                //TODO current issue in assigning currentAppUser
                 currentAppUser!.updateXP(timeStudied);
               });
             }
@@ -188,7 +190,7 @@ class _HomePageState extends State<HomePage> {
     return IconButton(
         onPressed: () async {
           await Navigator.pushNamed(context, '/scheduleGen',
-              arguments: currentAppUser!.quest);
+              /*arguments: currentAppUser!.quest*/);
 
           setState(() {
             _updateDayTask();

@@ -143,7 +143,6 @@ class Generator {
 
   List<Session> generateSchedule() {
     int numberOfFreeSessions = _sessions.expand((element) => element.expand((session) => session.splitIntoBlocks())).toSet().toList().length;
-    print(numberOfFreeSessions);
     List<String> allocations = [];
     List<String> modulesNoDup = List.from(_modules);
     modulesNoDup.removeWhere((element) => element == duplicate || element == freePeriod);

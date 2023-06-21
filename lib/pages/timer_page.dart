@@ -13,10 +13,18 @@ class TimerPage extends StatefulWidget {
 //TODO add in grace period for break and link to exp
 //TODO add in a stopwatch to track time spent studying
 class _TimerState extends State<TimerPage> {
+  late DateTime _start;
   Duration? _duration;
   Timer? _timer;
   Duration? _breakDuration = Duration(seconds: 0);
   bool resting = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _start = DateTime.now();
+  }
 
   void _startTimer() {
     _timer ??= Timer.periodic(const Duration(seconds: 1), (_) {
@@ -45,7 +53,7 @@ class _TimerState extends State<TimerPage> {
     //TODO end the study session and remove it from study sessions for the day in home
     //TODO factor in exp changes
     setState(() => _timer!.cancel());
-    Navigator.pop(context);
+    Navigator.pop(context, DateTime.now().difference(_start));
   }
 
   Widget time() {
