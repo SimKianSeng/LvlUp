@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/pages/authentication/authentication.dart';
 import 'package:lvlup/pages/authentication/login_page.dart';
-import '../../services/auth.dart';
+import 'package:lvlup/services/auth.dart';
 import 'package:lvlup/pages/authentication/email_verification_page.dart';
 
 class RegisterPage extends Parent {

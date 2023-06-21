@@ -1,4 +1,3 @@
-import 'package:lvlup/models/user.dart';
 import 'package:lvlup/pages/authentication/authentication.dart';
 // import 'package:lvlup/pages/authentication/email_verification_page.dart';
 import 'package:lvlup/pages/authentication/register_page.dart';

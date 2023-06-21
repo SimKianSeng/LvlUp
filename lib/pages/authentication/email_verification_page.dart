@@ -1,14 +1,15 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:lvlup/pages/authentication/register_page.dart';
 import 'package:lvlup/services/auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:lvlup/pages/home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String username;
-  const EmailVerificationScreen({Key? key, required this.username}) : super(key: key);
+  const EmailVerificationScreen({Key? key, required this.username})
+      : super(key: key);
 
   @override
   State<EmailVerificationScreen> createState() =>
@@ -44,7 +45,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(SnackBar(content: Text("Email Successfully Verified")));
       Map<String, dynamic> contact = {
-        widget.username!: {
+        FirebaseAuth.instance.currentUser!.uid: {
+          'username': widget.username,
           'characterName': "default",
           'tierName': "Noob",
           'xp': 0,
@@ -52,9 +54,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
           'evoImage': "default",
         }
       };
+      // DatabaseReference userRef = dbRef.child("users").push();
 
-      dbRef!.set(contact).whenComplete(() {
-        Navigator.pushReplacement(
+      dbRef!.update(contact).whenComplete(() {
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (ctx) => HomePage(),

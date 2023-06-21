@@ -54,12 +54,12 @@ class Session extends TimePlannerTask {
       numOfBlocks++;
     }
 
-    List<Session> children = List.generate(numOfBlocks, 
+    List<Session> children = List.generate(numOfBlocks,
       (index) => Session(
         minutesDuration: _interval,
         dateTime: TimePlannerDateTime(
-          day: super.dateTime.day, 
-          hour: startTime().plusMinutes(_interval * index).hour, 
+          day: super.dateTime.day,
+          hour: startTime().plusMinutes(_interval * index).hour,
           minutes: startTime().plusMinutes(_interval * index).minute),
       ));
 

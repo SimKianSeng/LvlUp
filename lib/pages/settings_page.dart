@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
-import '../services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lvlup/services/auth.dart';
 
 final User? user = Auth().currentUser;
 
@@ -14,11 +14,11 @@ Widget _signOutButton(BuildContext context) {
     width: 250,
     child: ElevatedButton(
       style: ButtonStyle(
-          shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)))),
+          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25.0)))),
       onPressed: () async {
         signOut();
-        Navigator.pop(context);
+        Navigator.popUntil(context, (route) => route.isFirst);
       },
       child: const Text('Sign Out'),
     ),
@@ -34,8 +34,9 @@ Widget _resetPasswordButton(BuildContext context) {
               RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25.0)))),
       onPressed: () {
-        Auth().sendPasswordResetEmail(email: user?.email ?? "", context: context);
-        
+        Auth()
+            .sendPasswordResetEmail(email: user?.email ?? "", context: context);
+
         // print("Email sent");
       },
       child: const Text('Reset Password'),
@@ -45,39 +46,49 @@ Widget _resetPasswordButton(BuildContext context) {
 
 Widget _deleteAccountButton(BuildContext context) {
   return ElevatedButton(
-      style: customButtonStyle(color: Colors.redAccent[100]),
-      onPressed: () async {
-        _deleteAccountConfirmation(context);
-      },
-      child: const Text('Delete Account'),
+    style: customButtonStyle(color: Colors.redAccent[100]),
+    onPressed: () async {
+      _deleteAccountConfirmation(context);
+    },
+    child: const Text('Delete Account'),
   );
 }
 
 void _deleteAccountConfirmation(BuildContext context) {
+  final TextEditingController _controllerPassword = TextEditingController();
+
   showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Delete Account"),
-        content: const Text("All progress will be lost"),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              Navigator.pop(context);
-              await Auth().deleteUser();
-              // print("Deleted account");
-            },
-            child: const Text("Yes"),
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Delete Account"),
+          content: Column(
+            children: [
+              Text("All progress will be lost"),
+              TextField(
+                decoration: customTextField(initText: 'password'),
+                controller: _controllerPassword,
+                obscureText: true,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.popUntil(context, (route) => route.isFirst);
+                await Auth().deleteUser(password: _controllerPassword.text);
+              },
+              child: const Text("Yes"),
             ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text("Cancel"),),
-        ],
-      );
-    });
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Cancel"),
+            ),
+          ],
+        );
+      });
 }
 
 class Settings extends StatelessWidget {
@@ -107,7 +118,5 @@ class Settings extends StatelessWidget {
       ),
       floatingActionButton: _deleteAccountButton(context),
     );
-
-
   }
 }
