@@ -3,28 +3,39 @@ import 'package:lvlup/models/session.dart';
 
 //TODO: instanciation and passing of data into and retrieving data from
 //TODO connect to realtime database
-class UserApp {
-  final DatabaseReference _database = FirebaseDatabase.instance.ref();
-
-  final String id;
-  final String username;
+class AppUser {
+  String username;
   String characterName;
   String tierName;
-  BigInt xp;
+  int xp;
   int evoState;
   String evoImage;
   List<Session>? quest;
 
+  AppUser.newUser({
+    required this.username,
+    this.characterName = 'white man',
+    this.tierName = 'Noob',
+    this.xp = 0,
+    this.evoState = 0,
+    this.evoImage = 'default',
+  });
+
   //TODO retrieve user from sign in?
-  UserApp(this.id, this.username, this.characterName, this.tierName, this.xp,
-      this.evoState, this.evoImage);
+  AppUser(
+      {required this.username,
+      required this.characterName,
+      required this.tierName,
+      required this.xp,
+      required this.evoState,
+      required this.evoImage,
+      this.quest});
 
   ///Constructor for logging in
 
   // Consumes JSON
-  UserApp.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        username = json['username'],
+  AppUser.fromJson(Map<String, dynamic> json)
+      : username = json['username'],
         characterName = json['characterName'],
         tierName = json['tierName'],
         xp = json['xp'],
@@ -33,7 +44,6 @@ class UserApp {
 
   // Produce JSON
   Map<String, dynamic> toJson() => {
-        'id': id,
         'username': username,
         'characterName': characterName,
         'tierName': tierName,
@@ -45,4 +55,13 @@ class UserApp {
   set acceptQuest(List<Session> acceptedQuest) {
     quest = acceptedQuest;
   }
+
+  void updateXP(Duration duration) {
+    const rate = 100; //100 exp per hour
+    const unitTime = 25; //25mins per unit Time
+
+    xp += (duration.inMinutes ~/ unitTime) * rate;
+  }
+
+  void test() {}
 }
