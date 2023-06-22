@@ -67,6 +67,7 @@ class _QuestState extends State<Quest> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: const Text("Quest"),
         centerTitle: true,
         actions: [

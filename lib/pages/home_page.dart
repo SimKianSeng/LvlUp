@@ -28,50 +28,56 @@ class _HomePageState extends State<HomePage> {
   }
 
   Image _avatar(String imagePath) {
-    // return FutureBuilder<DataSnapshot>(
-    //     future: _dbRef.child('/users/${user!.uid}').get(),
-    //     builder: (BuildContext context, AsyncSnapshot<DataSnapshot> snapshot) {
-    //       if (snapshot.hasData) {
-    //         return Image.asset(snapshot.data!.data);
-    //       } else {
-    //         return Image.asset("assets/Avatars/Basic Sprite.png");
-    //       }
-    //     });
     return Image.asset(imagePath);
-    // return Image.asset(currentAppUser!.imagePath);
   }
 
   //TODO: check if working as intended
-  Widget _userData() {
-    return Text(user?.email ?? 'User email');
-    // const maxExp = 1000;
+  Widget _userData(AppUser currentUser) {
+    const maxExp = 1000;
 
-    // Widget names = Column(
-    //   children: <Widget>[
-    //     Text(currentAppUser!.username),
-    //     Text(currentAppUser!.tierName),
-    //     Text(currentAppUser!.characterName),
-    //   ],
-    // );
+    Widget names = SizedBox(
+      width: 150,
+      child: Column(
+        children: <Widget>[
+          Text(currentUser.username,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 25.0)),
+          Text(currentUser.tierName,
+            style: TextStyle(
+              color: Colors.grey[800],
+                fontWeight: FontWeight.bold,
+                fontSize: 15.0)),
+          Text(currentUser.characterName,
+            style: TextStyle(
+              color: Colors.grey[800],
+                fontWeight: FontWeight.bold,
+                fontSize: 15.0)),
+        ],
+      ),
+    );
 
-    // Widget exp = Column(
-    //   children: <Widget>[
-    //     Text("${currentAppUser!.exp} / $maxExp"),
-    //     LinearProgressIndicator(
-    //       value: currentAppUser!.exp / maxExp,
-    //       color: Colors.greenAccent,
-    //       minHeight: 5.00,
-    //     ),
-    //   ],
-    // );
+    Widget exp = SizedBox(
+      width: 200,
+      child: Column(
+        children: <Widget>[
+          Text("${currentUser.xp} / $maxExp"),
+          LinearProgressIndicator(
+            value: currentUser.xp / maxExp,
+            color: Colors.greenAccent,
+            minHeight: 10.00,
+          ),
+        ],
+      ),
+    );
 
-    // return Row(
-    //   children: <Widget>[
-    //     names,
-    //     const SizedBox(width: 25.0),
-    //     exp,
-    //   ],
-    // );
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        names,
+        exp
+      ],
+    );
   }
 
   IconButton _startSessionButton(BuildContext context) {
@@ -127,13 +133,12 @@ class _HomePageState extends State<HomePage> {
               final timeStudied = await Navigator.pushNamed(context, '/timer',
                   arguments: duration) as Duration;
 
-              setState(() {
-                //TODO how am i going to test this feature without spending 25minutes
-                //Perhaps can add in some sort of cheat code? Unit testing perhaps
-
-                //TODO current issue in assigning currentAppUser
-                currentAppUser!.updateXP(timeStudied);
-              });
+              // setState(() {
+              //   //TODO how am i going to test this feature without spending 25minutes
+              //   //Perhaps can add in some sort of cheat code? Unit testing perhaps
+              //   //TODO current issue in assigning currentAppUser
+              //   currentAppUser!.updateXP(timeStudied);
+              // });
             }
           : null,
       icon: const Icon(Icons.play_arrow),
@@ -160,7 +165,18 @@ class _HomePageState extends State<HomePage> {
     if (_daytasks == null) {
       return Center(
         child: Text(
-          "There are no tasks for today",
+          "There are no study sessions today",
+          style: TextStyle(
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[800],
+          ),
+        ),
+      );
+    } else if (_daytasks!.isEmpty) {
+      return Center(
+        child: Text(
+          "There are no remaining study sessions today",
           style: TextStyle(
             fontSize: 25.0,
             fontWeight: FontWeight.bold,
@@ -232,8 +248,9 @@ class _HomePageState extends State<HomePage> {
                                 brRadius: 0.0, blRadius: 0.0),
                             width: double.infinity,
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                _userData(),
+                                _userData(currentUser),
                                 const SizedBox(height: 25.0),
                                 const Text('Task',
                                     style: TextStyle(
@@ -252,7 +269,7 @@ class _HomePageState extends State<HomePage> {
                   destinations: [
                     _startSessionButton(context),
                     _scheduleGenButton(context),
-                    _studyStatsButton(context),
+                    // _studyStatsButton(context), //Will uncomment after implementation
                     _settingsButton(context),
                   ],
                 ));
