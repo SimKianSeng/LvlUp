@@ -13,7 +13,7 @@ class StudyStats extends StatelessWidget {
       ),
       body: Container(
         decoration: bgColour,
-        child: Center(child: Text('Coming soon'),),
+        child: const Center(child: Text('Coming soon'),),
       ),
     );
   }

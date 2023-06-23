@@ -1,3 +1,4 @@
+import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/pages/authentication/login_page.dart';
 import 'package:lvlup/pages/authentication/register_page.dart';
 import 'package:lvlup/pages/schedule/quest_page.dart';
@@ -10,7 +11,6 @@ import 'package:lvlup/widget_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:lvlup/services/auth.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
@@ -24,9 +24,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User?>.value(
+    return StreamProvider<AppUser?>.value(
       initialData: null,
-      value: Auth().authStateChanges,
+      value: Auth().user,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
@@ -35,9 +35,9 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const WidgetTree(),
-          '/login': (context) => LoginPage(),
-          '/register': (context) => RegisterPage(),
-          '/settings': (context) => Settings(),
+          '/login': (context) => const LoginPage(),
+          '/register': (context) => const RegisterPage(),
+          '/settings': (context) => const Settings(),
           '/scheduleGen': (context) => const Quest(),
           '/studyStats': (context) => const StudyStats(),
           '/scheduleInput': (context) => const ScheduleInput(),

@@ -20,12 +20,10 @@ class _LoginPageState extends ParentState {
 
   Future<void> signInWithEmailAndPassword() async {
     try {
-      User? user = await Auth().signInWithEmailAndPassword(
+      await Auth().signInWithEmailAndPassword(
           email: _controllerEmail.text,
           password: _controllerPassword.text,
         );
-      
-      
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message;
@@ -60,7 +58,7 @@ class _LoginPageState extends ParentState {
   }
 
   Widget forgotPasswordButton() {
-    return Container(
+    return SizedBox(
       height: 45.0,
       child: TextButton(
         onPressed: () async {
@@ -101,7 +99,7 @@ class _LoginPageState extends ParentState {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                    MaterialPageRoute(builder: (context) => const RegisterPage()),
                   );
                 },
                 child: const Text("Register instead")),

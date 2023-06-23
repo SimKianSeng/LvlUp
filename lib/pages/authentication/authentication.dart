@@ -21,7 +21,7 @@ class _AuthenticationState extends State<Authentication> {
 
   @override
   Widget build(BuildContext context) {
-    return signingIn ? LoginPage() : RegisterPage();
+    return signingIn ? const LoginPage() : const RegisterPage();
   }
 }
 

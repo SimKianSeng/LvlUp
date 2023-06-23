@@ -165,7 +165,6 @@ class Generator {
       .toList();
   }
 
-  //TODO remove duplicates while processing
   List<Session> generateSchedule() {
     List<Session> uniqueSessions = removeDuplicateSessions(_sessions.expand((element) => element.expand((session) => session.splitIntoBlocks())).toList());
     int numberOfFreeSessions = uniqueSessions.length;

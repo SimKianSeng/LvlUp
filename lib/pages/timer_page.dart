@@ -16,7 +16,7 @@ class _TimerState extends State<TimerPage> {
   late DateTime _start;
   Duration? _duration;
   Timer? _timer;
-  Duration? _breakDuration = Duration(seconds: 0);
+  Duration? _breakDuration = const Duration(seconds: 0);
   bool resting = false;
 
   @override

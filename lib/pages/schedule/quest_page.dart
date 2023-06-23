@@ -4,7 +4,7 @@ import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
 
-//TODO: edit generated quest functionality
+//TODO: add in edit generated quest functionality
 //TODO update firebase on schedule and modules
 class Quest extends StatefulWidget {
   const Quest({super.key});

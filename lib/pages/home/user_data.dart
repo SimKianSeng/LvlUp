@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:lvlup/constants.dart';
-import 'package:lvlup/models/session.dart';
-import 'package:lvlup/services/auth.dart';
-import 'package:lvlup/services/generator.dart';
 import 'package:lvlup/models/app_user.dart';
+import 'package:lvlup/models/session.dart';
+import 'package:lvlup/services/generator.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+class UserData extends StatefulWidget {
+  const UserData({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<UserData> createState() => UserDataState();
 }
 
-class _HomePageState extends State<HomePage> {
-  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
-  AppUser? currentAppUser;
-  final User? user = Auth().currentUser;
+class UserDataState extends State<UserData> {
 
   List<Session>? _daytasks;
 
@@ -27,11 +22,24 @@ class _HomePageState extends State<HomePage> {
     _updateDayTask();
   }
 
+  void _updateDayTask() {
+    //For android emulator, take note that DateTime.now() is based on the virtual device
+    final now = DateTime.now();
+
+    //TODO change to app_user
+    _daytasks = Generator()
+        .quest
+        ?.where((session) =>
+            session.dateTime.day == now.weekday - 1 &&
+            session.dateTime.hour >= now.hour)
+        .toList();
+  }
+
   Image _avatar(String imagePath) {
     return Image.asset(imagePath);
   }
 
-  //TODO: check if working as intended
+
   Widget _userData(AppUser currentUser) {
     const maxExp = 1000;
 
@@ -39,16 +47,16 @@ class _HomePageState extends State<HomePage> {
       width: 150,
       child: Column(
         children: <Widget>[
-          Text(currentUser.username,
+          Text(currentUser.username!,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 25.0)),
-          Text(currentUser.tierName,
+          Text(currentUser.tierName!,
             style: TextStyle(
               color: Colors.grey[800],
                 fontWeight: FontWeight.bold,
                 fontSize: 15.0)),
-          Text(currentUser.characterName,
+          Text(currentUser.characterName!,
             style: TextStyle(
               color: Colors.grey[800],
                 fontWeight: FontWeight.bold,
@@ -63,7 +71,7 @@ class _HomePageState extends State<HomePage> {
         children: <Widget>[
           Text("${currentUser.xp} / $maxExp"),
           LinearProgressIndicator(
-            value: currentUser.xp / maxExp,
+            value: currentUser.xp! / maxExp,
             color: Colors.greenAccent,
             minHeight: 10.00,
           ),
@@ -80,7 +88,42 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  IconButton _startSessionButton(BuildContext context) {
+  ///shows the upcoming tasks for today
+  Widget dayTasks() {
+    if (_daytasks == null) {
+      return Center(
+        child: Text(
+          "There are no study sessions today",
+          style: TextStyle(
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[800],
+          ),
+        ),
+      );
+    } else if (_daytasks!.isEmpty) {
+      return Center(
+        child: Text(
+          "There are no remaining study sessions today",
+          style: TextStyle(
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[800],
+          ),
+        ),
+      );
+    }
+
+    return Expanded(
+        child: ListView.builder(
+            itemCount: _daytasks?.length,
+            itemBuilder: (context, index) => Card(
+                elevation: 0,
+                color: Colors.transparent,
+                child: _daytasks?[index].displayDayTask(context))));
+  }
+
+   IconButton _startSessionButton(BuildContext context) {
     DateTime currentTime = DateTime.now();
 
     //Edge case: _dayTasks is empty
@@ -147,54 +190,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _updateDayTask() {
-    //For android emulator, take note that DateTime.now() is based on the virtual device
-    final now = DateTime.now();
-
-    //TODO change to app_user
-    _daytasks = Generator()
-        .quest
-        ?.where((session) =>
-            session.dateTime.day == now.weekday - 1 &&
-            session.dateTime.hour >= now.hour)
-        .toList();
-  }
-
-  ///shows the upcoming tasks for today
-  Widget dayTasks() {
-    if (_daytasks == null) {
-      return Center(
-        child: Text(
-          "There are no study sessions today",
-          style: TextStyle(
-            fontSize: 25.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[800],
-          ),
-        ),
-      );
-    } else if (_daytasks!.isEmpty) {
-      return Center(
-        child: Text(
-          "There are no remaining study sessions today",
-          style: TextStyle(
-            fontSize: 25.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[800],
-          ),
-        ),
-      );
-    }
-
-    return Expanded(
-        child: ListView.builder(
-            itemCount: _daytasks?.length,
-            itemBuilder: (context, index) => Card(
-                elevation: 0,
-                color: Colors.transparent,
-                child: _daytasks?[index].displayDayTask(context))));
-  }
-
   IconButton _settingsButton(BuildContext context) {
     return IconButton(
         onPressed: () {
@@ -226,61 +221,51 @@ class _HomePageState extends State<HomePage> {
         icon: const Icon(Icons.wysiwyg));
   }
 
-  FutureBuilder<DataSnapshot> futureBuild() {
-    return FutureBuilder<DataSnapshot>(
-        future: _dbRef.child('/users/${user!.uid}').get(),
-        builder: (BuildContext context, AsyncSnapshot<DataSnapshot> snapshot) {
-          if (snapshot.hasData) {
-            AppUser currentUser =
-                AppUser.fromJson(snapshot.data!.value as Map<dynamic, dynamic>);
-            return Scaffold(
-                body: Container(
-                  decoration: bgColour,
-                  width: double.infinity,
-                  padding: const EdgeInsets.only(top: 30.0),
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(child: _avatar(currentUser.imagePath)),
-                      Expanded(
-                          flex: 3,
-                          child: Container(
-                            decoration: contentContainerColour(
-                                brRadius: 0.0, blRadius: 0.0),
-                            width: double.infinity,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                _userData(currentUser),
-                                const SizedBox(height: 25.0),
-                                const Text('Task',
-                                    style: TextStyle(
-                                        fontSize: 25.0,
-                                        fontWeight: FontWeight.bold)),
-                                dayTasks(),
-                              ],
-                            ),
-                          ))
-                    ],
-                  ),
-                ),
-                bottomNavigationBar: NavigationBar(
-                  height: 50.0,
-                  backgroundColor: Colors.white30,
-                  destinations: [
-                    _startSessionButton(context),
-                    _scheduleGenButton(context),
-                    // _studyStatsButton(context), //Will uncomment after implementation
-                    _settingsButton(context),
-                  ],
-                ));
-          } else {
-            return CircularProgressIndicator();
-          }
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return futureBuild();
+    final userData = Provider.of<AppUser?>(context);
+
+    return userData == null
+      ? const CircularProgressIndicator()
+      : Scaffold(
+        body: Container(
+          decoration: bgColour,
+          width: double.infinity,
+          padding: const EdgeInsets.only(top: 30.0),
+          child: Column(
+            children: <Widget>[
+              Expanded(child: _avatar(userData.imagePath)),
+              Expanded(
+                  flex: 3,
+                  child: Container(
+                    decoration: contentContainerColour(
+                        brRadius: 0.0, blRadius: 0.0),
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        _userData(userData),
+                        const SizedBox(height: 25.0),
+                        const Text('Task',
+                            style: TextStyle(
+                                fontSize: 25.0,
+                                fontWeight: FontWeight.bold)),
+                        dayTasks(),
+                      ],
+                    ),
+                  ))
+            ],
+          ),
+        ),
+        bottomNavigationBar: NavigationBar(
+          height: 50.0,
+          backgroundColor: Colors.white30,
+          destinations: [
+            _startSessionButton(context),
+            _scheduleGenButton(context),
+            // _studyStatsButton(context), //Will uncomment after implementation
+            _settingsButton(context),
+          ],
+        ));
   }
 }
