@@ -36,8 +36,6 @@ Widget _resetPasswordButton(BuildContext context) {
       onPressed: () {
         Auth()
             .sendPasswordResetEmail(email: user?.email ?? "", context: context);
-
-        // print("Email sent");
       },
       child: const Text('Reset Password'),
     ),
@@ -55,7 +53,7 @@ Widget _deleteAccountButton(BuildContext context) {
 }
 
 void _deleteAccountConfirmation(BuildContext context) {
-  final TextEditingController _controllerPassword = TextEditingController();
+  final TextEditingController controllerPassword = TextEditingController();
 
   showDialog(
       context: context,
@@ -64,10 +62,10 @@ void _deleteAccountConfirmation(BuildContext context) {
           title: const Text("Delete Account"),
           content: Column(
             children: [
-              Text("All progress will be lost"),
+              const Text("All progress will be lost"),
               TextField(
                 decoration: customTextField(initText: 'password'),
-                controller: _controllerPassword,
+                controller: controllerPassword,
                 obscureText: true,
               ),
             ],
@@ -76,7 +74,7 @@ void _deleteAccountConfirmation(BuildContext context) {
             TextButton(
               onPressed: () async {
                 Navigator.popUntil(context, (route) => route.isFirst);
-                await Auth().deleteUser(password: _controllerPassword.text);
+                await Auth().deleteUser(password: controllerPassword.text);
               },
               child: const Text("Yes"),
             ),

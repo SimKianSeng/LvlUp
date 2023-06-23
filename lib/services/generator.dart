@@ -10,7 +10,6 @@ import 'package:time_planner/time_planner.dart';
 ///and distribute the modules across the free sessions based on level of intensity
 
 class Generator {
-  //TODO link to homepage, timer
   //TODO link to firebase
   static final Generator _instance = Generator._internal();
   static const freePeriod = 'free';
@@ -87,6 +86,31 @@ class Generator {
     return quest??[];
   }
 
+@visibleForTesting
+  ///Remove sessions that share the same time periods, ie same start time and duration
+  List<Session> removeDuplicateSessions(List<Session> sessions) {
+    int current = 0;
+
+    while(current < sessions.length - 1) {
+      Session currentSession = sessions[current];
+      Session nextSession = sessions[current + 1];
+
+      bool sameStartTime = currentSession.dateTime.day == nextSession.dateTime.day && 
+      currentSession.dateTime.hour == nextSession.dateTime.hour && 
+      currentSession.dateTime.minutes == nextSession.dateTime.minutes;
+
+      bool sameDuration= currentSession.minutesDuration == nextSession.minutesDuration;
+
+      if (sameStartTime && sameDuration) {
+        sessions.removeAt(current + 1);
+      } else {
+        current++;
+      }
+    }
+
+    return sessions;
+  }
+
   ///Insert the generated modules into the respective timeslots available
   List<Session> _slotTasks(List<String> allocations) {
 
@@ -142,7 +166,10 @@ class Generator {
   }
 
   List<Session> generateSchedule() {
-    int numberOfFreeSessions = _sessions.expand((element) => element.expand((session) => session.splitIntoBlocks())).toSet().toList().length;
+    List<Session> uniqueSessions = removeDuplicateSessions(_sessions.expand((element) => element.expand((session) => session.splitIntoBlocks())).toList());
+    int numberOfFreeSessions = uniqueSessions.length;
+
+    
     List<String> allocations = [];
     List<String> modulesNoDup = List.from(_modules);
     modulesNoDup.removeWhere((element) => element == duplicate || element == freePeriod);

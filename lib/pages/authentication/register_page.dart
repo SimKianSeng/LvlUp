@@ -12,8 +12,7 @@ class RegisterPage extends Parent {
   ParentState createState() => _RegisterPageState();
 }
 
-//TODO: Register page should also ask user for their account name?
-//TODO: Ensure that only valid emails are used to create an account
+
 class _RegisterPageState extends ParentState {
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
@@ -93,7 +92,7 @@ class _RegisterPageState extends ParentState {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (ctx) => LoginPage(),
+                        builder: (ctx) => const LoginPage(),
                       ));
                 },
                 child: const Text("login instead")),

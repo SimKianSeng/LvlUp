@@ -1,15 +1,15 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:lvlup/models/session.dart';
 
-//TODO: instanciation and passing of data into and retrieving data from
-//TODO connect to realtime database
 class AppUser {
-  String username;
-  String characterName;
-  String tierName;
-  int xp;
-  int evoState;
-  String evoImage;
+
+  late final String uid;
+
+  String? username;
+  String? characterName;
+  String? tierName;
+  int? xp;
+  int? evoState;
+  String? evoImage;
   List<Session>? quest;
 
   AppUser.newUser({
@@ -21,18 +21,10 @@ class AppUser {
     this.evoImage = "assets/Avatars/Basic Sprite.png",
   });
 
-  //TODO retrieve user from sign in?
   AppUser(
-      {required this.username,
-      required this.characterName,
-      required this.tierName,
-      required this.xp,
-      required this.evoState,
-      required this.evoImage,
-      this.quest});
+      {required this.uid});
 
-  ///Constructor for logging in
-
+  ///Constructor for logging in, used in tandem with database_service
   // Consumes JSON
   AppUser.fromJson(Map<dynamic, dynamic> json)
       : username = json['username'],
@@ -57,15 +49,14 @@ class AppUser {
   }
 
   String get imagePath {
-    return evoImage;
+    return evoImage??"";
   }
 
+  //TODO game logic
   void updateXP(Duration duration) {
     const rate = 100; //100 exp per hour
-    const unitTime = 25; //25mins per unit Time
+    const unitTime = 15; //15mins per unit Time
 
-    xp += (duration.inMinutes ~/ unitTime) * rate;
+    // xp += (duration.inMinutes ~/ unitTime) * rate;
   }
-
-  void test() {}
 }

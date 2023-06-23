@@ -1,8 +1,8 @@
 // import 'dart:js';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:lvlup/models/app_user.dart';
 
 /// Handles the logic of the different authentication cases to modularise the project
 class Auth {
@@ -11,27 +11,17 @@ class Auth {
       FirebaseDatabase.instance.ref().child('users');
 
   User? get currentUser => _firebaseAuth.currentUser;
+  Stream<AppUser?> get user {
+    return _firebaseAuth.authStateChanges().map(_userToAppUser);
+  }
+
+  AppUser? _userToAppUser(User? user) {
+    return user == null ? null : AppUser(uid: user.uid);
+  }
 
   //authStateChanges() returns a stream of User; 'get' keyword is to declare as a getter
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
-  // Future<UserApp?> _userFromFirebase(User? user) async {
-  //   const String databaseTree = 'users';
-
-  //   if (user == null) {
-  //     return null;
-  //   }
-
-  //   DataSnapshot userData = await _database.child(databaseTree).child(user.uid).get();
-
-  //   return userData.exists ? UserApp(userData) : null;
-  // }
-
-  // Stream<UserApp?> get user {
-  //   return _firebaseAuth.authStateChanges().map((user) => _userFromFirebase(user));
-  // }
-
-  //TODO instanciate user account
   Future<User?> signInWithEmailAndPassword({
     required String email,
     required String password,
@@ -45,7 +35,7 @@ class Auth {
   }
 
   //Todo: Create user also allows for accountname input
-  Future<User?> createUserWithEmailAndPassword({
+  Future<AppUser?> createUserWithEmailAndPassword({
     required String email,
     required String password,
     required String passwordConfirmation,
@@ -61,7 +51,11 @@ class Auth {
         email: email,
         password: password,
       );
-      return userCredential.user;
+
+
+      //Changed 
+      return _userToAppUser(userCredential.user);
+
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -24,7 +24,7 @@ class Session extends TimePlannerTask {
   static const int _interval = 30;
   final String? task;
 
-  Session({super.key, super.minutesDuration = _interval, required super.dateTime, super.color = Colors.green, super.daysDuration, super.onTap, this.task, super.child}) {}
+  const Session({super.key, super.minutesDuration = _interval, required super.dateTime, super.color = Colors.green, super.daysDuration, super.onTap, this.task, super.child});
 
   TimeOfDay startTime() {
     return TimeOfDay(hour: super.dateTime.hour, minute: super.dateTime.minutes);
@@ -79,7 +79,7 @@ class Session extends TimePlannerTask {
     String timePeriod = "${start.format(context)} - ${end.format(context)}";
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 5.0),
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[

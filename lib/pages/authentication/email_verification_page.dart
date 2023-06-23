@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/pages/authentication/register_page.dart';
 import 'package:lvlup/services/auth.dart';
-import 'package:lvlup/pages/home_page.dart';
+import 'package:lvlup/pages/home/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:lvlup/services/database_service.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String username;
@@ -20,41 +20,35 @@ class EmailVerificationScreen extends StatefulWidget {
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   bool isEmailVerified = false;
   Timer? timer;
-  DatabaseReference? dbRef;
+  // DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('users');
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // FirebaseAuth.instance.currentUser?.sendEmailVerification();
     FirebaseAuth.instance.currentUser?.sendEmailVerification();
     timer =
         Timer.periodic(const Duration(seconds: 3), (_) => checkEmailVerified());
-    dbRef = FirebaseDatabase.instance.ref().child('users');
   }
 
   checkEmailVerified() async {
     await FirebaseAuth.instance.currentUser?.reload();
 
     setState(() {
-      // isEmailVerified =
-      //     FirebaseAuth.instance.currentUser?.emailVerified ?? false;
       isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
     });
 
     if (isEmailVerified) {
-      // TODO: implement your code after email verification
       // ScaffoldMessenger.of(context)
       //     .showSnackBar(SnackBar(content: Text("Email Successfully Verified")));
       Map<String, dynamic> contact = {
         FirebaseAuth.instance.currentUser!.uid: AppUser.newUser(username: widget.username).toJson()
       };
 
-      dbRef!.update(contact).whenComplete(() {
+      DatabaseService.createUser(contact).whenComplete(() {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (ctx) => HomePage(),
+            builder: (ctx) => const HomePage(),
           ),
         );
       });
@@ -64,7 +58,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     timer?.cancel();
     super.dispose();
   }
@@ -85,11 +78,11 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (ctx) => RegisterPage(),
+                    builder: (ctx) => const RegisterPage(),
                   ));
             },
           ),
-          title: Text("Verify email"),
+          title: const Text("Verify email"),
         ),
         body: SingleChildScrollView(
           child: Column(

@@ -97,8 +97,6 @@ class _WeeklyInputState extends State<WeeklyInput> {
     int endTimeInt = endTime.hour * 60 + endTime.minute;
     int minutesDuration = endTimeInt - startTimeInt;
 
-    //TODO: Prevent us from adding sessions that are subset of previously added time. Alternatively, can handle overlapping sessions in the generator
-
     if (minutesDuration <= 0) {
       const message = SnackBar(
         content: Text('End time must be after Start time!'),
@@ -117,7 +115,6 @@ class _WeeklyInputState extends State<WeeklyInput> {
   Widget _addSession() {
     return FloatingActionButton(
       onPressed: () async {
-        //TODO: Ensure that unable to choose a timerange that overlaps
         const TimeOfDay defaultTime = TimeOfDay(hour: 0, minute: 0);
         const Duration periodInterval = Duration(minutes: 30);
         final List<ClockLabel> clocklabels = ["12 am", "3 am", "6 am", "9 am", "12 pm", "3 pm", "6 pm", "9 pm"]
