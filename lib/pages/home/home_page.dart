@@ -22,6 +22,6 @@ class _HomePageState extends State<HomePage> {
     return StreamProvider<AppUser?>.value(
       value: DatabaseService(uid: currentUser!.uid).userData, 
       initialData: null,
-      child: UserData());
+      child: const UserData());
   }
 }

@@ -82,7 +82,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   ));
             },
           ),
-          title: Text("Verify email"),
+          title: const Text("Verify email"),
         ),
         body: SingleChildScrollView(
           child: Column(
