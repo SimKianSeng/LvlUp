@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lvlup/models/session.dart';
 import 'package:lvlup/pages/home/user_data.dart';
 import 'package:lvlup/services/database_service.dart';
 import 'package:lvlup/models/app_user.dart';
@@ -18,10 +19,14 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final currentUser = Provider.of<AppUser?>(context);
+    final DatabaseService _database = DatabaseService(uid: currentUser!.uid);
 
     return StreamProvider<AppUser?>.value(
-      value: DatabaseService(uid: currentUser!.uid).userData, 
+      value: _database.userData, 
       initialData: null,
-      child: const UserData());
+      child: StreamProvider<List<Session>?>.value(
+        value: _database.quest,
+        initialData: const [],
+        child: const UserData(),));
   }
 }

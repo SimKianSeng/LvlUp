@@ -19,8 +19,6 @@ class Generator {
   int _intensity = 5;
   List<List<Session>> _sessions = List.generate(7, (index) => []);
 
-  //TODO transfer to user class
-  List<Session>? quest;
 
   factory Generator() {
     return _instance;
@@ -75,15 +73,6 @@ class Generator {
 
   List<List<Session>> get sessions {
     return _sessions;
-  }
-
-  //TODO: Shift quest and functionalities to user class
-  void acceptQuest(List<Session> quest) {
-    this.quest = quest;
-  }
-
-  List<Session> getSavedQuest() {
-    return quest??[];
   }
 
 @visibleForTesting

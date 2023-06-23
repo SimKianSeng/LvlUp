@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
+import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/generator.dart';
+import 'package:provider/provider.dart';
 import 'package:time_planner/time_planner.dart';
 
 //TODO: add in edit generated quest functionality
-//TODO update firebase on schedule and modules
+//TODO update firebase on module
 class Quest extends StatefulWidget {
   const Quest({super.key});
 
@@ -15,11 +17,14 @@ class Quest extends StatefulWidget {
 
 class _QuestState extends State<Quest> {
   List<Session> _task = [];
+  late bool _acceptedQuest;
+  
 
   @override
   void initState() {
     super.initState();
-    _task = Generator().getSavedQuest();
+    // _task = Generator().getSavedQuest();
+    _acceptedQuest = true;
   }
 
   ///Provides a button that brings user to the generator input page
@@ -40,6 +45,7 @@ class _QuestState extends State<Quest> {
         setState(() {
           _task.clear();
           _task.addAll(Generator().generateSchedule());
+          _acceptedQuest = false;
         });
       },
       child: const Text("Generate"),
@@ -65,19 +71,30 @@ class _QuestState extends State<Quest> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ModalRoute.of(context)!.settings.arguments as AppUser;
+
+    if (_task.isEmpty) {
+      _task.addAll(user.getSavedQuest());
+    }
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         title: const Text("Quest"),
         centerTitle: true,
         actions: [
-          TextButton(
-            onPressed: () {
-              //TODO change to user
-              Generator().acceptQuest(_task);
+          IconButton(
+            onPressed: _acceptedQuest ? null : () {
+              
+              user.acceptQuest(_task);
+              setState(() {
+                _acceptedQuest = !_acceptedQuest;
+              });
             }, 
-            child: const Text('Accept quest', style: TextStyle(color: Colors.black),))
-        ],
+            icon: const Icon(Icons.save, color: Colors.black,),
+            disabledColor: Colors.red, //TODO color does not seem to change, but _acceptedQuest did change
+            tooltip: 'Accept quest')
+          ],
         ),
       body: Container(
         decoration: bgColour,

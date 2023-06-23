@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
-import 'package:lvlup/services/generator.dart';
 import 'package:provider/provider.dart';
 
 class UserData extends StatefulWidget {
@@ -13,23 +12,16 @@ class UserData extends StatefulWidget {
 }
 
 class UserDataState extends State<UserData> {
-
   List<Session>? _daytasks;
 
-  @override
-  void initState() {
-    super.initState();
-    _updateDayTask();
-  }
-
-  void _updateDayTask() {
+  void _updateDayTask(AppUser currentAppUser) {
     //For android emulator, take note that DateTime.now() is based on the virtual device
     final now = DateTime.now();
 
-    //TODO change to app_user
-    _daytasks = Generator()
-        .quest
-        ?.where((session) =>
+
+    _daytasks = currentAppUser
+        .getSavedQuest()
+        .where((session) =>
             session.dateTime.day == now.weekday - 1 &&
             session.dateTime.hour >= now.hour)
         .toList();
@@ -123,7 +115,7 @@ class UserDataState extends State<UserData> {
                 child: _daytasks?[index].displayDayTask(context))));
   }
 
-   IconButton _startSessionButton(BuildContext context) {
+   IconButton _startSessionButton(BuildContext context, AppUser currentAppUser) {
     DateTime currentTime = DateTime.now();
 
     //Edge case: _dayTasks is empty
@@ -176,12 +168,9 @@ class UserDataState extends State<UserData> {
               final timeStudied = await Navigator.pushNamed(context, '/timer',
                   arguments: duration) as Duration;
 
-              // setState(() {
-              //   //TODO how am i going to test this feature without spending 25minutes
-              //   //Perhaps can add in some sort of cheat code? Unit testing perhaps
-              //   //TODO current issue in assigning currentAppUser
-              //   currentAppUser!.updateXP(timeStudied);
-              // });
+              setState(() {
+                currentAppUser!.updateXP(timeStudied);
+              });
             }
           : null,
       icon: const Icon(Icons.play_arrow),
@@ -198,16 +187,16 @@ class UserDataState extends State<UserData> {
         icon: const Icon(Icons.settings));
   }
 
-  IconButton _scheduleGenButton(BuildContext context) {
+  IconButton _scheduleGenButton(BuildContext context, AppUser currentAppUser) {
     return IconButton(
         onPressed: () async {
           await Navigator.pushNamed(
             context,
-            '/scheduleGen', /*arguments: currentAppUser!.quest*/
+            '/scheduleGen', arguments: currentAppUser
           );
 
           setState(() {
-            _updateDayTask();
+            _updateDayTask(currentAppUser);
           });
         },
         icon: const Icon(Icons.calendar_month));
@@ -223,49 +212,58 @@ class UserDataState extends State<UserData> {
 
   @override
   Widget build(BuildContext context) {
-    final userData = Provider.of<AppUser?>(context);
+    final currentAppUser = Provider.of<AppUser?>(context);
+    final quest = Provider.of<List<Session>?>(context);
 
-    return userData == null
-      ? const CircularProgressIndicator()
-      : Scaffold(
-        body: Container(
-          decoration: bgColour,
-          width: double.infinity,
-          padding: const EdgeInsets.only(top: 30.0),
-          child: Column(
-            children: <Widget>[
-              Expanded(child: _avatar(userData.imagePath)),
-              Expanded(
-                  flex: 3,
-                  child: Container(
-                    decoration: contentContainerColour(
-                        brRadius: 0.0, blRadius: 0.0),
-                    width: double.infinity,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        _userData(userData),
-                        const SizedBox(height: 25.0),
-                        const Text('Task',
-                            style: TextStyle(
-                                fontSize: 25.0,
-                                fontWeight: FontWeight.bold)),
-                        dayTasks(),
-                      ],
-                    ),
-                  ))
-            ],
-          ),
-        ),
-        bottomNavigationBar: NavigationBar(
-          height: 50.0,
-          backgroundColor: Colors.white30,
-          destinations: [
-            _startSessionButton(context),
-            _scheduleGenButton(context),
-            // _studyStatsButton(context), //Will uncomment after implementation
-            _settingsButton(context),
+    if (currentAppUser == null || quest == null) {
+      return const Scaffold(
+        body: CircularProgressIndicator(),
+      );
+    }
+
+    currentAppUser.updateQuest(quest);
+
+    _updateDayTask(currentAppUser);
+
+    return Scaffold(
+      body: Container(
+        decoration: bgColour,
+        width: double.infinity,
+        padding: const EdgeInsets.only(top: 30.0),
+        child: Column(
+          children: <Widget>[
+            Expanded(child: _avatar(currentAppUser.imagePath)),
+            Expanded(
+                flex: 3,
+                child: Container(
+                  decoration: contentContainerColour(
+                      brRadius: 0.0, blRadius: 0.0),
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      _userData(currentAppUser!),
+                      const SizedBox(height: 25.0),
+                      const Text('Task',
+                          style: TextStyle(
+                              fontSize: 25.0,
+                              fontWeight: FontWeight.bold)),
+                      dayTasks(),
+                    ],
+                  ),
+                ))
           ],
-        ));
+        ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        height: 50.0,
+        backgroundColor: Colors.white30,
+        destinations: [
+          _startSessionButton(context, currentAppUser),
+          _scheduleGenButton(context, currentAppUser),
+          // _studyStatsButton(context), //Will uncomment after implementation
+          _settingsButton(context),
+        ],
+      ));
   }
 }

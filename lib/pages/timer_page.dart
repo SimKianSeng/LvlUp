@@ -96,7 +96,14 @@ class _TimerState extends State<TimerPage> {
     _startTimer();
 
     return Scaffold(
-      appBar: AppBar(elevation: 0.0, title: const Text('Timer'), centerTitle: true,),
+      appBar: AppBar(
+        leading: BackButton(
+          onPressed: () {
+            _stopTimer();
+          },
+        ),
+        title: const Text('Timer'), 
+        centerTitle: true,),
       body: Container(
         decoration: bgColour,
         child: Column(

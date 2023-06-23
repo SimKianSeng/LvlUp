@@ -26,6 +26,10 @@ class Session extends TimePlannerTask {
 
   const Session({super.key, super.minutesDuration = _interval, required super.dateTime, super.color = Colors.green, super.daysDuration, super.onTap, this.task, super.child});
 
+  Session.fromJson(Map<dynamic, dynamic> json)
+        : task = json['task'],
+          super(key: null, minutesDuration: json['minutesDuration'], color: Colors.green, dateTime: TimePlannerDateTime(day: json['day'], hour: json['startHour'], minutes: json['startMin']), child: Text(json['task'], style: const TextStyle(fontSize: 10.0)));
+
   TimeOfDay startTime() {
     return TimeOfDay(hour: super.dateTime.hour, minute: super.dateTime.minutes);
   }

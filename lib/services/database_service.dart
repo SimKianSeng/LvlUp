@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:lvlup/models/app_user.dart';
+import 'package:lvlup/models/session.dart';
 
 
 class DatabaseService {
@@ -16,7 +17,7 @@ class DatabaseService {
   ///Retrieve user data stored in database and convert it into appUser
   Stream<AppUser?> get userData {
     return _database.child('users/$uid').onValue.map((event) {
-      return AppUser.fromJson(event.snapshot.value as Map<dynamic, dynamic>);
+      return AppUser.fromJson(uid, event.snapshot.value as Map<dynamic, dynamic>);
     });
   }
 
@@ -24,7 +25,30 @@ class DatabaseService {
   //TODO update database information when evolve, level up, earn exp etc
 
   //TODO retrieve quest
+  Stream<List<Session>?> get quest {
+    return _database.child('quests/$uid').onValue.map((event) => _questFromDatabase(event.snapshot));
+  }
 
-  //TODO upload quest
+  List<Session> _questFromDatabase(DataSnapshot snapshot) {
+    return snapshot.children.map((sessionData) {
+      return Session.fromJson(sessionData.value as Map<dynamic, dynamic>);
+    }).toList();
+  }
+
+  ///Update firebase with the newly generated user Quest
+  Future updateQuest(List<Session> quest) {
+    //only accept string, bool, double, map or list
+    List<Map<String, dynamic>> questMap = quest.map((session) => 
+    {
+      'day': session.dateTime.day, 
+      'minutesDuration': session.minutesDuration, 
+      'startHour': session.dateTime.hour, 
+      'startMin': session.dateTime.minutes, 
+      'task': session.task
+    }).toList();
+
+
+    return _database.child('quests/$uid').set(questMap);
+  }
 
 }
