@@ -14,7 +14,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   AppUser? currentAppUser;
-  // final User? user = Auth().currentUser;
 
   @override
   Widget build(BuildContext context) {

@@ -24,7 +24,7 @@ class DatabaseService {
 
   //TODO update database information when evolve, level up, earn exp etc
 
-  //TODO retrieve quest
+  ///Retrieve the saved quest from firebase
   Stream<List<Session>?> get quest {
     return _database.child('quests/$uid').onValue.map((event) => _questFromDatabase(event.snapshot));
   }

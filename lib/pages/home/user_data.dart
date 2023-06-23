@@ -217,7 +217,7 @@ class UserDataState extends State<UserData> {
 
     if (currentAppUser == null || quest == null) {
       return const Scaffold(
-        body: CircularProgressIndicator(),
+        body: Center(child: CircularProgressIndicator()),
       );
     }
 
