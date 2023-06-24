@@ -2,7 +2,6 @@ import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/database_service.dart';
 
 class AppUser {
-
   late final String uid;
 
   String? username;
@@ -15,15 +14,21 @@ class AppUser {
 
   AppUser.newUser({
     required this.username,
-    this.characterName = 'white man',
+    this.characterName = 'White Man',
     this.tierName = 'Noob',
     this.xp = 0,
     this.evoState = 0,
-    this.evoImage = "assets/Avatars/Basic Sprite.png",
+    this.evoImage = "assets/avatars/white_man.png",
   });
 
   AppUser(
-      {required this.uid, this.username, this.characterName, this.tierName, this.xp, this.evoState, this.evoImage});
+      {required this.uid,
+      this.username,
+      this.characterName,
+      this.tierName,
+      this.xp,
+      this.evoState,
+      this.evoImage});
 
   ///Constructor for logging in, used in tandem with database_service
   // Consumes JSON
@@ -35,7 +40,6 @@ class AppUser {
         xp = json['xp'],
         evoState = json['evoState'],
         evoImage = json['evoImage'];
-
 
   // Produce JSON
   Map<String, dynamic> toJson() => {
@@ -59,11 +63,11 @@ class AppUser {
 
   //TODO
   List<Session> getSavedQuest() {
-    return _quest??[];
+    return _quest ?? [];
   }
 
   String get imagePath {
-    return evoImage??"";
+    return evoImage ?? "";
   }
 
   //TODO game logic

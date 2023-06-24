@@ -2,22 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
+import 'package:lvlup/services/game_logic/xp.dart';
+import 'package:lvlup/services/game_logic/tier.dart';
+import 'package:lvlup/widgets/evolution_selection_form.dart';
 import 'package:provider/provider.dart';
 
 class UserData extends StatefulWidget {
   const UserData({super.key});
 
   @override
-  State<UserData> createState() => UserDataState();
+  State<UserData> createState() => _UserDataState();
 }
 
-class UserDataState extends State<UserData> {
+class _UserDataState extends State<UserData> {
   List<Session>? _daytasks;
 
   void _updateDayTask(AppUser currentAppUser) {
     //For android emulator, take note that DateTime.now() is based on the virtual device
     final now = DateTime.now();
-
 
     _daytasks = currentAppUser
         .getSavedQuest()
@@ -31,28 +33,28 @@ class UserDataState extends State<UserData> {
     return Image.asset(imagePath);
   }
 
-
   Widget _userData(AppUser currentUser) {
-    const maxExp = 1000;
+    int curXp = Xp.getCurXp(currentUser.xp!);
+    int curLevel = Xp.getLevel(currentUser.xp!);
+    String tierName = Tier.getTierName(curLevel);
 
     Widget names = SizedBox(
       width: 150,
       child: Column(
         children: <Widget>[
           Text(currentUser.username!,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 25.0)),
-          Text(currentUser.tierName!,
-            style: TextStyle(
-              color: Colors.grey[800],
-                fontWeight: FontWeight.bold,
-                fontSize: 15.0)),
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0)),
+          Text(tierName,
+              style: TextStyle(
+                  color: Colors.grey[800],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.0)),
           Text(currentUser.characterName!,
-            style: TextStyle(
-              color: Colors.grey[800],
-                fontWeight: FontWeight.bold,
-                fontSize: 15.0)),
+              style: TextStyle(
+                  color: Colors.grey[800],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.0)),
         ],
       ),
     );
@@ -61,9 +63,14 @@ class UserDataState extends State<UserData> {
       width: 200,
       child: Column(
         children: <Widget>[
-          Text("${currentUser.xp} / $maxExp"),
+          Text("Level: ${curLevel}",
+              style: TextStyle(
+                  color: Colors.grey[800],
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15.0)),
+          Text("${curXp} / ${Xp.levelXpCap}"),
           LinearProgressIndicator(
-            value: currentUser.xp! / maxExp,
+            value: curXp / Xp.levelXpCap,
             color: Colors.greenAccent,
             minHeight: 10.00,
           ),
@@ -73,10 +80,7 @@ class UserDataState extends State<UserData> {
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        names,
-        exp
-      ],
+      children: <Widget>[names, exp],
     );
   }
 
@@ -95,15 +99,23 @@ class UserDataState extends State<UserData> {
       );
     } else if (_daytasks!.isEmpty) {
       return Center(
-        child: Text(
-          "There are no remaining study sessions today",
-          style: TextStyle(
-            fontSize: 25.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[800],
-          ),
-        ),
-      );
+          // child: Text(
+          //   "There are no remaining study sessions today",
+          //   style: TextStyle(
+          //     fontSize: 25.0,
+          //     fontWeight: FontWeight.bold,
+          //     color: Colors.grey[800],
+          //   ),
+          // ),
+
+          child: ElevatedButton(
+        child: Text("test"),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => evolution_selection_form());
+        },
+      ));
     }
 
     return Expanded(
@@ -115,7 +127,7 @@ class UserDataState extends State<UserData> {
                 child: _daytasks?[index].displayDayTask(context))));
   }
 
-   IconButton _startSessionButton(BuildContext context, AppUser currentAppUser) {
+  IconButton _startSessionButton(BuildContext context, AppUser currentAppUser) {
     DateTime currentTime = DateTime.now();
 
     //Edge case: _dayTasks is empty
@@ -152,12 +164,17 @@ class UserDataState extends State<UserData> {
       });
     });
 
-    if (!taskAvail) {
-      //No need for us to time, allow us to save resources
-      timerSubscriber.cancel();
+    Duration duration = endTime.difference(currentTime);
+
+    if (duration.inSeconds < 0) {
+      // endTime of 1st session is after currentTime
+      _updateDayTask(currentAppUser);
     }
 
-    Duration duration = endTime.difference(currentTime);
+    if (!taskAvail) {
+      // No need for us to time, allow us to save resources
+      timerSubscriber.cancel();
+    }
 
     return IconButton(
       iconSize: 30.0,
@@ -170,6 +187,7 @@ class UserDataState extends State<UserData> {
 
               setState(() {
                 currentAppUser!.updateXP(timeStudied);
+                _updateDayTask(currentAppUser);
               });
             }
           : null,
@@ -190,10 +208,8 @@ class UserDataState extends State<UserData> {
   IconButton _scheduleGenButton(BuildContext context, AppUser currentAppUser) {
     return IconButton(
         onPressed: () async {
-          await Navigator.pushNamed(
-            context,
-            '/scheduleGen', arguments: currentAppUser
-          );
+          await Navigator.pushNamed(context, '/scheduleGen',
+              arguments: currentAppUser);
 
           setState(() {
             _updateDayTask(currentAppUser);
@@ -222,48 +238,46 @@ class UserDataState extends State<UserData> {
     }
 
     currentAppUser.updateQuest(quest);
-
     _updateDayTask(currentAppUser);
 
     return Scaffold(
-      body: Container(
-        decoration: bgColour,
-        width: double.infinity,
-        padding: const EdgeInsets.only(top: 30.0),
-        child: Column(
-          children: <Widget>[
-            Expanded(child: _avatar(currentAppUser.imagePath)),
-            Expanded(
-                flex: 3,
-                child: Container(
-                  decoration: contentContainerColour(
-                      brRadius: 0.0, blRadius: 0.0),
-                  width: double.infinity,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      _userData(currentAppUser!),
-                      const SizedBox(height: 25.0),
-                      const Text('Task',
-                          style: TextStyle(
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.bold)),
-                      dayTasks(),
-                    ],
-                  ),
-                ))
-          ],
+        body: Container(
+          decoration: bgColour,
+          width: double.infinity,
+          padding: const EdgeInsets.only(top: 30.0),
+          child: Column(
+            children: <Widget>[
+              Expanded(child: _avatar(currentAppUser.imagePath)),
+              Expanded(
+                  flex: 3,
+                  child: Container(
+                    decoration:
+                        contentContainerColour(brRadius: 0.0, blRadius: 0.0),
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        _userData(currentAppUser!),
+                        const SizedBox(height: 25.0),
+                        const Text('Task',
+                            style: TextStyle(
+                                fontSize: 25.0, fontWeight: FontWeight.bold)),
+                        dayTasks(),
+                      ],
+                    ),
+                  ))
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: NavigationBar(
-        height: 50.0,
-        backgroundColor: Colors.white30,
-        destinations: [
-          _startSessionButton(context, currentAppUser),
-          _scheduleGenButton(context, currentAppUser),
-          // _studyStatsButton(context), //Will uncomment after implementation
-          _settingsButton(context),
-        ],
-      ));
+        bottomNavigationBar: NavigationBar(
+          height: 50.0,
+          backgroundColor: Colors.white30,
+          destinations: [
+            _startSessionButton(context, currentAppUser),
+            _scheduleGenButton(context, currentAppUser),
+            // _studyStatsButton(context), //Will uncomment after implementation
+            _settingsButton(context),
+          ],
+        ));
   }
 }

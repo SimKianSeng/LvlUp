@@ -19,7 +19,6 @@ class Generator {
   int _intensity = 5;
   List<List<Session>> _sessions = List.generate(7, (index) => []);
 
-
   factory Generator() {
     return _instance;
   }
@@ -36,6 +35,11 @@ class Generator {
     return _modules.contains(module.toUpperCase());
   }
 
+  bool hasNoInput() {
+    bool noSessionInput = _sessions.every((element) => element.isEmpty);
+    return _modules == [] || noSessionInput;
+  }
+
   void updateModule(String module, int rank) {
     if (alreadyInput(module)) {
       //Removed the partially filled module
@@ -44,7 +48,8 @@ class Generator {
     }
 
     //Module at current ranking is another module
-    if (_modules.length >= rank && _modules.elementAt(rank - 1) != module.toUpperCase()) {
+    if (_modules.length >= rank &&
+        _modules.elementAt(rank - 1) != module.toUpperCase()) {
       _modules.removeAt(rank - 1);
     }
 
@@ -75,20 +80,23 @@ class Generator {
     return _sessions;
   }
 
-@visibleForTesting
+  @visibleForTesting
+
   ///Remove sessions that share the same time periods, ie same start time and duration
   List<Session> removeDuplicateSessions(List<Session> sessions) {
     int current = 0;
 
-    while(current < sessions.length - 1) {
+    while (current < sessions.length - 1) {
       Session currentSession = sessions[current];
       Session nextSession = sessions[current + 1];
 
-      bool sameStartTime = currentSession.dateTime.day == nextSession.dateTime.day && 
-      currentSession.dateTime.hour == nextSession.dateTime.hour && 
-      currentSession.dateTime.minutes == nextSession.dateTime.minutes;
+      bool sameStartTime =
+          currentSession.dateTime.day == nextSession.dateTime.day &&
+              currentSession.dateTime.hour == nextSession.dateTime.hour &&
+              currentSession.dateTime.minutes == nextSession.dateTime.minutes;
 
-      bool sameDuration= currentSession.minutesDuration == nextSession.minutesDuration;
+      bool sameDuration =
+          currentSession.minutesDuration == nextSession.minutesDuration;
 
       if (sameStartTime && sameDuration) {
         sessions.removeAt(current + 1);
@@ -102,23 +110,23 @@ class Generator {
 
   ///Insert the generated modules into the respective timeslots available
   List<Session> _slotTasks(List<String> allocations) {
-
     //split input sessions into blocks of 30minutes interval and chain into a single list instead of nesting them
-    List<Session> sessionsExpanded = _sessions.expand(
-      (element) => element.expand((session) => session.splitIntoBlocks()))
-      .toSet().toList();
+    List<Session> sessionsExpanded = _sessions
+        .expand(
+            (element) => element.expand((session) => session.splitIntoBlocks()))
+        .toSet()
+        .toList();
 
     List<Session> slottedTasks = [];
-    
 
     for (int i = 0; i < allocations.length; i++) {
       if (allocations[i] == freePeriod) {
         //no need to show freeperiods on the schedule
         continue;
       }
-      slottedTasks.add(sessionsExpanded[i].assignTask(allocations[i]));  
+      slottedTasks.add(sessionsExpanded[i].assignTask(allocations[i]));
     }
-    
+
     //Note: slottedTasks only contains Session instances that are allocated tasks
     //Sessions that are free periods are not inside slottedTasks
     return slottedTasks;
@@ -129,13 +137,19 @@ class Generator {
     int next = 1;
 
     // Check through the allocated Tasks
-    while(next < allocatedTasks.length) {
-      TimeOfDay currentStart = TimeOfDay(hour: allocatedTasks[current].dateTime.hour, minute: allocatedTasks[current].dateTime.minutes);
-      TimeOfDay nextStart = TimeOfDay(hour: allocatedTasks[next].dateTime.hour, minute: allocatedTasks[next].dateTime.minutes);
+    while (next < allocatedTasks.length) {
+      TimeOfDay currentStart = TimeOfDay(
+          hour: allocatedTasks[current].dateTime.hour,
+          minute: allocatedTasks[current].dateTime.minutes);
+      TimeOfDay nextStart = TimeOfDay(
+          hour: allocatedTasks[next].dateTime.hour,
+          minute: allocatedTasks[next].dateTime.minutes);
 
-      bool hasDifferentTask = (allocatedTasks[current].task != allocatedTasks[next].task);
-      bool notConsecutiveTasks = (nextStart != currentStart.plusMinutes(allocatedTasks[current].minutesDuration));
-      
+      bool hasDifferentTask =
+          (allocatedTasks[current].task != allocatedTasks[next].task);
+      bool notConsecutiveTasks = (nextStart !=
+          currentStart.plusMinutes(allocatedTasks[current].minutesDuration));
+
       if (hasDifferentTask || notConsecutiveTasks) {
         current++;
         next++;
@@ -143,26 +157,27 @@ class Generator {
       }
 
       //Merging of consecutive tasks that have same task assigned
-      allocatedTasks[current] = allocatedTasks[current].mergeWith(allocatedTasks[next]);
+      allocatedTasks[current] =
+          allocatedTasks[current].mergeWith(allocatedTasks[next]);
       allocatedTasks.removeAt(next);
     }
   }
 
   List<TimePlannerTask> periods() {
-    return _sessions.expand(
-      (daySessions) => daySessions)
-      .toList();
+    return _sessions.expand((daySessions) => daySessions).toList();
   }
 
   List<Session> generateSchedule() {
-    List<Session> uniqueSessions = removeDuplicateSessions(_sessions.expand((element) => element.expand((session) => session.splitIntoBlocks())).toList());
+    List<Session> uniqueSessions = removeDuplicateSessions(_sessions
+        .expand(
+            (element) => element.expand((session) => session.splitIntoBlocks()))
+        .toList());
     int numberOfFreeSessions = uniqueSessions.length;
 
-    
     List<String> allocations = [];
     List<String> modulesNoDup = List.from(_modules);
-    modulesNoDup.removeWhere((element) => element == duplicate || element == freePeriod);
-
+    modulesNoDup.removeWhere(
+        (element) => element == duplicate || element == freePeriod);
 
     while (numberOfFreeSessions != 0) {
       String module = selectModule(modulesNoDup);
@@ -178,18 +193,17 @@ class Generator {
     return generatedTask;
   }
 
-  
   String selectModule(List<String> modulesNoDup) {
     //Save the need to compute everytime if there are no modules or zero intensity
     if (_modules.isEmpty || _intensity == 0) {
       return 'free';
     }
 
-    int moduleWeightage = ((modulesNoDup.length + 1) * modulesNoDup.length) * 5; // (/ 2 * 10)
+    int moduleWeightage =
+        ((modulesNoDup.length + 1) * modulesNoDup.length) * 5; // (/ 2 * 10)
     int totalWeightage = 0; // will increment as we iterate through
 
     List<int> prefixSum = [];
-
 
     for (int i = 0; i < modulesNoDup.length; i++) {
       int rank = modulesNoDup.length - i;
@@ -199,19 +213,19 @@ class Generator {
     }
 
     if (_intensity != 10) {
-      int freePeriodWeightage = (moduleWeightage * (10 - _intensity)) ~/ _intensity;
+      int freePeriodWeightage =
+          (moduleWeightage * (10 - _intensity)) ~/ _intensity;
       modulesNoDup.add(freePeriod);
       prefixSum.add(freePeriodWeightage + moduleWeightage);
     }
 
     int target = 1 + Random().nextInt(prefixSum.last);
 
-
     //Binary search to find smallest index corresponding to prefix sum greater than target
     int start = 0;
     int end = prefixSum.length - 1;
 
-    while(start < end) {
+    while (start < end) {
       int mid = (start + end) ~/ 2;
       if (prefixSum[mid] < target) {
         start = mid + 1;
@@ -223,9 +237,7 @@ class Generator {
       }
     }
 
-
     String module = modulesNoDup[start];
     return module;
   }
-  
 }

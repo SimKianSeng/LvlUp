@@ -18,7 +18,6 @@ class Quest extends StatefulWidget {
 class _QuestState extends State<Quest> {
   List<Session> _task = [];
   late bool _acceptedQuest;
-  
 
   @override
   void initState() {
@@ -29,24 +28,31 @@ class _QuestState extends State<Quest> {
 
   ///Provides a button that brings user to the generator input page
   Widget _generatorButton() {
-  return ElevatedButton(
-    style: customButtonStyle(),
-    onPressed: () {
-      Navigator.pushNamed(context, '/scheduleInput');
-    },
-    child: const Text("Generator"),);
-}
+    return ElevatedButton(
+      style: customButtonStyle(),
+      onPressed: () {
+        Navigator.pushNamed(context, '/scheduleInput');
+      },
+      child: const Text("Generator"),
+    );
+  }
 
   ///Provides a button for user to generate a schedule based on previous input to the generator
   Widget _generateButton() {
     return ElevatedButton(
       style: customButtonStyle(),
       onPressed: () {
-        setState(() {
-          _task.clear();
-          _task.addAll(Generator().generateSchedule());
-          _acceptedQuest = false;
-        });
+        if (Generator().hasNoInput()) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text(
+                  "Please input your modules and free periods in generator")));
+        } else {
+          setState(() {
+            _task.clear();
+            _task.addAll(Generator().generateSchedule());
+            _acceptedQuest = false;
+          });
+        }
       },
       child: const Text("Generate"),
     );
@@ -55,18 +61,24 @@ class _QuestState extends State<Quest> {
   Widget _schedule() {
     const int start = 0;
     const int end = 23;
-    List<TimePlannerTitle> headers = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'].map((day) => TimePlannerTitle(title: day)).toList();
-    TimePlannerStyle style = TimePlannerStyle(
-      cellWidth: 46
-    );
+    List<TimePlannerTitle> headers = [
+      'Mon',
+      'Tues',
+      'Wed',
+      'Thurs',
+      'Fri',
+      'Sat',
+      'Sun'
+    ].map((day) => TimePlannerTitle(title: day)).toList();
+    TimePlannerStyle style = TimePlannerStyle(cellWidth: 46);
 
     return TimePlanner(
-      startHour: start, 
-      endHour: end, 
+      startHour: start,
+      endHour: end,
       headers: headers,
       style: style,
       tasks: _task,
-      );
+    );
   }
 
   @override
@@ -84,18 +96,21 @@ class _QuestState extends State<Quest> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: _acceptedQuest ? null : () {
-              
-              user.acceptQuest(_task);
-              setState(() {
-                _acceptedQuest = !_acceptedQuest;
-              });
-            }, 
-            icon: const Icon(Icons.save, color: Colors.black,),
-            disabledColor: Colors.red, //TODO color does not seem to change, but _acceptedQuest did change
-            tooltip: 'Accept quest')
-          ],
-        ),
+              onPressed: _acceptedQuest
+                  ? null
+                  : () {
+                      user.acceptQuest(_task);
+                      setState(() {
+                        _acceptedQuest = !_acceptedQuest;
+                      });
+                    },
+              icon: const Icon(Icons.save),
+              color: Colors.black,
+              disabledColor: Colors
+                  .red, //TODO color does not seem to change, but _acceptedQuest did change
+              tooltip: 'Accept quest')
+        ],
+      ),
       body: Container(
         decoration: bgColour,
         child: _schedule(),
