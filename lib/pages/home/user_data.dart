@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:lvlup/services/firebase/database_service.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +20,7 @@ class UserData extends StatefulWidget {
 }
 
 class _UserDataState extends State<UserData> {
+  bool _evolving = false;
   AppUser? currentAppUser;
   List<Session>? _daytasks;
 
@@ -42,14 +45,18 @@ class _UserDataState extends State<UserData> {
     int curLevel = Xp.getLevel(currentUser.xp!);
     String tierName = Tier.getTierName(curLevel);
 
-    if (Evolution.getEvolutionStage(currentUser.xp!) ==
-        currentUser.evoState! + 1) {
+    if (!_evolving &&
+        Evolution.getEvolutionStage(currentUser.xp!) ==
+            currentUser.evoState! + 1) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        _evolving = true;
+        // currentUser.evoState = currentUser.evoState! + 1;
         showDialog(
+            barrierDismissible: false,
             context: context,
-            builder: (BuildContext ctx) =>
-                evolution_selection_form(currentUser));
+            builder: (context) => evolutionSelectionForm(currentUser, context));
       });
+      _evolving = false;
     }
 
     Widget names = SizedBox(
@@ -193,7 +200,7 @@ class _UserDataState extends State<UserData> {
               await DatabaseService(uid: currentAppUser.uid).updateXP(currentAppUser.xp!, timeStudied);
 
               setState(() {
-                
+
                 _updateDayTask(currentAppUser);
               });
             }

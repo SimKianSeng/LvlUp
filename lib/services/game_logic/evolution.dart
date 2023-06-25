@@ -80,13 +80,14 @@ class Evolution {
   }
 
   static List<Widget> generateAvatars(
-      List<String> evolutions, AppUser currentUser) {
+      List<String> evolutions, AppUser currentUser, BuildContext context) {
     List<Widget> widgets = [];
 
     evolutions.forEach((imagePath) {
       String filename = basename(imagePath);
       filename = filename.substring(0, filename.length - 4);
-      currentUser.characterName = filename;
+      AppUser appUser = AppUser.fromJson(currentUser.uid, currentUser.toJson());
+      appUser.characterName = filename;
 
       widgets.add(
         Column(children: [
@@ -94,10 +95,10 @@ class Evolution {
           ElevatedButton(
             onPressed: () {
               DatabaseService _db = DatabaseService(uid: currentUser.uid);
-              _db.evolve(currentUser, imagePath);
-              
+              _db.evolve(appUser, imagePath);
+              Navigator.pop(context);
             },
-            child: Text(currentUser.characterName!),
+            child: Text(appUser.characterName!),
           ),
           const SizedBox(height: 20),
         ]),
