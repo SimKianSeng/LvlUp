@@ -21,7 +21,6 @@ class _TimerState extends State<TimerPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _start = DateTime.now();
   }
@@ -51,7 +50,6 @@ class _TimerState extends State<TimerPage> {
 
   void _stopTimer() {
     //TODO end the study session and remove it from study sessions for the day in home
-    //TODO factor in exp changes
     setState(() => _timer!.cancel());
     Navigator.pop(context, DateTime.now().difference(_start));
   }

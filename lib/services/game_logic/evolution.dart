@@ -95,7 +95,6 @@ class Evolution {
   }
 
   static int getEvolutionStage(int xp) {
-    print(((Xp.getLevel(xp) - 1) / 20).floor());
     return ((Xp.getLevel(xp) - 1) / 20).floor();
   }
 
@@ -127,7 +126,7 @@ class Evolution {
             },
             child: Text(currentUser.characterName!),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
         ]),
       );
     });

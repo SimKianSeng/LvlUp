@@ -18,13 +18,13 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final currentUser = Provider.of<AppUser?>(context);
-    final DatabaseService _database = DatabaseService(uid: currentUser!.uid);
+    final DatabaseService database = DatabaseService(uid: currentUser!.uid);
 
     return StreamProvider<AppUser?>.value(
-      value: _database.userData, 
+      value: database.userData, 
       initialData: null,
       child: StreamProvider<List<Session>?>.value(
-        value: _database.quest,
+        value: database.quest,
         initialData: const [],
         child: const UserData(),));
   }

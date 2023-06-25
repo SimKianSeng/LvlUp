@@ -3,7 +3,6 @@ import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/generator.dart';
-import 'package:provider/provider.dart';
 import 'package:time_planner/time_planner.dart';
 
 //TODO: add in edit generated quest functionality
@@ -22,7 +21,6 @@ class _QuestState extends State<Quest> {
   @override
   void initState() {
     super.initState();
-    // _task = Generator().getSavedQuest();
     _acceptedQuest = true;
   }
 

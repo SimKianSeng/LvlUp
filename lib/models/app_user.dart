@@ -51,7 +51,6 @@ class AppUser {
         'evoImage': evoImage,
       };
 
-  //TODO
   void acceptQuest(List<Session> quest) async {
     updateQuest(quest);
     await DatabaseService(uid: uid).updateQuest(quest); //Issue updating Session
@@ -61,22 +60,11 @@ class AppUser {
     _quest = quest;
   }
 
-  //TODO
   List<Session> getSavedQuest() {
     return _quest ?? [];
   }
 
   String get imagePath {
     return evoImage ?? "";
-  }
-
-  //TODO game logic
-  void updateXP(Duration duration) {
-    const rate = 100; //100 exp per hour
-    const unitTime = 15; //15mins per unit Time
-
-    xp = xp! + (duration.inMinutes ~/ unitTime) * rate;
-
-    //TODO update firebase
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lvlup/services/database_service.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:lvlup/constants.dart';
@@ -19,28 +20,6 @@ class UserData extends StatefulWidget {
 class _UserDataState extends State<UserData> {
   AppUser? currentAppUser;
   List<Session>? _daytasks;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    Timer _timer = Timer.periodic(const Duration(seconds: 3), (Timer t) {
-      print("test");
-      // if (Evolution.getEvolutionStage(currentAppUser!.xp!) !=
-      //     currentAppUser!.evoState) {
-      //   showDialog(
-      //       context: context,
-      //       builder: (BuildContext context) => evolution_selection_form(
-      //           currentAppUser!.evoState!, currentAppUser!.imagePath));
-      // }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
 
   void _updateDayTask(AppUser currentAppUser) {
     //For android emulator, take note that DateTime.now() is based on the virtual device
@@ -98,12 +77,12 @@ class _UserDataState extends State<UserData> {
       width: 200,
       child: Column(
         children: <Widget>[
-          Text("Level: ${curLevel}",
+          Text("Level: $curLevel",
               style: TextStyle(
                   color: Colors.grey[800],
                   fontWeight: FontWeight.bold,
                   fontSize: 15.0)),
-          Text("${curXp} / ${Xp.levelXpCap}"),
+          Text("$curXp / ${Xp.levelXpCap}"),
           LinearProgressIndicator(
             value: curXp / Xp.levelXpCap,
             color: Colors.greenAccent,
@@ -134,28 +113,15 @@ class _UserDataState extends State<UserData> {
       );
     } else if (_daytasks!.isEmpty) {
       return Center(
-          // child: Text(
-          //   "There are no remaining study sessions today",
-          //   style: TextStyle(
-          //     fontSize: 25.0,
-          //     fontWeight: FontWeight.bold,
-          //     color: Colors.grey[800],
-          //   ),
-          // ),
-
-          // to be removed when done testing
-          child: ElevatedButton(
-        child: Text("test"),
-        onPressed: () {
-          // if (Evolution.getEvolutionStage(currentAppUser.xp!) !=
-          //     currentAppUser.evoState) {
-          //   showDialog(
-          //       context: context,
-          //       builder: (BuildContext context) => evolution_selection_form(
-          //           currentAppUser.evoState!, currentAppUser.imagePath));
-          // }
-        },
-      ));
+          child: Text(
+            "There are no remaining study sessions today",
+            style: TextStyle(
+              fontSize: 25.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[800],
+            ),
+          )
+        );
     }
 
     return Expanded(
@@ -220,13 +186,12 @@ class _UserDataState extends State<UserData> {
       iconSize: 30.0,
       onPressed: isStudyTime
           ? () async {
-              //TODO: update exp, level up if hit 1000xp, evolution etc as required
               //TODO: remove the task
               final timeStudied = await Navigator.pushNamed(context, '/timer',
                   arguments: duration) as Duration;
 
-              setState(() {
-                currentAppUser!.updateXP(timeStudied);
+              setState(() async {
+                await DatabaseService(uid: currentAppUser.uid).updateXP(currentAppUser.xp!, timeStudied);
                 _updateDayTask(currentAppUser);
               });
             }
@@ -297,7 +262,7 @@ class _UserDataState extends State<UserData> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        _userData(currentAppUser!),
+                        _userData(currentAppUser),
                         const SizedBox(height: 25.0),
                         const Text('Task',
                             style: TextStyle(

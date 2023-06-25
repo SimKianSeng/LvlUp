@@ -58,6 +58,16 @@ class DatabaseService {
     return _database.child('quests/$uid').set(questMap);
   }
 
+  Future<void> updateXP(int currentXP, Duration duration) {
+    const rate = 25; //100 exp per hour
+    const unitTime = 15; //15mins per unit Time
+
+    currentXP = currentXP + (duration.inMinutes ~/ unitTime) * rate;
+
+    return _database.child('users/$uid').update({'xp': currentXP});
+    //TODO update firebase
+  }
+
   Future<void> evolve(AppUser currentUser, String imagePath) {
     currentUser.evoState = currentUser.evoState! + 1;
     currentUser.evoImage = imagePath;
