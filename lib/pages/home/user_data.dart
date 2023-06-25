@@ -190,8 +190,10 @@ class _UserDataState extends State<UserData> {
               final timeStudied = await Navigator.pushNamed(context, '/timer',
                   arguments: duration) as Duration;
 
-              setState(() async {
-                await DatabaseService(uid: currentAppUser.uid).updateXP(currentAppUser.xp!, timeStudied);
+              await DatabaseService(uid: currentAppUser.uid).updateXP(currentAppUser.xp!, timeStudied);
+
+              setState(() {
+                
                 _updateDayTask(currentAppUser);
               });
             }

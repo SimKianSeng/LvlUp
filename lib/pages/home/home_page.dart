@@ -18,7 +18,13 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final currentUser = Provider.of<AppUser?>(context);
-    final DatabaseService database = DatabaseService(uid: currentUser!.uid);
+    
+    if (currentUser == null) {
+      return Container(
+        child: CircularProgressIndicator(),
+      );
+    }
+    final DatabaseService database = DatabaseService(uid: currentUser.uid);
 
     return StreamProvider<AppUser?>.value(
       value: database.userData, 
