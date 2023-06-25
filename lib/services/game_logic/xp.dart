@@ -9,6 +9,15 @@ class Xp {
     return xp % 1000;
   }
 
+  static int incrXP(Duration duration, int xp) {
+    const rate = 25; //100 exp per hour
+    const unitTime = 15; //15mins per unit Time
+
+    xp = xp + (duration.inMinutes ~/ unitTime) * rate;
+
+    return xp; 
+  }
+
 //   static int getXP(int level, int curXp) {
 //     return level * 1000 + curXp;
 //   }

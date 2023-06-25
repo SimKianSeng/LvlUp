@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
+import 'package:lvlup/services/game_logic/xp.dart';
 
 class DatabaseService {
   final String uid;
@@ -59,13 +60,10 @@ class DatabaseService {
   }
 
   Future<void> updateXP(int currentXP, Duration duration) {
-    const rate = 25; //100 exp per hour
-    const unitTime = 15; //15mins per unit Time
-
-    currentXP = currentXP + (duration.inMinutes ~/ unitTime) * rate;
+    
+    currentXP = Xp.incrXP(duration, currentXP);
 
     return _database.child('users/$uid').update({'xp': currentXP});
-    //TODO update firebase
   }
 
   Future<void> evolve(AppUser currentUser, String imagePath) {
