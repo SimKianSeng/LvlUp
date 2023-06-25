@@ -32,11 +32,11 @@ class _ScheduleInputState extends State<ScheduleInput>{
   }
     
   Slider _intensityScale() {
-    return Slider(
+    return Slider.adaptive(
       max: 10.0,
       divisions: 10,
       label: _intensity.toString(),
-      value: _intensity.toDouble(), 
+      value: _intensity.toDouble(),
       onChanged: (newIntensity) {
         setState(() {
           _intensity = newIntensity.toInt();
@@ -173,7 +173,15 @@ class _ScheduleInputState extends State<ScheduleInput>{
                 ],
               ),
               _weeklyInput(),
-              _heading('Intensity'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  _heading('Intensity'),
+                  Tooltip(
+                    message: "Intensity determines the proportion of free sessions that will be assigned as well as the time allowed for breaks in a study session.",
+                    child: Icon(Icons.help, color: Colors.grey[800],),
+                  )
+                  ]),
               _intensityScale(),
               // _check(),
             ],
