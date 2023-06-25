@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/pages/authentication/authentication.dart';
 import 'package:lvlup/pages/authentication/register_page.dart';
-import 'package:lvlup/services/auth.dart';
+import 'package:lvlup/services/firebase/auth.dart';
 
 class LoginPage extends Parent {
   const LoginPage({Key? key}) : super(key: key);

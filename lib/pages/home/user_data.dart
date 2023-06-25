@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lvlup/services/database_service.dart';
+import 'package:lvlup/services/firebase/database_service.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:lvlup/constants.dart';

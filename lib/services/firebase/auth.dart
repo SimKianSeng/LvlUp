@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lvlup/models/app_user.dart';
-import 'package:lvlup/services/database_service.dart';
+import 'package:lvlup/services/firebase/database_service.dart';
 
 /// Handles the logic of the different authentication cases to modularise the project
 class Auth {

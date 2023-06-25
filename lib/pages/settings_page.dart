@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:lvlup/services/auth.dart';
+import 'package:lvlup/services/firebase/auth.dart';
 
 final User? user = Auth().currentUser;
 

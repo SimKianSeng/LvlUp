@@ -1,5 +1,5 @@
 import 'package:lvlup/models/session.dart';
-import 'package:lvlup/services/database_service.dart';
+import 'package:lvlup/services/firebase/database_service.dart';
 
 class AppUser {
   late final String uid;

@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/pages/authentication/register_page.dart';
-import 'package:lvlup/services/auth.dart';
+import 'package:lvlup/services/firebase/auth.dart';
 import 'package:lvlup/pages/home/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:lvlup/services/database_service.dart';
+import 'package:lvlup/services/firebase/database_service.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String username;

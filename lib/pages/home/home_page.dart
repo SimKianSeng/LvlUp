@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/pages/home/user_data.dart';
-import 'package:lvlup/services/database_service.dart';
+import 'package:lvlup/services/firebase/database_service.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:provider/provider.dart';
 
