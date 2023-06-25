@@ -1,4 +1,5 @@
-import 'dart:io';
+// import 'dart:io';
+// import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,7 @@ import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/game_logic/evolution.dart';
 import 'package:lvlup/services/game_logic/xp.dart';
 import 'package:lvlup/services/game_logic/tier.dart';
+import 'package:lvlup/services/database_service.dart';
 import 'package:lvlup/widgets/evolution_selection_form.dart';
 
 class UserData extends StatefulWidget {
@@ -42,18 +44,23 @@ class _UserDataState extends State<UserData> {
   Widget _userData(AppUser currentUser) {
     int curXp = Xp.getCurXp(currentUser.xp!);
     int curLevel = Xp.getLevel(currentUser.xp!);
-    String tierName = Tier.getTierName(curLevel);
+    // int newEvoState = Evolution.getEvolutionStage(currentUser.xp!);
+    AppUser updatedUser =
+        AppUser.fromJson(currentUser.uid, currentUser.toJson());
+    updatedUser.evoState = Evolution.getEvolutionStage(currentUser.xp!);
+    updatedUser.tierName = Tier.getTierName(curLevel);
 
+    _evolving = false;
     if (!_evolving &&
-        Evolution.getEvolutionStage(currentUser.xp!) ==
-            currentUser.evoState! + 1) {
+        updatedUser.evoState! == currentUser.evoState! + 1 &&
+        updatedUser.tierName! != currentUser.tierName!) {
+      _evolving = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _evolving = true;
-        // currentUser.evoState = currentUser.evoState! + 1;
         showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (context) => evolutionSelectionForm(currentUser, context));
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => evolutionSelectionForm(currentUser, context),
+        );
       });
       _evolving = false;
     }
@@ -65,12 +72,12 @@ class _UserDataState extends State<UserData> {
           Text(currentUser.username!,
               style:
                   const TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0)),
-          Text(tierName,
+          Text(updatedUser.tierName!,
               style: TextStyle(
                   color: Colors.grey[800],
                   fontWeight: FontWeight.bold,
                   fontSize: 15.0)),
-          Text(currentUser.characterName!,
+          Text(updatedUser.characterName!,
               style: TextStyle(
                   color: Colors.grey[800],
                   fontWeight: FontWeight.bold,

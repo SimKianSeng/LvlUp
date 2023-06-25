@@ -88,6 +88,7 @@ class Evolution {
       filename = filename.substring(0, filename.length - 4);
       AppUser appUser = AppUser.fromJson(currentUser.uid, currentUser.toJson());
       appUser.characterName = filename;
+      appUser.evoImage = imagePath;
 
       widgets.add(
         Column(children: [
@@ -95,10 +96,10 @@ class Evolution {
           ElevatedButton(
             onPressed: () {
               DatabaseService _db = DatabaseService(uid: currentUser.uid);
-              _db.evolve(appUser, imagePath);
+              _db.evolve(appUser);
               Navigator.pop(context);
             },
-            child: Text(appUser.characterName!),
+            child: Text(currentUser.characterName!),
           ),
           SizedBox(height: 20),
         ]),

@@ -58,9 +58,19 @@ class DatabaseService {
     return _database.child('quests/$uid').set(questMap);
   }
 
-  Future<void> evolve(AppUser currentUser, String imagePath) {
+  Future<void> evolve(AppUser currentUser) {
     currentUser.evoState = currentUser.evoState! + 1;
-    currentUser.evoImage = imagePath;
+    currentUser.evoImage = currentUser.evoImage!;
     return _database.child('users/$uid').update(currentUser.toJson());
   }
+
+  // Future<void> updateEvoImage(AppUser currentUser) {
+  //   currentUser.evoImage = currentUser.evoImage!;
+  //   return _database.child('users/$uid').update(currentUser.toJson());
+  // }
+
+  // Future<void> updateEvoState(AppUser currentUser) {
+  //   currentUser.evoState = currentUser.evoState! + 1;
+  //   return _database.child('users/$uid').update(currentUser.toJson());
+  // }
 }
