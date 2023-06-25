@@ -5,33 +5,6 @@ import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/services/database_service.dart';
 
 class Evolution {
-  // static const _evolutions = {
-  //   "assets/avatars/evo0/white_man.png": {
-  //     // evo 1: morty path
-  //     "assets/avatars/evo1/morty.png": {
-  //       "assets/avatars/evo2/genin_morty.png": {
-  //         "assets/avatars/evo3/shinobi_morty.png":
-  //             "assets/avatars/evo4/cyborg.png",
-  //         "assets/avatars/evo3/jonin_morty.png":
-  //             "assets/avatars/evo0/dark_master.png",
-  //       },
-  //       "assets/avatars/evo2/padawan_morty.png": {
-  //         "assets/avatars/evo3/jedi_morty.png":
-  //             "assets/avatars/evo4/grandmaster.png",
-  //         "assets/avatars/evo3/mercenery_morty.png":
-  //             "assets/avatars/evo4/gang_leader.png",
-  //       },
-  //     },
-
-  //     // evo 1: dirty path
-  //     "assets/avatars/evo1/dirty.png": {
-  //       "assets/avatars/evo2/stony.png": {
-  //         "assets/avatars/evo3/rocky.png": "assets/avatars/evo4/swordy.png",
-  //         "assets/avatars/evo3/boudy.png": "assets/avatars/evo4/goldy.png",
-  //       }
-  //     },
-  //   }
-  // };
   static const List<Map<String, List<String>>> _evolutions = [
     // evo0 to evo1
     {
@@ -95,7 +68,6 @@ class Evolution {
   }
 
   static int getEvolutionStage(int xp) {
-    print(((Xp.getLevel(xp) - 1) / 20).floor());
     return ((Xp.getLevel(xp) - 1) / 20).floor();
   }
 
@@ -108,13 +80,14 @@ class Evolution {
   }
 
   static List<Widget> generateAvatars(
-      List<String> evolutions, AppUser currentUser) {
+      List<String> evolutions, AppUser currentUser, BuildContext context) {
     List<Widget> widgets = [];
 
     evolutions.forEach((imagePath) {
       String filename = basename(imagePath);
       filename = filename.substring(0, filename.length - 4);
-      currentUser.characterName = filename;
+      AppUser appUser = AppUser.fromJson(currentUser.uid, currentUser.toJson());
+      appUser.characterName = filename;
 
       widgets.add(
         Column(children: [
@@ -122,10 +95,10 @@ class Evolution {
           ElevatedButton(
             onPressed: () {
               DatabaseService _db = DatabaseService(uid: currentUser.uid);
-              _db.evolve(currentUser, imagePath);
-              
+              _db.evolve(appUser, imagePath);
+              Navigator.pop(context);
             },
-            child: Text(currentUser.characterName!),
+            child: Text(appUser.characterName!),
           ),
           SizedBox(height: 20),
         ]),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
@@ -17,30 +19,9 @@ class UserData extends StatefulWidget {
 }
 
 class _UserDataState extends State<UserData> {
+  bool _evolving = false;
   AppUser? currentAppUser;
   List<Session>? _daytasks;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    Timer _timer = Timer.periodic(const Duration(seconds: 3), (Timer t) {
-      print("test");
-      // if (Evolution.getEvolutionStage(currentAppUser!.xp!) !=
-      //     currentAppUser!.evoState) {
-      //   showDialog(
-      //       context: context,
-      //       builder: (BuildContext context) => evolution_selection_form(
-      //           currentAppUser!.evoState!, currentAppUser!.imagePath));
-      // }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
 
   void _updateDayTask(AppUser currentAppUser) {
     //For android emulator, take note that DateTime.now() is based on the virtual device
@@ -63,14 +44,18 @@ class _UserDataState extends State<UserData> {
     int curLevel = Xp.getLevel(currentUser.xp!);
     String tierName = Tier.getTierName(curLevel);
 
-    if (Evolution.getEvolutionStage(currentUser.xp!) ==
-        currentUser.evoState! + 1) {
+    if (!_evolving &&
+        Evolution.getEvolutionStage(currentUser.xp!) ==
+            currentUser.evoState! + 1) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        _evolving = true;
+        // currentUser.evoState = currentUser.evoState! + 1;
         showDialog(
+            barrierDismissible: false,
             context: context,
-            builder: (BuildContext ctx) =>
-                evolution_selection_form(currentUser));
+            builder: (context) => evolutionSelectionForm(currentUser, context));
       });
+      _evolving = false;
     }
 
     Widget names = SizedBox(
@@ -134,28 +119,15 @@ class _UserDataState extends State<UserData> {
       );
     } else if (_daytasks!.isEmpty) {
       return Center(
-          // child: Text(
-          //   "There are no remaining study sessions today",
-          //   style: TextStyle(
-          //     fontSize: 25.0,
-          //     fontWeight: FontWeight.bold,
-          //     color: Colors.grey[800],
-          //   ),
-          // ),
-
-          // to be removed when done testing
-          child: ElevatedButton(
-        child: Text("test"),
-        onPressed: () {
-          // if (Evolution.getEvolutionStage(currentAppUser.xp!) !=
-          //     currentAppUser.evoState) {
-          //   showDialog(
-          //       context: context,
-          //       builder: (BuildContext context) => evolution_selection_form(
-          //           currentAppUser.evoState!, currentAppUser.imagePath));
-          // }
-        },
-      ));
+        child: Text(
+          "There are no remaining study sessions today",
+          style: TextStyle(
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[800],
+          ),
+        ),
+      );
     }
 
     return Expanded(
