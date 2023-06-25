@@ -18,7 +18,7 @@ class AppUser {
     this.tierName = 'Noob',
     this.xp = 0,
     this.evoState = 0,
-    this.evoImage = "assets/avatars/white_man.png",
+    this.evoImage = "assets/avatars/evo0/white_man.png",
   });
 
   AppUser(

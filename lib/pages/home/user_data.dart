@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'dart:async';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
+import 'package:lvlup/services/game_logic/evolution.dart';
 import 'package:lvlup/services/game_logic/xp.dart';
 import 'package:lvlup/services/game_logic/tier.dart';
 import 'package:lvlup/widgets/evolution_selection_form.dart';
-import 'package:provider/provider.dart';
 
 class UserData extends StatefulWidget {
   const UserData({super.key});
@@ -15,7 +17,30 @@ class UserData extends StatefulWidget {
 }
 
 class _UserDataState extends State<UserData> {
+  AppUser? currentAppUser;
   List<Session>? _daytasks;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    Timer _timer = Timer.periodic(const Duration(seconds: 3), (Timer t) {
+      print("test");
+      // if (Evolution.getEvolutionStage(currentAppUser!.xp!) !=
+      //     currentAppUser!.evoState) {
+      //   showDialog(
+      //       context: context,
+      //       builder: (BuildContext context) => evolution_selection_form(
+      //           currentAppUser!.evoState!, currentAppUser!.imagePath));
+      // }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   void _updateDayTask(AppUser currentAppUser) {
     //For android emulator, take note that DateTime.now() is based on the virtual device
@@ -37,6 +62,16 @@ class _UserDataState extends State<UserData> {
     int curXp = Xp.getCurXp(currentUser.xp!);
     int curLevel = Xp.getLevel(currentUser.xp!);
     String tierName = Tier.getTierName(curLevel);
+
+    if (Evolution.getEvolutionStage(currentUser.xp!) ==
+        currentUser.evoState! + 1) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+            context: context,
+            builder: (BuildContext ctx) =>
+                evolution_selection_form(currentUser));
+      });
+    }
 
     Widget names = SizedBox(
       width: 150,
@@ -108,12 +143,17 @@ class _UserDataState extends State<UserData> {
           //   ),
           // ),
 
+          // to be removed when done testing
           child: ElevatedButton(
         child: Text("test"),
         onPressed: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) => evolution_selection_form());
+          // if (Evolution.getEvolutionStage(currentAppUser.xp!) !=
+          //     currentAppUser.evoState) {
+          //   showDialog(
+          //       context: context,
+          //       builder: (BuildContext context) => evolution_selection_form(
+          //           currentAppUser.evoState!, currentAppUser.imagePath));
+          // }
         },
       ));
     }

@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lvlup/models/app_user.dart';
+import 'package:lvlup/services/database_service.dart';
 
 /// Handles the logic of the different authentication cases to modularise the project
 class Auth {
@@ -53,7 +54,7 @@ class Auth {
       );
 
 
-      //Changed 
+      //Changed
       return _userToAppUser(userCredential.user);
 
     } on FirebaseAuthException catch (e) {
@@ -118,6 +119,7 @@ class Auth {
     // await DatabaseService(uid: currentUser?.uid)
     //     .deleteuser(); // called from database class
     _dbUsersRef.child(currentUser?.uid ?? "").remove();
+    DatabaseService(uid: currentUser!.uid).deleteUserData();
     await currentUser?.delete();
 
     // await currentUser?.delete();

@@ -1,64 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:lvlup/models/app_user.dart';
+import 'package:lvlup/services/game_logic/evolution.dart';
 
-Widget evolution_selection_form() {
+Widget evolution_selection_form(AppUser currentUser) {
   return AlertDialog(
     scrollable: true,
     title: const Text("Select evolution path"),
     content: Padding(
       padding: const EdgeInsets.all(8.0),
       child: Form(
-        child: Row(
-          children: [
-            // TextFormField(
-            //   decoration: const InputDecoration(
-            //     labelText: "Name",
-            //     icon: Icon(Icons.account_box),
-            //   ),
-            // ),
-            // TextFormField(
-            //   decoration: const InputDecoration(
-            //     labelText: "Email",
-            //     icon: Icon(Icons.email),
-            //   ),
-            // ),
-            // TextFormField(
-            //   decoration: const InputDecoration(
-            //     labelText: "Message",
-            //     icon: Icon(Icons.message),
-            //   ),
-            // ),
-            Column(children: [
-              Text("hello"),
-              ElevatedButton(
-                onPressed: () {},
-                child: Text("morty"),
-              ),
-            ]),
-            Column(children: [
-              Text("hello"),
-              ElevatedButton(
-                onPressed: () {},
-                child: Text("rick"),
-              ),
-            ]),
-            Column(children: [
-              Text("hello"),
-              ElevatedButton(
-                onPressed: () {},
-                child: Text("test"),
-              ),
-            ]),
-          ],
+        child: Column(
+          children: Evolution.generateAvatars(
+              Evolution.getEvolutions(currentUser), currentUser),
         ),
       ),
     ),
-    actions: [
-      ElevatedButton(
-        child: const Text("submit"),
-        onPressed: () {
-          // your code
-        },
-      ),
-    ],
   );
 }

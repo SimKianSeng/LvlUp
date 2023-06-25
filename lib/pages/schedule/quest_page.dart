@@ -94,7 +94,7 @@ class _QuestState extends State<Quest> {
         elevation: 0,
         title: const Text("Quest"),
         centerTitle: true,
-        actions: [
+        actions: [ 
           IconButton(
               onPressed: _acceptedQuest
                   ? null
@@ -106,8 +106,7 @@ class _QuestState extends State<Quest> {
                     },
               icon: const Icon(Icons.save),
               color: Colors.black,
-              disabledColor: Colors
-                  .red, //TODO color does not seem to change, but _acceptedQuest did change
+              disabledColor: Colors.grey,
               tooltip: 'Accept quest')
         ],
       ),

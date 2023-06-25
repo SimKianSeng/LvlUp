@@ -12,7 +12,6 @@ class RegisterPage extends Parent {
   ParentState createState() => _RegisterPageState();
 }
 
-
 class _RegisterPageState extends ParentState {
   final TextEditingController _controllerUsername = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
@@ -85,8 +84,11 @@ class _RegisterPageState extends ParentState {
               height: 25.0,
             ),
             entryField('confirm password', _controllerPasswordConfirmation),
+            const SizedBox(
+              height: 25.0,
+            ),
             submitButton(),
-            ElevatedButton(
+            TextButton(
                 onPressed: () {
                   // Navigator.pop(context);
                   Navigator.push(
