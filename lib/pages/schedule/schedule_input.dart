@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
-import 'package:lvlup/models/module_row.dart';
+import 'package:lvlup/widgets/module_row.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
 
@@ -30,7 +30,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
       sessions.addAll(_generator.periods());
     });
   }
-    
+
   Slider _intensityScale() {
     return Slider.adaptive(
       max: 10.0,
@@ -61,7 +61,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
       child: Container(
         decoration: contentContainerColour(),
         //TODO: after settling other main stuff
-        
+
         // child: Column(
         //   children: [
         //     Expanded(
@@ -164,7 +164,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
                     onPressed: () async {
                       await Navigator.pushNamed(context, '/weeklyInput');
                       _updateSession();
-                    }, 
+                    },
                     child: Text(
                       'Add free period',
                       style: TextStyle(

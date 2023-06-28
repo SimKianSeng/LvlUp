@@ -51,8 +51,7 @@ class _TimerState extends State<TimerPage> {
   void _stopTimer() {
     //TODO end the study session and remove it from study sessions for the day in home
     setState(() => _timer!.cancel());
-    // Navigator.pop(context, DateTime.now().difference(_start));
-    Navigator.pop(context, Duration(minutes: 30));
+    Navigator.pop(context, DateTime.now().difference(_start));
   }
 
   Widget time() {
@@ -101,7 +100,7 @@ class _TimerState extends State<TimerPage> {
             _stopTimer();
           },
         ),
-        title: const Text('Timer'), 
+        title: const Text('Timer'),
         centerTitle: true,),
       body: Container(
         decoration: bgColour,
