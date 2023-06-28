@@ -36,6 +36,7 @@ InputDecoration customTextField({String initText = ''}) {
       labelStyle: const TextStyle(color: Colors.black),
       filled: true,
       fillColor: Colors.white38,
+      contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),

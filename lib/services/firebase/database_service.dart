@@ -59,15 +59,15 @@ class DatabaseService {
     return _database.child('quests/$uid').set(questMap);
   }
 
-  Future<void> updateXP(int currentXP, Duration duration) {
+  Future<void> updateXP(Duration duration, AppUser currentUser) {
+    final int newXp = Xp.incrXP(duration, currentUser);
 
-    currentXP = Xp.incrXP(duration, currentXP);
-
-    return _database.child('users/$uid').update({'xp': currentXP});
+    return _database.child('users/$uid').update({'xp' : newXp});
   }
 
   Future<void> evolve(AppUser currentUser, String imagePath) {
     currentUser.evoState = currentUser.evoState! + 1;
+    currentUser.evoImage = currentUser.evoImage!;
     currentUser.evoImage = currentUser.evoImage!;
     return _database.child('users/$uid').update(currentUser.toJson());
   }
@@ -81,4 +81,5 @@ class DatabaseService {
   //   currentUser.evoState = currentUser.evoState! + 1;
   //   return _database.child('users/$uid').update(currentUser.toJson());
   // }
+  
 }

@@ -1,3 +1,5 @@
+import 'package:lvlup/models/app_user.dart';
+
 class Xp {
   static const int levelXpCap = 1000;
 
@@ -5,13 +7,16 @@ class Xp {
     return (xp / 1000).floor() + 1;
   }
 
+  ///Take the total exp that the user has and find the current level progress.
   static int getCurXp(int xp) {
     return xp % 1000;
   }
 
-  static int incrXP(Duration duration, int xp) {
+  static int incrXP(Duration duration, AppUser currentUser) {
     const rate = 25; //100 exp per hour
     const unitTime = 15; //15mins per unit Time
+
+    int xp = currentUser.xp!;
 
     xp = xp + (duration.inMinutes ~/ unitTime) * rate;
 

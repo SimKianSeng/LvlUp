@@ -1,6 +1,9 @@
 // import 'dart:io';
 // import 'dart:js_interop';
 
+// import 'dart:io';
+// import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
 import 'package:lvlup/services/firebase/database_service.dart';
 import 'package:provider/provider.dart';
@@ -205,10 +208,8 @@ class _UserDataState extends State<UserData> {
               final timeStudied = await Navigator.pushNamed(context, '/timer',
                   arguments: duration) as Duration;
 
-              await DatabaseService(uid: currentAppUser.uid).updateXP(currentAppUser.xp!, timeStudied);
-
               setState(() {
-
+                DatabaseService(uid: currentAppUser.uid).updateXP(timeStudied, currentAppUser);
                 _updateDayTask(currentAppUser);
               });
             }

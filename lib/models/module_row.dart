@@ -45,7 +45,7 @@ class _ModuleRowState extends State<ModuleRow> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          SizedBox(width: widget.index == 1 ? 68.0 : 135.0,),
+          SizedBox(width: widget.index == 1 ? 68.0 : 135.0),
           widget.index == 1 ? const Text('Module 1 (Weakest):') : Text('Module ${widget.index}:'),
           const SizedBox(width: 25.0,),
           SizedBox(
