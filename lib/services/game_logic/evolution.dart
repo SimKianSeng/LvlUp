@@ -88,6 +88,7 @@ class Evolution {
       filename = filename.substring(0, filename.length - 4);
       AppUser appUser = AppUser.fromJson(currentUser.uid, currentUser.toJson());
       appUser.characterName = filename;
+      appUser.evoImage = imagePath;
 
       widgets.add(
         Column(children: [
