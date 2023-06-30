@@ -94,6 +94,7 @@ class _RegisterPageState extends ParentState {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
+                        //TODO navigator stack will just keep stacking if we keep switching between the 2 page, to rely on authentication.dart
                         builder: (ctx) => const LoginPage(),
                       ));
                 },

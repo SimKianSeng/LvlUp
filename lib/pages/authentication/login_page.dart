@@ -21,9 +21,9 @@ class _LoginPageState extends ParentState {
   Future<void> signInWithEmailAndPassword() async {
     try {
       await Auth().signInWithEmailAndPassword(
-          email: _controllerEmail.text,
-          password: _controllerPassword.text,
-        );
+        email: _controllerEmail.text,
+        password: _controllerPassword.text,
+      );
     } on FirebaseAuthException catch (e) {
       setState(() {
         errorMessage = e.message;
@@ -99,7 +99,9 @@ class _LoginPageState extends ParentState {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const RegisterPage()),
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const RegisterPage()), //TODO make use of authentication page
                   );
                 },
                 child: const Text("Register instead")),

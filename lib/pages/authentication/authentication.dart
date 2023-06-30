@@ -3,6 +3,7 @@ import 'package:lvlup/pages/authentication/login_page.dart';
 import 'package:lvlup/pages/authentication/register_page.dart';
 import '../../constants.dart';
 
+// TODO: this file can be removed or used for the switching page functionality instead of pushing onto navigator stack
 class Authentication extends StatefulWidget {
   const Authentication({Key? key}) : super(key: key);
 
@@ -13,6 +14,7 @@ class Authentication extends StatefulWidget {
 class _AuthenticationState extends State<Authentication> {
   bool signingIn = true;
 
+  // TODO utilize this in the log in / register page instead of pushing another page?
   void switchPage() {
     setState(() {
       signingIn = !signingIn;

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/pages/authentication/register_page.dart';
 import 'package:lvlup/services/firebase/auth.dart';
-import 'package:lvlup/pages/home/home_page.dart';
+import 'package:lvlup/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lvlup/services/firebase/database_service.dart';
 
@@ -20,7 +20,6 @@ class EmailVerificationScreen extends StatefulWidget {
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   bool isEmailVerified = false;
   Timer? timer;
-  // DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('users');
 
   @override
   void initState() {
@@ -38,15 +37,15 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     });
 
     if (isEmailVerified) {
-      // ScaffoldMessenger.of(context)
-      //     .showSnackBar(SnackBar(content: Text("Email Successfully Verified")));
       Map<String, dynamic> contact = {
-        FirebaseAuth.instance.currentUser!.uid: AppUser.newUser(username: widget.username).toJson()
+        FirebaseAuth.instance.currentUser!.uid:
+            AppUser.newUser(username: widget.username).toJson()
       };
 
       DatabaseService.createUser(contact).whenComplete(() {
+//To use Navigator.pop
         Navigator.push(
-          context,
+          context, //TODO: make use of widget tree and streamProvider isntead of pushing onto navigation stack
           MaterialPageRoute(
             builder: (ctx) => const HomePage(),
           ),

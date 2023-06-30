@@ -17,6 +17,10 @@ class DatabaseService {
   ///Retrieve user data stored in database and convert it into appUser
   Stream<AppUser?> get userData {
     return _database.child('users/$uid').onValue.map((event) {
+      if (event.snapshot.value == null) {
+        return null;
+      }
+
       return AppUser.fromJson(
           uid, event.snapshot.value as Map<dynamic, dynamic>);
     });
@@ -62,7 +66,7 @@ class DatabaseService {
   Future<void> updateXP(Duration duration, AppUser currentUser) {
     final int newXp = Xp.incrXP(duration, currentUser);
 
-    return _database.child('users/$uid').update({'xp' : newXp});
+    return _database.child('users/$uid').update({'xp': newXp});
   }
 
   Future<void> evolve(AppUser currentUser, String imagePath) {
@@ -81,5 +85,4 @@ class DatabaseService {
   //   currentUser.evoState = currentUser.evoState! + 1;
   //   return _database.child('users/$uid').update(currentUser.toJson());
   // }
-  
 }

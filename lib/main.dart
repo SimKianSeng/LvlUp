@@ -35,8 +35,6 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const WidgetTree(),
-          '/login': (context) => const LoginPage(),
-          '/register': (context) => const RegisterPage(),
           '/settings': (context) => const Settings(),
           '/scheduleGen': (context) => const Quest(),
           '/studyStats': (context) => const StudyStats(),

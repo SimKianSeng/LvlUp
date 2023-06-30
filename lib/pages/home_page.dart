@@ -1,20 +1,47 @@
-// import 'dart:io';
-// import 'dart:js_interop';
-
-// import 'dart:io';
-// import 'dart:js_interop';
-
 import 'package:flutter/material.dart';
+import 'package:lvlup/models/session.dart';
+// import 'package:lvlup/pages/home/user_data.dart';
 import 'package:lvlup/services/firebase/database_service.dart';
-import 'package:provider/provider.dart';
-import 'dart:async';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/app_user.dart';
-import 'package:lvlup/models/session.dart';
+import 'package:provider/provider.dart';
+import 'dart:async';
 import 'package:lvlup/services/game_logic/evolution.dart';
 import 'package:lvlup/services/game_logic/xp.dart';
 import 'package:lvlup/services/game_logic/tier.dart';
 import 'package:lvlup/widgets/evolution_selection_form.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  Widget build(BuildContext context) {
+    final currentUser = Provider.of<AppUser?>(context);
+
+    if (currentUser == null) {
+      return Container(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    //To retrieve data stored in database
+    final DatabaseService database = DatabaseService(uid: currentUser.uid);
+
+    return StreamProvider<AppUser?>.value(
+        value: database.userData,
+        initialData: null,
+        child: StreamProvider<List<Session>?>.value(
+          value: database.quest,
+          initialData: const [],
+          child: const UserData(),
+        ));
+  }
+}
 
 class UserData extends StatefulWidget {
   const UserData({super.key});
@@ -132,14 +159,13 @@ class _UserDataState extends State<UserData> {
     } else if (_daytasks!.isEmpty) {
       return Center(
           child: Text(
-            "There are no remaining study sessions today",
-            style: TextStyle(
-              fontSize: 25.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[800],
-            ),
-          )
-        );
+        "There are no remaining study sessions today",
+        style: TextStyle(
+          fontSize: 25.0,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey[800],
+        ),
+      ));
     }
 
     return Expanded(
@@ -209,7 +235,8 @@ class _UserDataState extends State<UserData> {
                   arguments: duration) as Duration;
 
               setState(() {
-                DatabaseService(uid: currentAppUser.uid).updateXP(timeStudied, currentAppUser);
+                DatabaseService(uid: currentAppUser.uid)
+                    .updateXP(timeStudied, currentAppUser);
                 _updateDayTask(currentAppUser);
               });
             }
@@ -255,6 +282,7 @@ class _UserDataState extends State<UserData> {
     final quest = Provider.of<List<Session>?>(context);
 
     if (currentAppUser == null || quest == null) {
+      //quest is null
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
