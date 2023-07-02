@@ -1,4 +1,3 @@
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/services/game_logic/xp.dart';

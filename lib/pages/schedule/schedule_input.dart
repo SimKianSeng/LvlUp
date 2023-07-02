@@ -179,6 +179,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
                   _heading('Intensity'),
                   Tooltip(
                     message: "Intensity determines the proportion of free sessions that will be assigned as well as the time allowed for breaks in a study session.",
+                    triggerMode: TooltipTriggerMode.tap,
                     child: Icon(Icons.help, color: Colors.grey[800],),
                   )
                   ]),
