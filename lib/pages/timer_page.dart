@@ -74,7 +74,8 @@ class _TimerState extends State<TimerPage> {
     );
   }
 
-  Widget pauseButton() {
+  Widget breakButton() {
+    //TODO switched icons and colours to show when on break / off break
     return IconButton(
       onPressed: _pauseResumeTimer,
       icon: const Icon(Icons.pause_circle_rounded, size: 75.0,));
@@ -89,6 +90,12 @@ class _TimerState extends State<TimerPage> {
 
   @override
   Widget build(BuildContext context) {
+    //TODO receive grace period input from upcoming session
+
+    //TODO screen arguments to pass as a page argument model or list/map?
+    //TODO pass screen arguments as a List containing duration for both grace period / intensity and _duration?
+    // For grace period, if based on total remaining time upon entering timer page, then passed as int and calculate in timer_page
+    //Else if grace period is based on total duration of session, then passed as duration too
 
     _duration ??= ModalRoute.of(context)!.settings.arguments as Duration;
     _startTimer();
@@ -116,7 +123,7 @@ class _TimerState extends State<TimerPage> {
               children: <Widget>[
                 // stopButton(),
                 const SizedBox(width: 105.0),
-                pauseButton(),
+                breakButton(),
               ],
             )
 

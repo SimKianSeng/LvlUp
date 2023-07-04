@@ -10,7 +10,7 @@ import 'package:time_planner/time_planner.dart';
 ///and distribute the modules across the free sessions based on level of intensity
 
 class Generator {
-  //TODO link to firebase
+  //TODO link to firebase and retrieve saved inputs for every access
   static final Generator _instance = Generator._internal();
   static const freePeriod = 'free';
   static const duplicate = 'duplicate';
@@ -25,6 +25,7 @@ class Generator {
 
   Generator._internal();
 
+  //TODO set this as a button on generator page
   void reset() {
     _modules = [];
     _intensity = 5;

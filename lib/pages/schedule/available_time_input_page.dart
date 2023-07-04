@@ -115,7 +115,7 @@ class _WeeklyInputState extends State<WeeklyInput> {
   Widget _addSession() {
     return FloatingActionButton(
       onPressed: () async {
-        const TimeOfDay defaultTime = TimeOfDay(hour: 0, minute: 0);
+        const TimeOfDay defaultTime = TimeOfDay(hour: 10, minute: 30);
         const Duration periodInterval = Duration(minutes: 30);
         final List<ClockLabel> clocklabels = ["12 am", "3 am", "6 am", "9 am", "12 pm", "3 pm", "6 pm", "9 pm"]
           .asMap().entries.map((e) => ClockLabel.fromIndex(idx: e.key, length: 8, text: e.value))
