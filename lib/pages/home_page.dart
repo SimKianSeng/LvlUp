@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/models/session.dart';
-// import 'package:lvlup/pages/home/user_data.dart';
 import 'package:lvlup/services/firebase/database_service.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/app_user.dart';
@@ -25,7 +24,8 @@ class _HomePageState extends State<HomePage> {
 
     if (currentUser == null) {
       return Container(
-        child: CircularProgressIndicator(),
+        color: Colors.white,
+        child: const CircularProgressIndicator(),
       );
     }
 
@@ -177,8 +177,9 @@ class _UserDataState extends State<UserData> {
                 child: _daytasks?[index].displayDayTask(context))));
   }
 
+  //TODO logic for late start
   IconButton _startSessionButton(BuildContext context, AppUser currentAppUser) {
-    DateTime currentTime = DateTime.now();
+    DateTime currentTime = DateTime.now();  
 
     //Edge case: _dayTasks is empty
     bool taskAvail = _daytasks != null && _daytasks!.isNotEmpty;
@@ -215,7 +216,9 @@ class _UserDataState extends State<UserData> {
     });
 
     Duration duration = endTime.difference(currentTime);
-
+    Duration breakRemaining = taskAvail ? nextSession!.breakRemaining(currentTime.difference(startTime)) : const Duration();
+    // Duration breakRemaining = Duration();
+    
     if (duration.inSeconds < 0) {
       // endTime of 1st session is after currentTime
       _updateDayTask(currentAppUser);
@@ -230,9 +233,9 @@ class _UserDataState extends State<UserData> {
       iconSize: 30.0,
       onPressed: isStudyTime
           ? () async {
-              //TODO: remove the task
+              //TODO: remove the task when timer is stop
               final timeStudied = await Navigator.pushNamed(context, '/timer',
-                  arguments: duration) as Duration;
+                  arguments: {'duration': duration, 'break': breakRemaining}) as Duration;
 
               setState(() {
                 DatabaseService(uid: currentAppUser.uid)

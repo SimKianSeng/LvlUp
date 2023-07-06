@@ -16,8 +16,8 @@ class _TimerState extends State<TimerPage> {
   late DateTime _start;
   Duration? _duration;
   Timer? _timer;
-  Duration? _breakDuration = const Duration(seconds: 0);
-  bool resting = false;
+  Duration? _breakDuration;
+  bool _resting = false;
 
   @override
   void initState() {
@@ -37,14 +37,16 @@ class _TimerState extends State<TimerPage> {
         _stopTimer();
       } else {
         _duration = Duration(seconds: _duration!.inSeconds - 1);
-        _breakDuration = resting ? Duration(seconds: _breakDuration!.inSeconds + 1) : _breakDuration;
+
+        //TODO when _breakDuration passes 0seconds, it resets to 1minute
+        _breakDuration = _resting ? Duration(seconds: _breakDuration!.inSeconds - 1) : _breakDuration; //Countdown
       }
     });
   }
 
-  //Toggle break mode
+  ///Toggle break mode
   void _pauseResumeTimer() {
-    resting = !resting;
+    _resting = !_resting;
   }
 
 
@@ -69,16 +71,17 @@ class _TimerState extends State<TimerPage> {
     int min = _breakDuration!.inMinutes % 60;
     int seconds = _breakDuration!.inSeconds % 60;
 
-    return Text("Time spent on break: ${hour.toString().padLeft(2, '0')} : ${min.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')}",
+    //TODO find soln to when _breakDuration is negative as it currently resets to 1 minute
+    return Text("Remaining break time: ${hour.toString().padLeft(2, '0')} : ${min.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')}",
       style: const TextStyle(fontSize: 25.0)
     );
   }
 
   Widget breakButton() {
-    //TODO switched icons and colours to show when on break / off break
+    //TODO find and replace with a better icon to illustrate taking a break and resume study
     return IconButton(
       onPressed: _pauseResumeTimer,
-      icon: const Icon(Icons.pause_circle_rounded, size: 75.0,));
+      icon: _resting ? const Icon(Icons.play_arrow_rounded, size: 75.0, color: Colors.green,) : const Icon(Icons.pause_circle_rounded, size: 75.0, color: Colors.red,));
   }
 
   //TODO monitor, does not seem entirely responsive
@@ -90,14 +93,11 @@ class _TimerState extends State<TimerPage> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO receive grace period input from upcoming session
+    
+    Map<String, Duration> durations = ModalRoute.of(context)!.settings.arguments as Map<String, Duration>;
+    _duration ??= durations['duration'];
+    _breakDuration ??= durations['break'];
 
-    //TODO screen arguments to pass as a page argument model or list/map?
-    //TODO pass screen arguments as a List containing duration for both grace period / intensity and _duration?
-    // For grace period, if based on total remaining time upon entering timer page, then passed as int and calculate in timer_page
-    //Else if grace period is based on total duration of session, then passed as duration too
-
-    _duration ??= ModalRoute.of(context)!.settings.arguments as Duration;
     _startTimer();
 
     return Scaffold(

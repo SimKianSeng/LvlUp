@@ -21,6 +21,7 @@ extension Plus on TimeOfDay {
 }
 
 class Session extends TimePlannerTask {
+  static const int breakRate = 5; //5 minutes for every multiple of _interval
   static const int _interval = 30;
   final String? task;
 
@@ -36,6 +37,23 @@ class Session extends TimePlannerTask {
 
   TimeOfDay endTime() {
     return TimeOfDay(hour: super.dateTime.hour, minute: super.dateTime.minutes).plusMinutes(super.minutesDuration);
+  }
+
+  @visibleForTesting
+  int breakDuration() {
+    int breakDurationMinutes= super.minutesDuration ~/ _interval * breakRate;
+
+    return breakDurationMinutes;
+  }
+
+  Duration breakRemaining(Duration durationDelayed) {
+    int minutesDelayed = durationDelayed.inMinutes; //Minutes used here for leniency, to account for time needed to enter app and start timer
+    
+    int breakMinutesRemaining = breakDuration() - minutesDelayed;
+
+    //TODO debug edge case when minutesDelayed is greater than breakDuration, ie breakMinutesRemaining is negative
+
+    return Duration(minutes: breakMinutesRemaining);
   }
 
   Session assignTask(String task) {
