@@ -67,13 +67,30 @@ class _TimerState extends State<TimerPage> {
   }
 
   Widget breakTime() {
-    int hour = _breakDuration!.inHours % 24;
-    int min = _breakDuration!.inMinutes % 60;
-    int seconds = _breakDuration!.inSeconds % 60;
+    bool hasExceededBreak = _breakDuration!.isNegative;
 
-    //TODO find soln to when _breakDuration is negative as it currently resets to 1 minute
-    return Text("Remaining break time: ${hour.toString().padLeft(2, '0')} : ${min.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')}",
-      style: const TextStyle(fontSize: 25.0)
+    int hour, min, seconds;
+
+    if (hasExceededBreak) {
+      hour = 24 - (_breakDuration!.inHours % 24);
+      min = 60 - (_breakDuration!.inMinutes % 60);
+      seconds = 60 - (_breakDuration!.inSeconds % 60);
+
+      //Fix formatting
+      hour = hour == 24 ? 0 : hour;
+      min = min == 60 ? 0 : min;
+      seconds = seconds == 60 ? 0 : seconds;
+    } else {
+      hour = _breakDuration!.inHours % 24;
+      min = _breakDuration!.inMinutes % 60;
+      seconds = _breakDuration!.inSeconds % 60;
+    }
+    
+    return hasExceededBreak
+      ? Text("Exceeded break time: ${hour.toString().padLeft(2, '0')} : ${min.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')}",
+      style: TextStyle(fontSize: 25.0, color: Colors.red[900]))
+      : Text("Remaining break time: ${hour.toString().padLeft(2, '0')} : ${min.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')}",
+      style: TextStyle(fontSize: 25.0, color: Colors.green[800])
     );
   }
 
@@ -116,6 +133,7 @@ class _TimerState extends State<TimerPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             time(),
+            const SizedBox(height: 35.0,),
             breakTime(),
             const SizedBox(width: double.infinity,height: 150.0,),
             Row(
