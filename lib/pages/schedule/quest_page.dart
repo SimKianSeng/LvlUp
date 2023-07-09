@@ -25,11 +25,11 @@ class _QuestState extends State<Quest> {
   }
 
   ///Provides a button that brings user to the generator input page
-  Widget _generatorButton() {
+  Widget _generatorButton(AppUser user) {
     return ElevatedButton(
       style: customButtonStyle(),
       onPressed: () {
-        Navigator.pushNamed(context, '/scheduleInput');
+        Navigator.pushNamed(context, '/scheduleInput', arguments: user);
       },
       child: const Text("Generator"),
     );
@@ -116,7 +116,7 @@ class _QuestState extends State<Quest> {
         height: 50.0,
         backgroundColor: Colors.white30,
         destinations: [
-          _generatorButton(),
+          _generatorButton(user),
           _generateButton(),
         ],
       ),

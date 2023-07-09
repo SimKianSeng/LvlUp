@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
-
-import 'package:time_planner/time_planner.dart';
+import 'package:lvlup/services/firebase/database_service.dart';
 
 ///Generator is a singleton class that takes in the input for the schedule consisting:
 ///modules (ranked), intensity and free sessions.
@@ -39,6 +39,10 @@ class Generator {
   bool hasNoInput() {
     bool noSessionInput = _sessions.every((element) => element.isEmpty);
     return _modules == [] || noSessionInput;
+  }
+
+  void saveToDatabase(AppUser user) {
+    DatabaseService(uid: user.uid).updateGeneratorInputs(_modules, _sessions.expand((element) => element).toList(), _intensity);
   }
 
   void updateModule(String module, int rank) {
@@ -164,7 +168,7 @@ class Generator {
     }
   }
 
-  List<TimePlannerTask> periods() {
+  List<Session> periods() {
     return _sessions.expand((daySessions) => daySessions).toList();
   }
 

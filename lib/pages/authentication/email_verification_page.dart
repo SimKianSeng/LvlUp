@@ -100,7 +100,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Center(
                   child: Text(
-                    'We have sent you a Email on  ${Auth().currentUser?.email}',
+                    'We have sent you an email on  ${Auth().currentUser?.email}',
                     textAlign: TextAlign.center,
                   ),
                 ),

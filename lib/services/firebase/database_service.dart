@@ -18,7 +18,6 @@ class DatabaseService {
 
   ///Update realtime database with the registration of a new user
   static Future createUser(Map<String, Object?> newUser) {
-    // return _database.child('users').update(newUser);
     return _database.child(directory[0]).update(newUser);
   }
 
@@ -34,8 +33,6 @@ class DatabaseService {
     });
   }
 
-  //TODO update database information when evolve, level up, earn exp etc
-
   ///Retrieve the saved quest from firebase
   Stream<List<Session>?> get quest {
     return _database
@@ -50,20 +47,28 @@ class DatabaseService {
     }).toList();
   }
 
-  // ///Update firebase with the current input
-  // Future<void> updateGeneratorInputs(List<String> modules, List<List<Session>> freePeriods, int intensity) {
-  //   //Convert input into a map to update firebase with
-  //   Map<String, dynamic> inputs = {'modules': modules, 'freePeriods': freePeriods, 'intensity': intensity};
+  ///Update firebase with the current input
+  Future<void> updateGeneratorInputs(List<String> modules, List<Session> freePeriods, int intensity) {
+    //Convert freePeriods into a database-friendly type
+    List<Map<String, dynamic>> periods = freePeriods.map((session) => 
+      {
+        'day' : session.dateTime.day,
+        'minutesDuration': session.minutesDuration,
+        'startHour': session.dateTime.hour,
+        'startMin': session.dateTime.minutes,
+      }).toList();
 
-  //   //TODO Update database with modules, intensity and list of free periods
-  //   return _database.child("${directory[2]}/$uid").update(inputs);
-  // }
+    //Convert input into a map to update firebase with
+    Map<String, dynamic> inputs = {'modules': modules, 'freePeriods': periods, 'intensity': intensity};
 
-  // ///Retrieve previous inputs from firebase
-  // Stream<> retrieveGeneratorInputs() {
-  //   //TODO retrieve from database modules, list of freeperiods and intensity
-  //   return _database.child("${directory[2]}/$uid").onValue.map((event) => event.snapshot);
-  // }
+    return _database.child("${directory[2]}/$uid").update(inputs);
+  }
+
+  ///Retrieve previous inputs from firebase
+  Stream retrieveGeneratorInputs() {
+    //TODO retrieve from database modules, list of freeperiods and intensity
+    return _database.child("${directory[2]}/$uid").onValue.map((event) => event.snapshot);
+  }
 
   /// Remove the user data when they delete their account
   Future<void> deleteUserData() async {
@@ -100,14 +105,4 @@ class DatabaseService {
     currentUser.evoImage = currentUser.evoImage!;
     return _database.child('users/$uid').update(currentUser.toJson());
   }
-
-  // Future<void> updateEvoImage(AppUser currentUser) {
-  //   currentUser.evoImage = currentUser.evoImage!;
-  //   return _database.child('users/$uid').update(currentUser.toJson());
-  // }
-
-  // Future<void> updateEvoState(AppUser currentUser) {
-  //   currentUser.evoState = currentUser.evoState! + 1;
-  //   return _database.child('users/$uid').update(currentUser.toJson());
-  // }
 }

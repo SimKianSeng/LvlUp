@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
+import 'package:lvlup/models/app_user.dart';
+import 'package:lvlup/models/session.dart';
+import 'package:lvlup/services/firebase/database_service.dart';
 import 'package:lvlup/widgets/module_row.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
@@ -16,7 +19,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
   final Generator _generator = Generator();
   int _moduleCount = 1;
   int _intensity = 5;
-  List<TimePlannerTask> sessions = [];
+  List<Session> sessions = [];
 
   @override
   void initState() {
@@ -24,11 +27,21 @@ class _ScheduleInputState extends State<ScheduleInput>{
     _generator.reset();
   }
 
+  ///Update freeperiods on the page
   void _updateSession() {
     setState(() {
       sessions.clear();
       sessions.addAll(_generator.periods());
     });
+  }
+ 
+
+  Widget _saveInputs(AppUser user) {
+    return IconButton(
+      onPressed: () {
+        _generator.saveToDatabase(user);
+      }, 
+      icon: const Icon(Icons.save));
   }
 
   Slider _intensityScale() {
@@ -143,13 +156,19 @@ class _ScheduleInputState extends State<ScheduleInput>{
 
   @override
   Widget build(BuildContext context) {
+    final user = ModalRoute.of(context)!.settings.arguments as AppUser;
+
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentNode = FocusScope.of(context);
         currentNode.unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          actions: [
+            _saveInputs(user),
+          ],
+        ),
         body: Container(
           decoration: bgColour,
           child: Column(
