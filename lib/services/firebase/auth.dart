@@ -116,12 +116,8 @@ class Auth {
           email: currentUser!.email!, password: password);
       await currentUser?.reauthenticateWithCredential(credentials);
     }
-    // await DatabaseService(uid: currentUser?.uid)
-    //     .deleteuser(); // called from database class
-    _dbUsersRef.child(currentUser?.uid ?? "").remove();
+    
     DatabaseService(uid: currentUser!.uid).deleteUserData();
     await currentUser?.delete();
-
-    // await currentUser?.delete();
   }
 }

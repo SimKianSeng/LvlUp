@@ -7,16 +7,24 @@ class DatabaseService {
   final String uid;
   static final _database = FirebaseDatabase.instance.ref();
 
+  //Used to help minimise typo error in updating and retrieving from database
+  static final List<String> directory = [
+    "users",
+    "quests",
+    "generator",
+  ];
+
   DatabaseService({required this.uid});
 
   ///Update realtime database with the registration of a new user
   static Future createUser(Map<String, Object?> newUser) {
-    return _database.child('users').update(newUser);
+    // return _database.child('users').update(newUser);
+    return _database.child(directory[0]).update(newUser);
   }
 
   ///Retrieve user data stored in database and convert it into appUser
   Stream<AppUser?> get userData {
-    return _database.child('users/$uid').onValue.map((event) {
+    return _database.child('${directory[0]}/$uid').onValue.map((event) {
       if (event.snapshot.value == null) {
         return null;
       }
@@ -31,7 +39,7 @@ class DatabaseService {
   ///Retrieve the saved quest from firebase
   Stream<List<Session>?> get quest {
     return _database
-        .child('quests/$uid')
+        .child('${directory[1]}/$uid')
         .onValue
         .map((event) => _questFromDatabase(event.snapshot));
   }
@@ -42,9 +50,26 @@ class DatabaseService {
     }).toList();
   }
 
+  // ///Update firebase with the current input
+  // Future<void> updateGeneratorInputs(List<String> modules, List<List<Session>> freePeriods, int intensity) {
+  //   //Convert input into a map to update firebase with
+  //   Map<String, dynamic> inputs = {'modules': modules, 'freePeriods': freePeriods, 'intensity': intensity};
+
+  //   //TODO Update database with modules, intensity and list of free periods
+  //   return _database.child("${directory[2]}/$uid").update(inputs);
+  // }
+
+  // ///Retrieve previous inputs from firebase
+  // Stream<> retrieveGeneratorInputs() {
+  //   //TODO retrieve from database modules, list of freeperiods and intensity
+  //   return _database.child("${directory[2]}/$uid").onValue.map((event) => event.snapshot);
+  // }
+
   /// Remove the user data when they delete their account
-  Future<void> deleteUserData() {
-    return _database.child('quests/$uid').remove();
+  Future<void> deleteUserData() async {
+    await _database.child('${directory[0]}/$uid').remove();
+
+    return _database.child('${directory[1]}/$uid').remove();
   }
 
   ///Update firebase with the newly generated user Quest

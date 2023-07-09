@@ -15,6 +15,10 @@ class ModuleRow extends StatefulWidget {
 class _ModuleRowState extends State<ModuleRow> {
   String module = '';
 
+  bool hasNoInput() {
+    return module == '';
+  }
+
  void updateModule(String module) {
     if (widget.generator.alreadyInput(module)) {
       //module has been input, do not update
@@ -53,6 +57,7 @@ class _ModuleRowState extends State<ModuleRow> {
             height: 35.0,
             child: TextField(
               textAlign: TextAlign.center,
+              autofocus: true,
               onChanged: (value) => updateModule(value),
               decoration: customTextField(),
             ),

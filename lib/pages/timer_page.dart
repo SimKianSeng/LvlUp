@@ -53,6 +53,8 @@ class _TimerState extends State<TimerPage> {
   void _stopTimer() {
     //TODO end the study session and remove it from study sessions for the day in home
     setState(() => _timer!.cancel());
+
+    
     Navigator.pop(context, DateTime.now().difference(_start));
   }
 
