@@ -67,7 +67,14 @@ class DatabaseService {
   ///Retrieve previous inputs from firebase
   Stream retrieveGeneratorInputs() {
     //TODO retrieve from database modules, list of freeperiods and intensity
-    return _database.child("${directory[2]}/$uid").onValue.map((event) => event.snapshot);
+    Future generatorDataSnapshot = _database.child("${directory[2]}/$uid").get();
+
+    Future previousInput = generatorDataSnapshot.then((value) {
+      
+    });
+
+
+    return Stream.empty();
   }
 
   /// Remove the user data when they delete their account

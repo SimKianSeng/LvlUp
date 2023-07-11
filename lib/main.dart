@@ -1,6 +1,5 @@
 import 'package:lvlup/models/app_user.dart';
-import 'package:lvlup/pages/authentication/login_page.dart';
-import 'package:lvlup/pages/authentication/register_page.dart';
+import 'package:lvlup/pages/schedule/edit_quest.dart';
 import 'package:lvlup/pages/schedule/quest_page.dart';
 import 'package:lvlup/pages/schedule/schedule_input.dart';
 import 'package:lvlup/pages/schedule/available_time_input_page.dart';
@@ -37,6 +36,7 @@ class MyApp extends StatelessWidget {
           '/': (context) => const WidgetTree(),
           '/settings': (context) => const Settings(),
           '/scheduleGen': (context) => const Quest(),
+          '/questEdit':(context) => const EditQuest(),
           '/studyStats': (context) => const StudyStats(),
           '/scheduleInput': (context) => const ScheduleInput(),
           '/weeklyInput': (context) => WeeklyInput(),

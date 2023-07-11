@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
-import 'package:lvlup/services/firebase/database_service.dart';
 import 'package:lvlup/widgets/module_row.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
@@ -20,6 +19,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
   int _moduleCount = 1;
   int _intensity = 5;
   List<Session> sessions = [];
+  // List<ModuleRow> modules = <ModuleRow>[];
 
   @override
   void initState() {
@@ -101,12 +101,14 @@ class _ScheduleInputState extends State<ScheduleInput>{
           children: [
             Expanded(
               flex: 6,
-              child: ListView.builder(
+              child: 
+              // ListView(
+              //   children: modules,
+              // )
+              //Listview.builder used as ListView does not seem to update when we add modules
+              ListView.builder(
                 itemCount: _moduleCount,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5.0),
-                  child: ModuleRow(index: index + 1,),
-                )),
+                itemBuilder: (context, index) => ModuleRow(index: index + 1,)),
             ),
             Expanded(
               child: _addModule()

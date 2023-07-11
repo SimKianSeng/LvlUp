@@ -51,8 +51,6 @@ class Session extends TimePlannerTask {
     
     int breakMinutesRemaining = breakDuration() - minutesDelayed;
 
-    //TODO debug edge case when minutesDelayed is greater than breakDuration, ie breakMinutesRemaining is negative
-
     return Duration(minutes: breakMinutesRemaining);
   }
 
@@ -128,5 +126,25 @@ class Session extends TimePlannerTask {
           Text(end.format(context)),
         ],
       );
+  }
+
+  ///Display quest sessions in editable mode for edit_quest page
+  Widget displayEditQuest(BuildContext context) {
+    return ListTile(
+      title: Text(task?? 'No assigned task'),
+      subtitle: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Text("Start: ${startTime().format(context)}"),
+          Text("End: ${endTime().format(context)}"),
+        ],
+      ),
+      trailing: IconButton(
+        onPressed: () {
+          //TODO remove session, edit time or edit task in dialog box
+
+        }, 
+        icon: const Icon(Icons.edit)),
+    );
   }
 }

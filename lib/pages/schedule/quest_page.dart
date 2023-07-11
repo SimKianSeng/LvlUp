@@ -5,7 +5,7 @@ import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
 
-//TODO: add in edit generated quest functionality
+
 //TODO update firebase on module
 class Quest extends StatefulWidget {
   const Quest({super.key});
@@ -22,6 +22,33 @@ class _QuestState extends State<Quest> {
   void initState() {
     super.initState();
     _acceptedQuest = true;
+  }
+
+//TODO: add in edit generated quest functionality
+  Widget _editQuestButton() {
+    return IconButton(
+      onPressed: () async {
+        await Navigator.pushNamed(context, '/questEdit', arguments: _task);
+
+        _acceptedQuest = false; //TODO set to false only if there is edits made
+      }, 
+      icon: const Icon(Icons.edit));
+  }
+
+  Widget _saveQuestButton(AppUser user) {
+    return IconButton(
+      onPressed: _acceptedQuest
+          ? null
+          : () {
+              user.acceptQuest(_task);
+              setState(() {
+                _acceptedQuest = !_acceptedQuest;
+              });
+            },
+      icon: const Icon(Icons.save),
+      color: Colors.black,
+      disabledColor: Colors.grey,
+      tooltip: 'Accept quest');
   }
 
   ///Provides a button that brings user to the generator input page
@@ -93,19 +120,8 @@ class _QuestState extends State<Quest> {
         title: const Text("Quest"),
         centerTitle: true,
         actions: [ 
-          IconButton(
-              onPressed: _acceptedQuest
-                  ? null
-                  : () {
-                      user.acceptQuest(_task);
-                      setState(() {
-                        _acceptedQuest = !_acceptedQuest;
-                      });
-                    },
-              icon: const Icon(Icons.save),
-              color: Colors.black,
-              disabledColor: Colors.grey,
-              tooltip: 'Accept quest')
+          _editQuestButton(),
+          _saveQuestButton(user)
         ],
       ),
       body: Container(
