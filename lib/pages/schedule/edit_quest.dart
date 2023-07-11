@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/session.dart';
 
+
+//TODO update quest_page with the newly updated quest from this page, pass back through navigator?
+//TODO add in edit session actiondialog
+//TODO add in a session, but not clash timing with other sessions
 class EditQuest extends StatefulWidget {
   const EditQuest({super.key});
 
@@ -10,7 +14,7 @@ class EditQuest extends StatefulWidget {
 }
 
 class _EditQuestState extends State<EditQuest> {
-  final List<String> days = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
+  final List<String> _days = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
   int _currentIndex = 0;
   List<Session> _quest = [];
 
@@ -36,7 +40,7 @@ class _EditQuestState extends State<EditQuest> {
                 _currentIndex = index;
               });
             },
-            child: Text(days[index]),
+            child: Text(_days[index]),
             ),
     );
 

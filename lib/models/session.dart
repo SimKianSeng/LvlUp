@@ -128,6 +128,26 @@ class Session extends TimePlannerTask {
       );
   }
 
+
+  AlertDialog _editSession(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Edit session'),
+      content: Placeholder(), //TODO add stuff to change the session info
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          }, 
+          child: const Text('Cancel')),
+        TextButton(
+          onPressed: () {
+            //TODO pop off alertdialog and update the session field
+          }, 
+          child: const Text('Accept changes'))
+      ],
+    );
+  }
+
   ///Display quest sessions in editable mode for edit_quest page
   Widget displayEditQuest(BuildContext context) {
     return ListTile(
@@ -142,7 +162,13 @@ class Session extends TimePlannerTask {
       trailing: IconButton(
         onPressed: () {
           //TODO remove session, edit time or edit task in dialog box
-
+          showDialog(
+            context: context, 
+            builder: (_) {
+              return _editSession(context);
+            },
+            barrierDismissible: false
+            );
         }, 
         icon: const Icon(Icons.edit)),
     );
