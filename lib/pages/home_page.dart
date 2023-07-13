@@ -72,8 +72,9 @@ class _UserDataState extends State<UserData> {
   }
 
   Widget _userData(AppUser currentUser) {
-    int curXp = Xp.getCurXp(currentUser.xp!);
     int curLevel = Xp.getLevel(currentUser.xp!);
+    int curXp = Xp.getCurXp(currentUser.xp!);
+    int curXpCap = Xp.getCurXpCap(currentUser.xp!);
     // int newEvoState = Evolution.getEvolutionStage(currentUser.xp!);
     AppUser updatedUser =
         AppUser.fromJson(currentUser.uid, currentUser.toJson());
@@ -127,9 +128,9 @@ class _UserDataState extends State<UserData> {
                   color: Colors.grey[800],
                   fontWeight: FontWeight.bold,
                   fontSize: 15.0)),
-          Text("$curXp / ${Xp.levelXpCap}"),
+          Text("$curXp / $curXpCap"),
           LinearProgressIndicator(
-            value: curXp / Xp.levelXpCap,
+            value: curXp / curXpCap,
             color: Colors.greenAccent,
             minHeight: 10.00,
           ),
@@ -179,7 +180,7 @@ class _UserDataState extends State<UserData> {
 
   //TODO logic for late start
   IconButton _startSessionButton(BuildContext context, AppUser currentAppUser) {
-    DateTime currentTime = DateTime.now();  
+    DateTime currentTime = DateTime.now();
 
     //Edge case: _dayTasks is empty
     bool taskAvail = _daytasks != null && _daytasks!.isNotEmpty;
@@ -216,9 +217,11 @@ class _UserDataState extends State<UserData> {
     });
 
     Duration duration = endTime.difference(currentTime);
-    Duration breakRemaining = taskAvail ? nextSession!.breakRemaining(currentTime.difference(startTime)) : const Duration();
+    Duration breakRemaining = taskAvail
+        ? nextSession!.breakRemaining(currentTime.difference(startTime))
+        : const Duration();
     // Duration breakRemaining = Duration();
-    
+
     if (duration.inSeconds < 0) {
       // endTime of 1st session is after currentTime
       _updateDayTask(currentAppUser);
@@ -235,7 +238,10 @@ class _UserDataState extends State<UserData> {
           ? () async {
               //TODO: remove the task when timer is stop
               final timeStudied = await Navigator.pushNamed(context, '/timer',
-                  arguments: {'duration': duration, 'break': breakRemaining}) as Duration;
+                  arguments: {
+                    'duration': duration,
+                    'break': breakRemaining
+                  }) as Duration;
 
               setState(() {
                 DatabaseService(uid: currentAppUser.uid)
