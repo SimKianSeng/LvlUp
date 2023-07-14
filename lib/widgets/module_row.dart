@@ -55,11 +55,13 @@ class _ModuleRowState extends State<ModuleRow> {
           SizedBox(
             width: 100.0,
             height: 35.0,
-            child: TextField(
+            //we can use textformfield to accomplish the task of auto populating the input
+            child: TextFormField(
               textAlign: TextAlign.center,
               autofocus: true,
               onChanged: (value) => updateModule(value),
               decoration: customTextField(),
+              initialValue: module,
             ),
           ),
         ],

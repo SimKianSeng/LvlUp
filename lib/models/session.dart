@@ -119,17 +119,15 @@ class Session extends TimePlannerTask {
     return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const Text('Start:'),
-          Text(start.format(context)),
+          Text('Start: ${start.format(context).padLeft(8, '0')}'),
           const SizedBox(width: 50.0,),
-          const Text('End:'),
-          Text(end.format(context)),
+          Text('End: ${end.format(context).padLeft(8, '0')}'),
         ],
       );
   }
 
-
-  AlertDialog _editSession(BuildContext context) {
+  ///Dialog box for user to edit the session
+  AlertDialog _editSessionDialog(BuildContext context) {
     return AlertDialog(
       title: const Text('Edit session'),
       content: Placeholder(), //TODO add stuff to change the session info
@@ -155,8 +153,8 @@ class Session extends TimePlannerTask {
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Text("Start: ${startTime().format(context)}"),
-          Text("End: ${endTime().format(context)}"),
+          Text("Start: ${startTime().format(context).padLeft(8, '0')}"),
+          Text("End: ${endTime().format(context).padLeft(8, '0')}"),
         ],
       ),
       trailing: IconButton(
@@ -165,7 +163,7 @@ class Session extends TimePlannerTask {
           showDialog(
             context: context, 
             builder: (_) {
-              return _editSession(context);
+              return _editSessionDialog(context);
             },
             barrierDismissible: false
             );

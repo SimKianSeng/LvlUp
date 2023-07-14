@@ -1,7 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/game_logic/xp.dart';
+import 'package:time_planner/time_planner.dart';
 
 class DatabaseService {
   final String uid;
@@ -59,29 +61,66 @@ class DatabaseService {
       }).toList();
 
     //Convert input into a map to update firebase with
-    Map<String, dynamic> inputs = {'modules': modules, 'freePeriods': periods, 'intensity': intensity};
+    final Map<String, dynamic> inputs = {'modules': modules, 'freePeriods': periods, 'intensity': intensity};
 
     return _database.child("${directory[2]}/$uid").update(inputs);
   }
 
   ///Retrieve previous inputs from firebase
-  Stream retrieveGeneratorInputs() {
+  Future<Map<String, dynamic>> retrieveGeneratorInputs() async {
     //TODO retrieve from database modules, list of freeperiods and intensity
-    Future generatorDataSnapshot = _database.child("${directory[2]}/$uid").get();
+    final String userBranch = '${directory[2]}/$uid';
 
-    Future previousInput = generatorDataSnapshot.then((value) {
-      
+    return _database.child(userBranch).get()
+    .then((snapshot) {
+      if (!(snapshot.exists)) {
+        List<String> modules = [];
+        List<Session> freePeriods = [];
+
+        //User has no previous data saved for the generator
+        return {'modules' : modules, 'freePeriods' : freePeriods, 'intensity' : 5};
+      }
+
+      return _retrieveInputs(snapshot);
     });
+  }
 
+  Future<Map<String, dynamic>> _retrieveInputs (DataSnapshot dataSnapShot) async {
 
-    return Stream.empty();
+    Map<dynamic, dynamic> data = dataSnapShot.value as Map<dynamic, dynamic>;
+    
+    List<Object?> moduleData = data['modules'];
+    List<Object?> freePeriodData = data['freePeriods'];
+
+    int intensity = data['intensity'];
+
+    List<String> modules = moduleData.map((e) => e.toString()).toList();
+
+    List<Session> freePeriods = freePeriodData
+      .map((e) => e as Map<dynamic, dynamic>)
+      .map((e) {
+        return Session(
+          minutesDuration: e['minutesDuration'],
+          dateTime: TimePlannerDateTime(day: e['day'], hour: e['startHour'], minutes: e['startMin'])
+        );
+      })
+      .toList();
+    
+    return {
+      'modules' : modules, 'freePeriods' : freePeriods, 'intensity' : intensity
+      };
   }
 
   /// Remove the user data when they delete their account
   Future<void> deleteUserData() async {
+    //Remove user data
     await _database.child('${directory[0]}/$uid').remove();
 
-    return _database.child('${directory[1]}/$uid').remove();
+    //Remove quest data
+    await _database.child('${directory[1]}/$uid').remove();
+
+    //Finally remove genereator data
+    return _database.child('${directory[2]}/$uid').remove();
   }
 
   ///Update firebase with the newly generated user Quest

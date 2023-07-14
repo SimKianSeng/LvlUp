@@ -1,7 +1,9 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
+import 'package:lvlup/services/firebase/database_service.dart';
 import 'package:lvlup/widgets/module_row.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
@@ -19,12 +21,26 @@ class _ScheduleInputState extends State<ScheduleInput>{
   int _moduleCount = 1;
   int _intensity = 5;
   List<Session> sessions = [];
-  // List<ModuleRow> modules = <ModuleRow>[];
 
   @override
   void initState() {
     super.initState();
-    _generator.reset();
+    _generator.reset();  //TODO replace with _populateFields
+  }
+
+  void _populateFields(String uid) async {
+    Map<String, dynamic> inputs = await DatabaseService(uid: uid).retrieveGeneratorInputs();
+
+
+    sessions.clear;
+    sessions.addAll(inputs['freePeriods']);
+
+    _intensity = inputs['intensity'];
+
+    List<String> modules = inputs['modules'];
+    _moduleCount = modules.length;
+
+    //TODO update moduleRows with modules
   }
 
   ///Update freeperiods on the page
@@ -33,6 +49,20 @@ class _ScheduleInputState extends State<ScheduleInput>{
       sessions.clear();
       sessions.addAll(_generator.periods());
     });
+  }
+
+  Widget resetButton() {
+    return TextButton(
+      onPressed: () {
+        _generator.reset();
+        setState(() {
+          //TODO implement smth so that _populateField won't be called when we reset
+          _moduleCount = 1;
+          _intensity = 5;
+          sessions.clear();
+        });
+      }, 
+      child: const Text('Reset'));
   }
  
 
@@ -93,7 +123,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
         //         itemBuilder: (context, index) => ModuleRow(key: Key(index.toString()), index: index + 1,)),
         //     ),
         //     Expanded(
-        //       child: _addModule()
+        //       child: _addModuleButton()
         //     ),
         //   ]
         // ),
@@ -111,7 +141,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
                 itemBuilder: (context, index) => ModuleRow(index: index + 1,)),
             ),
             Expanded(
-              child: _addModule()
+              child: _addModuleButton()
             ),
           ]
         ),
@@ -119,7 +149,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
     );
   }
 
-  IconButton _addModule() {
+  IconButton _addModuleButton() {
     return IconButton(
       onPressed: () {
         setState(() {
@@ -159,6 +189,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
   @override
   Widget build(BuildContext context) {
     final user = ModalRoute.of(context)!.settings.arguments as AppUser;
+    _populateFields(user.uid); //TODO placing this here is affecting the page, unable to add modules and all
 
     return GestureDetector(
       onTap: () {
