@@ -1,9 +1,7 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
-import 'package:lvlup/services/firebase/database_service.dart';
 import 'package:lvlup/widgets/module_row.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
@@ -16,6 +14,7 @@ class ScheduleInput extends StatefulWidget {
   State<ScheduleInput> createState() => _ScheduleInputState();
 }
 
+//TODO link up UI with whatever is in generator upon building
 class _ScheduleInputState extends State<ScheduleInput>{
   final Generator _generator = Generator();
   int _moduleCount = 1;
@@ -25,13 +24,14 @@ class _ScheduleInputState extends State<ScheduleInput>{
   @override
   void initState() {
     super.initState();
-    _generator.reset();  //TODO replace with _populateFields
+    //TODO replace _generator.reset() with _populateFields
+    // _generator.reset();
   }
 
+  //TODO _populateFields based on current generator inputs
+  /*
+  ///Ensures that the page is displaying the same inputs that generator already has  
   void _populateFields(String uid) async {
-    Map<String, dynamic> inputs = await DatabaseService(uid: uid).retrieveGeneratorInputs();
-
-
     sessions.clear;
     sessions.addAll(inputs['freePeriods']);
 
@@ -42,6 +42,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
 
     //TODO update moduleRows with modules
   }
+  */
 
   ///Update freeperiods on the page
   void _updateSession() {
@@ -189,7 +190,6 @@ class _ScheduleInputState extends State<ScheduleInput>{
   @override
   Widget build(BuildContext context) {
     final user = ModalRoute.of(context)!.settings.arguments as AppUser;
-    _populateFields(user.uid); //TODO placing this here is affecting the page, unable to add modules and all
 
     return GestureDetector(
       onTap: () {

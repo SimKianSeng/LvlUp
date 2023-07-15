@@ -60,6 +60,10 @@ class AppUser {
     _quest = quest;
   }
 
+  Future<Map<String, dynamic>> retrievePreviousGenInputs() {
+    return DatabaseService(uid: uid).retrieveGeneratorInputs();
+  }
+
   List<Session> getSavedQuest() {
     return _quest ?? [];
   }

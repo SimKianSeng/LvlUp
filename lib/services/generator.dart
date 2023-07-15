@@ -18,6 +18,7 @@ class Generator {
   List<String> _modules = [];
   int _intensity = 5;
   List<List<Session>> _sessions = List.generate(7, (index) => []);
+  bool retrievedPreviousData = false; //To track if generator is currently using saved inputs from database
 
   factory Generator() {
     return _instance;
@@ -30,6 +31,23 @@ class Generator {
     _modules = [];
     _intensity = 5;
     _sessions = List.generate(7, (index) => []);
+    retrievedPreviousData = false;
+  }
+
+  void retrievePreviousData(Map<String, dynamic> inputs) async {
+    //Update _sessions
+    List<Session> previousSession = inputs['freePeriods'] as List<Session>;
+    for (Session session in previousSession) {
+      _sessions[session.dateTime.day].add(session);
+    }
+
+    //update _intensity
+    _intensity = inputs['intensity'];
+    
+    //Update _modules
+    _modules = inputs['modules'];
+
+    retrievedPreviousData = true;
   }
 
   bool alreadyInput(String module) {

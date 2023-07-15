@@ -3,6 +3,7 @@ import 'package:firebase_database_mocks/firebase_database_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
+import 'package:time_planner/time_planner.dart';
 
 class UserRepo {
   FirebaseDatabase firebaseDatabase;
@@ -31,39 +32,39 @@ class UserRepo {
     return datasnapshot.then((snapshot) {
         if (!(snapshot.exists)) {
           //Default values for the 3 inputs
-          return {'modules': [], 'freePeriods': [], 'intensity': 5};
+          List<Session> freePeriods = [];
+          List<String> modules = [];
+          
+          return {'modules': modules, 'freePeriods': freePeriods, 'intensity': 5};
         }
 
         return _retrieveInputs(snapshot);
       });
   }
 
-  Map<String, dynamic> _retrieveInputs(DataSnapshot snapshot) {
-    List<DataSnapshot> data = snapshot.children.toList();
-
-    //Some error regarding range here
-
-    // List<Session> freePeriods = data[0].children
-    //   .map((sessionDataSnapShot) {
-
-    //     Map<String, dynamic> sessionData = sessionDataSnapShot.value as Map<String, dynamic>;
-        
-    //     return Session(
-    //       minutesDuration: sessionData['minutesDuration'], 
-    //       dateTime: TimePlannerDateTime(day: sessionData['day'], hour: sessionData['startHour'], minutes: sessionData['startMin'])
-    //     );
-    //     })
-    //   .toList();
-    List<Session> freePeriods = [];
-
-    int intensity = data[1].value as int;
-
-    //Some error regarding range here
-    Map<dynamic, String> moduleBranch = data[2].value as Map<dynamic, String>;
-    List<String> modules = moduleBranch.values.toList();
-    // List<String> modules = [];
+  Map<String, dynamic> _retrieveInputs(DataSnapshot dataSnapShot) {
+    Map<dynamic, dynamic> data = dataSnapShot.value as Map<dynamic, dynamic>;
     
-    return {'modules': modules, 'freePeriods': freePeriods, 'intensity': intensity};
+    List<Object?> moduleData = data['modules'];
+    List<Object?> freePeriodData = data['freePeriods'];
+
+    int intensity = data['intensity'];
+
+    List<String> modules = moduleData.map((e) => e.toString()).toList();
+
+    List<Session> freePeriods = freePeriodData
+      .map((e) => e as Map<dynamic, dynamic>)
+      .map((e) {
+        return Session(
+          minutesDuration: e['minutesDuration'],
+          dateTime: TimePlannerDateTime(day: e['day'], hour: e['startHour'], minutes: e['startMin'])
+        );
+      })
+      .toList();
+    
+    return {
+      'modules' : modules, 'freePeriods' : freePeriods, 'intensity' : intensity
+      };
   }
 }
 
@@ -135,9 +136,18 @@ void main() {
     });
   });
 
-  group('Updating and retrieving generator inputs', () {
-    test('Retrieval of inputs', () async {
+  group('Retrieving generator inputs', () {
+    
+    test('Retrieval of modules', () async {
       final data = await userRepo.getGeneratorInputs(uid);
+      
+      expect(['TEST1', 'TEST2', 'TEST3'], data['modules']);
+    });
+
+    test('Retrieval of intensity', () async {
+      final data = await userRepo.getGeneratorInputs(uid);
+
+      expect(10, data['intensity']);
     });
   });
 

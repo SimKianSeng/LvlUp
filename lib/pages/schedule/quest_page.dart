@@ -16,12 +16,17 @@ class Quest extends StatefulWidget {
 
 class _QuestState extends State<Quest> {
   List<Session> _task = [];
+  final Generator _generator = Generator();
   late bool _acceptedQuest;
 
   @override
   void initState() {
     super.initState();
     _acceptedQuest = true;
+  }
+
+  Future<void> _setUpGenerator(AppUser user) async {
+    await user.retrievePreviousGenInputs().then((value) => _generator.retrievePreviousData(value));
   }
 
 //TODO: add in edit generated quest functionality
@@ -67,14 +72,14 @@ class _QuestState extends State<Quest> {
     return ElevatedButton(
       style: customButtonStyle(),
       onPressed: () {
-        if (Generator().hasNoInput()) {
+        if (_generator.hasNoInput()) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text(
                   "Please input your modules and free periods in generator")));
         } else {
           setState(() {
             _task.clear();
-            _task.addAll(Generator().generateSchedule());
+            _task.addAll(_generator.generateSchedule());
             _acceptedQuest = false;
           });
         }
@@ -110,10 +115,15 @@ class _QuestState extends State<Quest> {
   Widget build(BuildContext context) {
     final user = ModalRoute.of(context)!.settings.arguments as AppUser;
 
+    if (!(_generator.retrievedPreviousData)) {
+      //Update generator with the saved input if it has no input and page is build
+      _setUpGenerator(user);
+    }
+
     if (_task.isEmpty) {
       _task.addAll(user.getSavedQuest());
     }
-
+    
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
