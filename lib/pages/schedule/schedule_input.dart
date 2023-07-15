@@ -17,6 +17,7 @@ class ScheduleInput extends StatefulWidget {
 //TODO link up UI with whatever is in generator upon building
 class _ScheduleInputState extends State<ScheduleInput>{
   final Generator _generator = Generator();
+  List<String> _modules = [];
   int _moduleCount = 1;
   int _intensity = 5;
   List<Session> sessions = [];
@@ -24,25 +25,23 @@ class _ScheduleInputState extends State<ScheduleInput>{
   @override
   void initState() {
     super.initState();
-    //TODO replace _generator.reset() with _populateFields
-    // _generator.reset();
+    _populateFields();
   }
 
-  //TODO _populateFields based on current generator inputs
-  /*
-  ///Ensures that the page is displaying the same inputs that generator already has  
-  void _populateFields(String uid) async {
-    sessions.clear;
-    sessions.addAll(inputs['freePeriods']);
+  //TODO _populateFields based on current generator inputs, can possibly be used in both initstate and reset
+  ///Ensures that the page is displaying the same inputs that generator already has
+  void _populateFields() {
+    //TODO some UI debugging to avoid showing empty fields or duplicate
+    _modules = _generator.modules;
+    _moduleCount = _modules.length;
+    
+    //Update sessions
+    sessions.clear();
+    sessions.addAll(_generator.periods());
 
-    _intensity = inputs['intensity'];
-
-    List<String> modules = inputs['modules'];
-    _moduleCount = modules.length;
-
-    //TODO update moduleRows with modules
+    //Update intensity
+    _intensity = _generator.intensity;    
   }
-  */
 
   ///Update freeperiods on the page
   void _updateSession() {
@@ -52,25 +51,23 @@ class _ScheduleInputState extends State<ScheduleInput>{
     });
   }
 
+  //TODO Reset both generator and update UI fields to match generator
   Widget resetButton() {
     return TextButton(
       onPressed: () {
         _generator.reset();
         setState(() {
-          //TODO implement smth so that _populateField won't be called when we reset
-          _moduleCount = 1;
-          _intensity = 5;
-          sessions.clear();
+          _populateFields();
         });
       }, 
-      child: const Text('Reset'));
+      child: const Text('Reset generator', style: TextStyle(color: Colors.black),));
   }
  
 
   Widget _saveInputs(AppUser user) {
     return IconButton(
       onPressed: () {
-        _generator.saveToDatabase(user);
+        _generator.saveToDatabase(user); //TODO debug to avoid uploading 'duplicate'
       }, 
       icon: const Icon(Icons.save));
   }
@@ -139,7 +136,9 @@ class _ScheduleInputState extends State<ScheduleInput>{
               //Listview.builder used as ListView does not seem to update when we add modules
               ListView.builder(
                 itemCount: _moduleCount,
-                itemBuilder: (context, index) => ModuleRow(index: index + 1,)),
+                itemBuilder: (context, index) => ModuleRow(
+                  index: index + 1, 
+                  originalInput: _modules.length > index ? _modules[index] : '',)),
             ),
             Expanded(
               child: _addModuleButton()
@@ -199,6 +198,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
       child: Scaffold(
         appBar: AppBar(
           actions: [
+            resetButton(),
             _saveInputs(user),
           ],
         ),

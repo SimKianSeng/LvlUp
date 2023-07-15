@@ -5,8 +5,9 @@ import 'package:lvlup/services/generator.dart';
 class ModuleRow extends StatefulWidget {
   final int index;
   final Generator generator = Generator();
+  final String originalInput;
 
-  ModuleRow({required this.index, super.key});
+  ModuleRow({required this.index, this.originalInput = '', super.key});
 
   @override
   State<ModuleRow> createState() => _ModuleRowState();
@@ -44,6 +45,7 @@ class _ModuleRowState extends State<ModuleRow> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Row(
@@ -61,7 +63,7 @@ class _ModuleRowState extends State<ModuleRow> {
               autofocus: true,
               onChanged: (value) => updateModule(value),
               decoration: customTextField(),
-              initialValue: module,
+              initialValue: widget.originalInput,
             ),
           ),
         ],

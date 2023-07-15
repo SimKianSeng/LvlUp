@@ -10,7 +10,6 @@ import 'package:lvlup/services/firebase/database_service.dart';
 ///and distribute the modules across the free sessions based on level of intensity
 
 class Generator {
-  //TODO link to firebase and retrieve saved inputs for every access
   static final Generator _instance = Generator._internal();
   static const freePeriod = 'free';
   static const duplicate = 'duplicate';
@@ -26,7 +25,6 @@ class Generator {
 
   Generator._internal();
 
-  //TODO set this as a button on generator page
   void reset() {
     _modules = [];
     _intensity = 5;
@@ -35,7 +33,10 @@ class Generator {
   }
 
   void retrievePreviousData(Map<String, dynamic> inputs) async {
-    //Update _sessions
+    //Update _sessions to be that in previous inputs
+    for (List<Session> daySessions in _sessions) {
+      daySessions.clear();
+    }
     List<Session> previousSession = inputs['freePeriods'] as List<Session>;
     for (Session session in previousSession) {
       _sessions[session.dateTime.day].add(session);
@@ -50,6 +51,14 @@ class Generator {
     retrievedPreviousData = true;
   }
 
+  int get intensity {
+    return _intensity;
+  }
+
+  List<String> get modules {
+    return _modules.where((module) => module != '' && module != duplicate).toList();
+  }
+
   bool alreadyInput(String module) {
     return _modules.contains(module.toUpperCase());
   }
@@ -60,7 +69,12 @@ class Generator {
   }
 
   void saveToDatabase(AppUser user) {
-    DatabaseService(uid: user.uid).updateGeneratorInputs(_modules, _sessions.expand((element) => element).toList(), _intensity);
+    DatabaseService(uid: user.uid)
+      .updateGeneratorInputs(
+        _modules.where((module) => module != '' && module != 'duplicate').toList(),
+        _sessions.expand((element) => element).toList(), 
+        _intensity
+        );
   }
 
   void updateModule(String module, int rank) {
@@ -104,7 +118,6 @@ class Generator {
   }
 
   @visibleForTesting
-
   ///Remove sessions that share the same time periods, ie same start time and duration
   List<Session> removeDuplicateSessions(List<Session> sessions) {
     int current = 0;
@@ -186,6 +199,7 @@ class Generator {
     }
   }
 
+  ///Retrieve the free periods that has been input in generator
   List<Session> periods() {
     return _sessions.expand((daySessions) => daySessions).toList();
   }
