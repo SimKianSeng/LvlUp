@@ -20,6 +20,8 @@ class _ScheduleInputState extends State<ScheduleInput>{
   int _moduleCount = 1;
   int _intensity = 5;
   List<Session> sessions = [];
+  FocusNode? focusNode;
+  final scrollController = ScrollController();
 
   @override
   void initState() {
@@ -132,10 +134,12 @@ class _ScheduleInputState extends State<ScheduleInput>{
             Expanded(
               flex: 6,
               child: ListView.builder(
+                controller: scrollController,
                 itemCount: _moduleCount,
                 itemBuilder: (context, index) => ModuleRow(
                   index: index + 1, 
-                  originalInput: _modules.length > index ? _modules[index] : '',)),
+                  originalInput: _modules.length > index ? _modules[index] : '',
+                  focusNode: index == _moduleCount - 1 ? focusNode : null)),
             ),
             Expanded(
               child: _addModuleButton()
@@ -151,6 +155,19 @@ class _ScheduleInputState extends State<ScheduleInput>{
       onPressed: () {
         setState(() {
           _moduleCount += 1;
+
+          //Switch focus to newly added moduleRow
+          if (focusNode != null) {
+            focusNode!.unfocus();
+          }
+          focusNode = FocusNode();
+          focusNode!.requestFocus();
+
+          //Scroll to newly added moduleRow
+          scrollController.animateTo(
+            scrollController.position.maxScrollExtent, 
+            duration: const Duration(milliseconds: 300), 
+            curve: Curves.easeOut);
         });
       },
       icon: const Icon(Icons.add)
