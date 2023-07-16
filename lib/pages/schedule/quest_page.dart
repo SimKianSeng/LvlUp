@@ -121,6 +121,7 @@ class _QuestState extends State<Quest> {
     }
 
     if (_task.isEmpty) {
+      //TODO bug - when 'generate' generates 0 tasks, will revert back to the one in database
       _task.addAll(user.getSavedQuest());
     }
     

@@ -14,7 +14,6 @@ class ScheduleInput extends StatefulWidget {
   State<ScheduleInput> createState() => _ScheduleInputState();
 }
 
-//TODO link up UI with whatever is in generator upon building
 class _ScheduleInputState extends State<ScheduleInput>{
   final Generator _generator = Generator();
   List<String> _modules = [];
@@ -28,12 +27,15 @@ class _ScheduleInputState extends State<ScheduleInput>{
     _populateFields();
   }
 
-  //TODO _populateFields based on current generator inputs, can possibly be used in both initstate and reset
   ///Ensures that the page is displaying the same inputs that generator already has
   void _populateFields() {
-    //TODO some UI debugging to avoid showing empty fields or duplicate
+    //Update modules
     _modules = _generator.modules;
     _moduleCount = _modules.length;
+
+    //TODO feature to make input more inuitive - bug encountered is that initValue for the textform is not cleared
+    //What this does is that if there are no modules input during set up of the page, it will show only 1 moduleRow with initValue ''
+    // _moduleCount = _modules.isEmpty ? 1: _modules.length;
     
     //Update sessions
     sessions.clear();
@@ -51,7 +53,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
     });
   }
 
-  //TODO Reset both generator and update UI fields to match generator
+  ///Reset generator and input fields
   Widget resetButton() {
     return TextButton(
       onPressed: () {
@@ -67,7 +69,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
   Widget _saveInputs(AppUser user) {
     return IconButton(
       onPressed: () {
-        _generator.saveToDatabase(user); //TODO debug to avoid uploading 'duplicate'
+        _generator.saveToDatabase(user);
       }, 
       icon: const Icon(Icons.save));
   }
@@ -101,7 +103,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
     return Expanded(
       child: Container(
         decoration: contentContainerColour(),
-        //TODO: after settling other main stuff
+        //TODO: refinement
 
         // child: Column(
         //   children: [
@@ -129,12 +131,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
           children: [
             Expanded(
               flex: 6,
-              child: 
-              // ListView(
-              //   children: modules,
-              // )
-              //Listview.builder used as ListView does not seem to update when we add modules
-              ListView.builder(
+              child: ListView.builder(
                 itemCount: _moduleCount,
                 itemBuilder: (context, index) => ModuleRow(
                   index: index + 1, 
@@ -221,7 +218,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
                       'Add free period',
                       style: TextStyle(
                         color: Colors.blue[100]
-                      ),)),
+                      ))),
                 ],
               ),
               _weeklyInput(),
@@ -236,7 +233,6 @@ class _ScheduleInputState extends State<ScheduleInput>{
                   )
                   ]),
               _intensityScale(),
-              // _check(),
             ],
           ),
         ),
