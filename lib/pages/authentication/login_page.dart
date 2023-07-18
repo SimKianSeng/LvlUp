@@ -97,12 +97,16 @@ class _LoginPageState extends ParentState {
             forgotPasswordButton(),
             TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            const RegisterPage()), //TODO make use of authentication page
-                  );
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const RegisterPage()), //TODO make use of authentication page
+                    );
+                  }
                 },
                 child: const Text("Register instead")),
           ],

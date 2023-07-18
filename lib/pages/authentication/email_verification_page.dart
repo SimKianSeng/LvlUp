@@ -43,9 +43,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       };
 
       DatabaseService.createUser(contact).whenComplete(() {
-//To use Navigator.pop
         Navigator.push(
-          context, //TODO: make use of widget tree and streamProvider isntead of pushing onto navigation stack
+          context,
           MaterialPageRoute(
             builder: (ctx) => const HomePage(),
           ),
@@ -70,15 +69,15 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
             onPressed: () async {
               timer?.cancel();
               await Auth().deleteUser();
-              // Navigator.pop(context);
               if (Navigator.canPop(context)) {
                 Navigator.pop(context);
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => const RegisterPage(),
+                    ));
               }
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (ctx) => const RegisterPage(),
-                  ));
             },
           ),
           title: const Text("Verify email"),

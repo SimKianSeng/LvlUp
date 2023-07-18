@@ -50,18 +50,24 @@ class DatabaseService {
   }
 
   ///Update firebase with the current input
-  Future<void> updateGeneratorInputs(List<String> modules, List<Session> freePeriods, int intensity) {
+  Future<void> updateGeneratorInputs(
+      List<String> modules, List<Session> freePeriods, int intensity) {
     //Convert freePeriods into a database-friendly type
-    List<Map<String, dynamic>> periods = freePeriods.map((session) => 
-      {
-        'day' : session.dateTime.day,
-        'minutesDuration': session.minutesDuration,
-        'startHour': session.dateTime.hour,
-        'startMin': session.dateTime.minutes,
-      }).toList();
+    List<Map<String, dynamic>> periods = freePeriods
+        .map((session) => {
+              'day': session.dateTime.day,
+              'minutesDuration': session.minutesDuration,
+              'startHour': session.dateTime.hour,
+              'startMin': session.dateTime.minutes,
+            })
+        .toList();
 
     //Convert input into a map to update firebase with
-    final Map<String, dynamic> inputs = {'modules': modules, 'freePeriods': periods, 'intensity': intensity};
+    final Map<String, dynamic> inputs = {
+      'modules': modules,
+      'freePeriods': periods,
+      'intensity': intensity
+    };
 
     return _database.child("${directory[2]}/$uid").update(inputs);
   }
@@ -71,24 +77,23 @@ class DatabaseService {
     //TODO retrieve from database modules, list of freeperiods and intensity
     final String userBranch = '${directory[2]}/$uid';
 
-    return _database.child(userBranch).get()
-    .then((snapshot) {
+    return _database.child(userBranch).get().then((snapshot) {
       if (!(snapshot.exists)) {
         List<String> modules = [];
         List<Session> freePeriods = [];
 
         //User has no previous data saved for the generator
-        return {'modules' : modules, 'freePeriods' : freePeriods, 'intensity' : 5};
+        return {'modules': modules, 'freePeriods': freePeriods, 'intensity': 5};
       }
 
       return _retrieveInputs(snapshot);
     });
   }
 
-  Future<Map<String, dynamic>> _retrieveInputs (DataSnapshot dataSnapShot) async {
-
+  Future<Map<String, dynamic>> _retrieveInputs(
+      DataSnapshot dataSnapShot) async {
     Map<dynamic, dynamic> data = dataSnapShot.value as Map<dynamic, dynamic>;
-    
+
     List<Object?> moduleData = data['modules'];
     List<Object?> freePeriodData = data['freePeriods'];
 
@@ -96,19 +101,19 @@ class DatabaseService {
 
     List<String> modules = moduleData.map((e) => e.toString()).toList();
 
-    List<Session> freePeriods = freePeriodData
-      .map((e) => e as Map<dynamic, dynamic>)
-      .map((e) {
-        return Session(
+    List<Session> freePeriods =
+        freePeriodData.map((e) => e as Map<dynamic, dynamic>).map((e) {
+      return Session(
           minutesDuration: e['minutesDuration'],
-          dateTime: TimePlannerDateTime(day: e['day'], hour: e['startHour'], minutes: e['startMin'])
-        );
-      })
-      .toList();
-    
+          dateTime: TimePlannerDateTime(
+              day: e['day'], hour: e['startHour'], minutes: e['startMin']));
+    }).toList();
+
     return {
-      'modules' : modules, 'freePeriods' : freePeriods, 'intensity' : intensity
-      };
+      'modules': modules,
+      'freePeriods': freePeriods,
+      'intensity': intensity
+    };
   }
 
   /// Remove the user data when they delete their account
@@ -147,8 +152,9 @@ class DatabaseService {
 
   Future<void> evolve(AppUser currentUser, String imagePath) {
     currentUser.evoState = currentUser.evoState! + 1;
-    currentUser.evoImage = currentUser.evoImage!;
-    currentUser.evoImage = currentUser.evoImage!;
+    // currentUser.evoImage = currentUser.evoImage!;
+    // currentUser.evoImage = currentUser.evoImage!;
+    // currentUser.characterName = currentUser.evoImage!;
     return _database.child('users/$uid').update(currentUser.toJson());
   }
 }

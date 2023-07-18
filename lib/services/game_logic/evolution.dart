@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:lvlup/services/game_logic/xp.dart';
 import 'package:lvlup/models/app_user.dart';
+import 'package:lvlup/utils/string_extensions.dart';
 import 'package:lvlup/services/firebase/database_service.dart';
 
 class Evolution {
@@ -87,7 +88,7 @@ class Evolution {
       String filename = basename(imagePath);
       filename = filename.substring(0, filename.length - 4);
       AppUser appUser = AppUser.fromJson(currentUser.uid, currentUser.toJson());
-      appUser.characterName = filename;
+      appUser.characterName = filename.replaceAll("_", " ").toTitleCase();
       appUser.evoImage = imagePath;
 
       widgets.add(
