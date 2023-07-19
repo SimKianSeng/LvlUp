@@ -90,13 +90,15 @@ class _RegisterPageState extends ParentState {
             submitButton(),
             TextButton(
                 onPressed: () {
-                  // Navigator.pop(context);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        //TODO navigator stack will just keep stacking if we keep switching between the 2 page, to rely on authentication.dart
-                        builder: (ctx) => const LoginPage(),
-                      ));
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (ctx) => const LoginPage(),
+                        ));
+                  }
                 },
                 child: const Text("login instead")),
           ],
