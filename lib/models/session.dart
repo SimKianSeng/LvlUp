@@ -126,49 +126,42 @@ class Session extends TimePlannerTask {
       );
   }
 
-  ///Dialog box for user to edit the session
-  AlertDialog _editSessionDialog(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Edit session'),
-      content: Placeholder(), //TODO add stuff to change the session info
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          }, 
-          child: const Text('Cancel')),
-        TextButton(
-          onPressed: () {
-            //TODO pop off alertdialog and update the session field
-          }, 
-          child: const Text('Accept changes'))
-      ],
-    );
-  }
-
   ///Display quest sessions in editable mode for edit_quest page
-  Widget displayEditQuest(BuildContext context) {
-    return ListTile(
-      title: Text(task?? 'No assigned task'),
-      subtitle: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Text("Start: ${startTime().format(context).padLeft(8, '0')}"),
-          Text("End: ${endTime().format(context).padLeft(8, '0')}"),
-        ],
-      ),
-      trailing: IconButton(
-        onPressed: () {
-          //TODO remove session, edit time or edit task in dialog box
-          showDialog(
-            context: context, 
-            builder: (_) {
-              return _editSessionDialog(context);
-            },
-            barrierDismissible: false
-            );
-        }, 
-        icon: const Icon(Icons.edit)),
-    );
-  }
+  // Widget displayEditQuest(BuildContext context, List<Session> quest) {
+  //   return ListTile(
+  //     title: Text(task?? 'No assigned task'),
+  //     subtitle: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //       children: [
+  //         Text("Start: ${startTime().format(context).padLeft(8, '0')}"),
+  //         Text("End: ${endTime().format(context).padLeft(8, '0')}"),
+  //       ],
+  //     ),
+  //     trailing: IconButton(
+  //       onPressed: () async {
+  //         Session? newSession = await showDialog(
+  //           context: context, 
+  //           builder: (_) => EditSessionDialog(
+  //               originalTask: task ?? '',
+  //               originalMinutesDuration: minutesDuration,
+  //               startTime: dateTime
+  //             ),
+  //           barrierDismissible: false
+  //         );
+
+  //         if (newSession == null) {
+  //           //Delete
+  //           print('deleting');
+  //           quest.remove(this); //need setstate in the page to see updates
+  //         } else {
+  //           //Replace this session with newSession
+  //           print(quest[quest.indexOf(this)] == this);
+  //           quest.replaceRange(quest.indexOf(this), quest.indexOf(this) + 1, [newSession]);
+  //           // quest[quest.indexOf(this)] = newSession;
+  //           //Seems like changing the session will change this
+  //         }
+  //       }, 
+  //       icon: const Icon(Icons.edit)),
+  //   );
+  // }
 }

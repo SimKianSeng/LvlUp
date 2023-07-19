@@ -29,11 +29,21 @@ class _QuestState extends State<Quest> {
     await user.retrievePreviousGenInputs().then((value) => _generator.retrievePreviousData(value));
   }
 
-//TODO: add in edit generated quest functionality
+  //TODO error while returning
   Widget _editQuestButton() {
     return IconButton(
       onPressed: () async {
+        //TODO quest is not updating after popping edit page
         await Navigator.pushNamed(context, '/questEdit', arguments: _task);
+
+        setState(() {
+          
+        });
+        // .then((editedQuest) {
+        //   _task.clear();
+        //   print('added edited quest');
+        //   _task.addAll(editedQuest as List<Session>);
+        // });
 
         _acceptedQuest = false; //TODO set to false only if there is edits made
       }, 

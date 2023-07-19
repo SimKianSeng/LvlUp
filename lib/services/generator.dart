@@ -91,6 +91,7 @@ class Generator {
     }
 
     //TODO debug, not touching previous ModuleRows and filling the latest one will only result in error
+    //Maybe if there is nothing inserted yet, we can just put a placeholder in there that will also be removed from the generating/ saving etc
     _modules.insert(rank - 1, module.toUpperCase());
   }
 
