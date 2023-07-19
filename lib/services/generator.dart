@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
+import 'package:lvlup/utils/timeofday_extensions.dart';
 import 'package:lvlup/services/firebase/database_service.dart';
 
 ///Generator is a singleton class that takes in the input for the schedule consisting:

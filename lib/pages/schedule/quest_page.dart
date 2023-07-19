@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/app_user.dart';
+import 'package:lvlup/models/quest.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
 
 
-//TODO update firebase on module
-class Quest extends StatefulWidget {
-  const Quest({super.key});
+class QuestPage extends StatefulWidget {
+  const QuestPage({super.key});
 
   @override
-  State<Quest> createState() => _QuestState();
+  State<QuestPage> createState() => _QuestPageState();
 }
 
-class _QuestState extends State<Quest> {
+class _QuestPageState extends State<QuestPage> {
   List<Session> _task = [];
   final Generator _generator = Generator();
   late bool _acceptedQuest;
@@ -29,23 +29,19 @@ class _QuestState extends State<Quest> {
     await user.retrievePreviousGenInputs().then((value) => _generator.retrievePreviousData(value));
   }
 
-  //TODO error while returning
+  
   Widget _editQuestButton() {
     return IconButton(
       onPressed: () async {
-        //TODO quest is not updating after popping edit page
-        await Navigator.pushNamed(context, '/questEdit', arguments: _task);
+        bool edited = await Navigator.pushNamed(context, '/questEdit') as bool;
 
         setState(() {
-          
+          _task.clear();
+          _task.addAll(Quest().retrieveQuest());
         });
-        // .then((editedQuest) {
-        //   _task.clear();
-        //   print('added edited quest');
-        //   _task.addAll(editedQuest as List<Session>);
-        // });
 
-        _acceptedQuest = false; //TODO set to false only if there is edits made
+        //If not yet accept, do not depend on edited. Else check if there are edits
+        _acceptedQuest = !_acceptedQuest ? _acceptedQuest : !edited;
       }, 
       icon: const Icon(Icons.edit));
   }
@@ -90,6 +86,7 @@ class _QuestState extends State<Quest> {
           setState(() {
             _task.clear();
             _task.addAll(_generator.generateSchedule());
+            Quest().set(_task);
             _acceptedQuest = false;
           });
         }

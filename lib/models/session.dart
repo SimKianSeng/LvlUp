@@ -1,24 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:time_planner/time_planner.dart';
+import 'package:lvlup/utils/timeofday_extensions.dart';
 
-//TODO transfer into external file?
-extension Plus on TimeOfDay {
-  TimeOfDay plusMinutes(int minutes) {
-    if (minutes == 0) {
-      return this;
-    } else {
-      int mofd = this.hour * 60 + this.minute;
-      int newMofd = ((minutes % 1440) + mofd + 1440) % 1440;
-      if (mofd == newMofd) {
-        return this;
-      } else {
-        int newHour = newMofd ~/ 60;
-        int newMinute = newMofd % 60;
-        return TimeOfDay(hour: newHour, minute: newMinute);
-      }
-    }
-  }
-}
 
 class Session extends TimePlannerTask {
   static const int breakRate = 5; //5 minutes for every multiple of _interval

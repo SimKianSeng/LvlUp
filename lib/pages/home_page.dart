@@ -52,9 +52,11 @@ class UserData extends StatefulWidget {
 
 class _UserDataState extends State<UserData> {
   bool _evolving = false;
+  bool updatedDayTask = false;
   AppUser? currentAppUser;
   List<Session>? _daytasks;
 
+  //TODO being called multiple times
   void _updateDayTask(AppUser currentAppUser) {
     //For android emulator, take note that DateTime.now() is based on the virtual device
     final now = DateTime.now();
@@ -244,6 +246,7 @@ class _UserDataState extends State<UserData> {
                   }) as Duration;
 
               setState(() {
+                updatedDayTask = false;
                 DatabaseService(uid: currentAppUser.uid)
                     .updateXP(timeStudied, currentAppUser);
                 _updateDayTask(currentAppUser);
@@ -271,6 +274,7 @@ class _UserDataState extends State<UserData> {
               arguments: currentAppUser);
 
           setState(() {
+            updatedDayTask = false;
             _updateDayTask(currentAppUser);
           });
         },
@@ -297,8 +301,12 @@ class _UserDataState extends State<UserData> {
       );
     }
 
-    currentAppUser.updateQuest(quest);
-    _updateDayTask(currentAppUser);
+    //TODO this is causing us to update so many times
+    if (!updatedDayTask) {
+      updatedDayTask = !updatedDayTask;
+      currentAppUser.updateQuest(quest);
+      _updateDayTask(currentAppUser);
+    }
 
     return Scaffold(
         body: Container(

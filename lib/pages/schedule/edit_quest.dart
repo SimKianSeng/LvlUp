@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
+import 'package:lvlup/models/quest.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/generator.dart';
-import 'package:lvlup/widgets/edit_session_alertdialog.dart';
+import 'package:lvlup/widgets/session_add_edit.dart';
 import 'package:time_planner/time_planner.dart';
 
 
-//TODO update quest_page with the newly updated quest from this page, pass back through navigator?
-//TODO add in edit session actiondialog
 //TODO add in a session, but not clash timing with other sessions
 class EditQuest extends StatefulWidget {
   const EditQuest({super.key});
@@ -20,6 +19,13 @@ class _EditQuestState extends State<EditQuest> {
   final List<String> _days = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
   int _currentIndex = 0;
   List<Session> _quest = [];
+  bool edited = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _quest = Quest().retrieveQuest();
+  }
 
   Widget _day(String heroTag, int index) {
     if (index < 0 || index > 6) {
@@ -86,22 +92,26 @@ class _EditQuestState extends State<EditQuest> {
 
           if (newSession == null) {
             //Delete
-            print('deleting');
             setState(() {
-              _quest.remove(session);
+              Quest().removeSession(session);
+              _quest.clear();
+              _quest.addAll(Quest().retrieveQuest());
             });
           } else {
             //Replace this session with newSession            
             setState(() {
-              _quest.replaceRange(_quest.indexOf(session), _quest.indexOf(session) + 1, [newSession]);  
+              Quest().replaceSession(session, newSession);
+              _quest.clear();
+              _quest.addAll(Quest().retrieveQuest());
             });
           }
+
+          edited = true;
         }, 
         icon: const Icon(Icons.edit)),
     );
   }
 
-  //TODO what if i place this in a new file under a stateful widget
   Widget _daySessions() {
     List<Widget> currentDaySession = _quest.where((session) => session.dateTime.day == _currentIndex)
     .map((session) => _displayEditQuest(session))
@@ -119,94 +129,64 @@ class _EditQuestState extends State<EditQuest> {
   }
 
   Widget _addTask() {
-    String module = Generator().modules[0];
-
     return FloatingActionButton(
       onPressed: () async {
         Session? newSession = await showDialog(
-        context: context, 
-        builder: (_) => EditSessionDialog(
-          action: 'Add',
-          originalTask: module, 
-          originalMinutesDuration: 30, //Min interval
-          startTime: TimePlannerDateTime(day: _currentIndex, hour: 0, minutes: 0)),
-        barrierDismissible: false
-        );
+          context: context, 
+          builder: (_) => EditSessionDialog(
+            action: 'Add',
+            originalTask: Generator().modules[0], 
+            originalMinutesDuration: 30, //Min interval
+            startTime: TimePlannerDateTime(day: _currentIndex, hour: 0, minutes: 0)),
+          barrierDismissible: false
+          );
 
         if (newSession != null) {
           setState(() {
-            //TODO sort the ordering based on start time 
-            _quest.add(newSession);
+            Quest().add(newSession);
+            _quest.clear();
+              _quest.addAll(Quest().retrieveQuest());
+            // _quest.add(newSession);
           });
         }
+
+        edited = true;
       },
       child: const Icon(Icons.add),
       );
   }
 
   @override
-  Widget build(BuildContext context) {
-    _quest = ModalRoute.of(context)!.settings.arguments as List<Session>;
-
-    //TODO WillPopScope prevents us from viewing the _quest passed as argument to the page the first time we build it
-    return Scaffold(
-        appBar: AppBar(title: const Text('Edit quest')),
+  Widget build(BuildContext context) {    
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Edit quest'), 
+          centerTitle: true,
+          actions: const <Widget>[
+            Tooltip(
+              message: 'To be able to change to a certain module, do ensure that it has been inputted into generator',
+              triggerMode: TooltipTriggerMode.tap,
+              child: Padding(
+                padding: EdgeInsets.only(right: 5.0),
+                child: Icon(Icons.tips_and_updates),
+              ),
+            )
+          ],),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             _daysOption(),
             _daySessions(),
-            // _quest[0].displayEditQuest(context)
           ],
           ),
         floatingActionButton: _addTask(),
-        );
-    /*
-    return WillPopScope(
+        ), 
       onWillPop: () async {
         //Returns the updated quest to quest_page
-        Navigator.pop(context, _quest);
+        Navigator.pop(context, edited); //TODO update quest_page quest
         return false;
-      },
-      child:  Scaffold(
-        appBar: AppBar(title: const Text('Edit quest')),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            _daysOption(),
-            _daySessions(),
-            // _quest[0].displayEditQuest(context)
-          ],
-          ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            showDialog(
-              context: context, 
-              builder: (_) {
-                return AlertDialog(
-                  title: Text('New task'),
-                  content: Column(
-                    children: <Widget>[
-                      DropdownButton(
-                        items: Generator().modules
-                        .where((module) => module != '' && module != 'duplicate' && module != 'free')
-                        .map((module) => DropdownMenuItem(
-                          value: module,
-                          child: Text(module)))
-                        .toList(), 
-                        onChanged: (String? selectedModule) {
-                          //TODO display selected module
-                        })
-                    ],
-                  ),
-                );
-              },
-              barrierDismissible: false
-              );
-          }, 
-          child: const Icon(Icons.add),
-          ),
-        ));
-        */
+      }
+    );
   }
 }

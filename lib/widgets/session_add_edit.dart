@@ -20,6 +20,7 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
   late String newTask;
   late TimePlannerDateTime newStartTime;
   late int newMinutesDuration;
+  late List<DropdownMenuItem<String>> modules;
   
   @override
   void initState() {
@@ -27,6 +28,20 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
     newTask = widget.originalTask;
     newStartTime = widget.startTime;
     newMinutesDuration = widget.originalMinutesDuration;
+    modules = Generator().modules
+              .where((module) => module != '' && module != 'duplicate' && module != 'free')
+              .map((module) => DropdownMenuItem(
+                value: module,
+                child: Text(module)))
+              .toList();
+
+    if (!(Generator().modules.contains(widget.originalTask))) {
+      //original task does not exist in generator anymore
+      modules.add(DropdownMenuItem(
+        value: widget.originalTask,
+        child: Text(widget.originalTask),
+      ));
+    }
   }
 
 
@@ -40,12 +55,7 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
         children: <Widget>[
           //TODO ensure that original task appears in the list
           DropdownButton(
-            items:  Generator().modules
-              .where((module) => module != '' && module != 'duplicate' && module != 'free')
-              .map((module) => DropdownMenuItem(
-                value: module,
-                child: Text(module)))
-              .toList(), 
+            items: modules, 
             onChanged: (dynamic selectedValue) {
 
               setState(() {
