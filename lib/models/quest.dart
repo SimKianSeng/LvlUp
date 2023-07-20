@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/models/session.dart';
-import 'package:lvlup/utils/timeofday_extensions.dart';
+import 'package:time_planner/time_planner.dart';
 
 ///Quest is a singleton class that encapsulates the user's tasks and methods related to it.
 ///It is a singleton as a user will only have 1 quest at any point in time
@@ -56,15 +56,23 @@ class Quest {
   }
 
   ///Check through the day tasks for that particular dayIndex and check if there is any overlapping time periods
-  bool timeOverlaps(int dayIndex, TimeOfDay startTime, TimeOfDay endTime) {
+  bool timeOverlaps(TimeOfDay startTime, TimeOfDay endTime, TimePlannerDateTime originalStartTime, int minutesDuration) {
+    int originalStart = (originalStartTime.hour * 60) + originalStartTime.minutes;
+    int originalEnd = originalStart + minutesDuration;
+
     //Retrieve list of Sessions for that particular day
-    List<Session> daySessions = _quest[dayIndex];
+    List<Session> daySessions = _quest[originalStartTime.day];
     int start = (startTime.hour * 60) + startTime.minute;
     int end = (endTime.hour * 60) + endTime.minute;
 
     for (Session session in daySessions) {
       int sessionStart = (session.dateTime.hour * 60) + session.dateTime.minutes;
       int sessionEnd = sessionStart + session.minutesDuration;
+
+      if (sessionStart == originalStart && sessionEnd == originalEnd) {
+        //This is the current session that we are editing
+        continue;
+      }
 
       //To not overlap, startTime and endTime must not be between sessionStart and sessionEnd exclusive
       bool startInBetween = start > sessionStart && start < sessionEnd;

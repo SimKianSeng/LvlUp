@@ -70,7 +70,7 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
       setState(() {
         message = 'End time must be after Start time!';
       });
-    } else if (Quest().timeOverlaps(newStartTime.day, newTime, endTime)) {
+    } else if (Quest().timeOverlaps(newTime, endTime, widget.startTime, widget.originalMinutesDuration)) {
       setState(() {
         message = 'Chosen timing collide with other tasks!';
       });
@@ -81,13 +81,15 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
         newMinutesDuration = minutesDuration;
       });
     }
-
-
   }
 
   Widget _timePicker() {
     TimeOfDay startTime = TimeOfDay(hour: newStartTime.hour, minute: newStartTime.minutes);
     TimeOfDay endTime = startTime.plusMinutes(newMinutesDuration);
+    const Duration periodInterval = Duration(minutes: 30);
+    final List<ClockLabel> clocklabels = ["12 am", "3 am", "6 am", "9 am", "12 pm", "3 pm", "6 pm", "9 pm"]
+          .asMap().entries.map((e) => ClockLabel.fromIndex(idx: e.key, length: 8, text: e.value))
+          .toList();
 
     return TextButton(
       onPressed: () async {
@@ -95,7 +97,10 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
           context: context,
           start: startTime,
           end: endTime,
-          interval: const Duration(minutes: 30)
+          interval: periodInterval,
+          ticks: 24,
+          clockRotation: 180,
+          labels: clocklabels
         );
 
         //Period change

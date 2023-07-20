@@ -6,8 +6,6 @@ import 'package:lvlup/services/generator.dart';
 import 'package:lvlup/widgets/session_add_edit.dart';
 import 'package:time_planner/time_planner.dart';
 
-
-//TODO add in a session, but not clash timing with other sessions
 class EditQuest extends StatefulWidget {
   const EditQuest({super.key});
 
@@ -184,7 +182,7 @@ class _EditQuestState extends State<EditQuest> {
         ), 
       onWillPop: () async {
         //Returns the updated quest to quest_page
-        Navigator.pop(context, edited); //TODO update quest_page quest
+        Navigator.pop(context, edited);
         return false;
       }
     );
