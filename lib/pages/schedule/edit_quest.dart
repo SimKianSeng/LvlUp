@@ -72,7 +72,7 @@ class _EditQuestState extends State<EditQuest> {
       title: Text(session.task?? 'No assigned task'),
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
+        children: <Widget>[
           Text("Start: ${session.startTime().format(context).padLeft(8, '0')}"),
           Text("End: ${session.endTime().format(context).padLeft(8, '0')}"),
         ],

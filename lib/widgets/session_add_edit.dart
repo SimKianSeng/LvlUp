@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:lvlup/models/quest.dart';
 import 'package:lvlup/models/session.dart';
+import 'package:lvlup/utils/timeofday_extensions.dart';
 import 'package:time_planner/time_planner.dart';
 import 'package:lvlup/services/generator.dart';
+import 'package:time_range_picker/time_range_picker.dart';
 
 class EditSessionDialog extends StatefulWidget {
   static const Map<String, String> actions = {'Add' : 'New task', 'Edit': 'Edit session'};
@@ -21,6 +24,7 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
   late TimePlannerDateTime newStartTime;
   late int newMinutesDuration;
   late List<DropdownMenuItem<String>> modules;
+  String message = '';
   
   @override
   void initState() {
@@ -36,7 +40,7 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
               .toList();
 
     if (!(Generator().modules.contains(widget.originalTask))) {
-      //original task does not exist in generator anymore
+      //original task does not exist in generator, to add into list
       modules.add(DropdownMenuItem(
         value: widget.originalTask,
         child: Text(widget.originalTask),
@@ -44,29 +48,100 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
     }
   }
 
+  void _changeTime(TimeRange? period) {
+    if (period == null) {
+      // No change
+      return;
+    }
+
+    TimeOfDay newTime = period.startTime;
+    TimeOfDay endTime = period.endTime;
+
+    if (endTime.format(context) == "12:00 AM") {
+      //To allow us to add from xxxxH to 0000H
+      endTime = const TimeOfDay(hour: 23, minute: 59);
+    }
+
+    int startTimeInt = newTime.hour * 60 + newTime.minute;
+    int endTimeInt = endTime.hour * 60 + endTime.minute;
+    int minutesDuration = endTimeInt - startTimeInt;
+
+    if (minutesDuration <= 0) {
+      setState(() {
+        message = 'End time must be after Start time!';
+      });
+    } else if (Quest().timeOverlaps(newStartTime.day, newTime, endTime)) {
+      setState(() {
+        message = 'Chosen timing collide with other tasks!';
+      });
+    } else {
+      setState(() {
+        //Same day
+        newStartTime = TimePlannerDateTime(day: newStartTime.day, hour: newTime.hour, minutes: newTime.minute);
+        newMinutesDuration = minutesDuration;
+      });
+    }
+
+
+  }
+
+  Widget _timePicker() {
+    TimeOfDay startTime = TimeOfDay(hour: newStartTime.hour, minute: newStartTime.minutes);
+    TimeOfDay endTime = startTime.plusMinutes(newMinutesDuration);
+
+    return TextButton(
+      onPressed: () async {
+        TimeRange? period = await showTimeRangePicker(
+          context: context,
+          start: startTime,
+          end: endTime,
+          interval: const Duration(minutes: 30)
+        );
+
+        //Period change
+        _changeTime(period);
+      }, 
+      child: const Text('Change time period')
+      );
+  }
+
+  Widget _selectedTime() {
+    String startTime = TimeOfDay(hour: newStartTime.hour, minute: newStartTime.minutes).format(context);
+    String endTime = TimeOfDay(hour: newStartTime.hour, minute: newStartTime.minutes).plusMinutes(newMinutesDuration).format(context);
+
+    return Text('$startTime to $endTime');
+  }
+  
+  Widget _moduleSelections() {
+    return DropdownButton(
+      items: modules, 
+      onChanged: (dynamic selectedValue) {
+        setState(() {
+          //Display
+          newTask = selectedValue;
+        });
+      },
+      value: newTask,
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    //TODO time picking
+    
 
     return AlertDialog(
       title: Text(EditSessionDialog.actions[widget.action] ?? 'Error'),
       content: Column(
         children: <Widget>[
-          //TODO ensure that original task appears in the list
-          DropdownButton(
-            items: modules, 
-            onChanged: (dynamic selectedValue) {
-
-              setState(() {
-                //Display
-                newTask = selectedValue;
-              });
-
-              //TODO update the current session time
-            },
-            value: newTask,
-            )
+          const Text('Module', style: TextStyle(fontWeight: FontWeight.bold),),
+          _moduleSelections(),
+          const SizedBox(height: 35.0,),
+          const Text('Time of session', style: TextStyle(fontWeight: FontWeight.bold),),
+          const SizedBox(height: 15.0,),
+          _selectedTime(),
+          _timePicker(),
+          Text(message, style: TextStyle(fontWeight: FontWeight.w400, color: Colors.red[900]),)
         ],
       ), 
       actions: [
@@ -88,7 +163,7 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
         ), 
         IconButton(
           onPressed: () {
-            //TODO delete the current session
+            //Deleting the current session returns null
             Navigator.pop(context, null);
           }, 
           icon: const Icon(Icons.delete)
