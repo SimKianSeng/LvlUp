@@ -148,6 +148,14 @@ class DatabaseService {
     return _database.child('users/$uid').update({'xp': newXp});
   }
 
+  Future<void> updateStoppedSession(Map<dynamic, dynamic> info) {
+    return _database.child('users/$uid').update({'stoppedSession': info});
+  }
+
+  Future<void> removeStoppedSession() async {
+      await _database.child('${directory[0]}/$uid/stoppedSession').remove();
+  }
+
   Future<void> evolve(AppUser currentUser, String imagePath) {
     currentUser.evoState = currentUser.evoState! + 1;
     // currentUser.evoImage = currentUser.evoImage!;

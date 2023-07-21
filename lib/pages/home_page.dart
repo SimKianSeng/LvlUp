@@ -56,7 +56,6 @@ class _UserDataState extends State<UserData> {
   AppUser? currentAppUser;
   List<Session>? _daytasks;
 
-  //TODO being called multiple times
   void _updateDayTask(AppUser currentAppUser) {
     //For android emulator, take note that DateTime.now() is based on the virtual device
     final now = DateTime.now();
@@ -65,7 +64,9 @@ class _UserDataState extends State<UserData> {
         .getSavedQuest()
         .where((session) =>
             session.dateTime.day == now.weekday - 1 &&
-            session.dateTime.hour >= now.hour)
+            session.dateTime.hour >= now.hour && 
+            !(currentAppUser.isStoppedSession(session))
+            )
         .toList();
   }
 
@@ -237,11 +238,15 @@ class _UserDataState extends State<UserData> {
       onPressed: isStudyTime
           ? () async {
               //TODO: remove the task when timer is stop
-              final timeStudied = await Navigator.pushNamed(context, '/timer',
+              final infoReturned = await Navigator.pushNamed(context, '/timer',
                   arguments: {
+                    'session': nextSession,
                     'duration': duration,
                     'break': breakRemaining
-                  }) as Duration;
+                  }) as List<Object?>;
+
+              final timeStudied = infoReturned[0] as Duration;
+              currentAppUser.noteStoppedSession(infoReturned[1] as Session);
 
               setState(() {
                 updatedDayTask = false;

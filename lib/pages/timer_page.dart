@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
+import 'package:lvlup/models/session.dart';
 
 class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
@@ -10,9 +11,9 @@ class TimerPage extends StatefulWidget {
 }
 
 //TODO implement gamified features, pausing feature and ability to change page without destroying current page and progress earned
-//TODO add in grace period for break and link to exp
 //TODO add in a stopwatch to track time spent studying
 class _TimerState extends State<TimerPage> {
+  late Session session;
   late DateTime _start;
   Duration? _duration;
   Timer? _timer;
@@ -49,13 +50,12 @@ class _TimerState extends State<TimerPage> {
     _resting = !_resting;
   }
 
-
+  ///Stop the session prematurely
   void _stopTimer() {
     //TODO end the study session and remove it from study sessions for the day in home
     setState(() => _timer!.cancel());
-
     
-    Navigator.pop(context, DateTime.now().difference(_start));
+    Navigator.pop(context, [DateTime.now().difference(_start), session]);
   }
 
   Widget time() {
@@ -113,9 +113,10 @@ class _TimerState extends State<TimerPage> {
   @override
   Widget build(BuildContext context) {
     
-    Map<String, Duration> durations = ModalRoute.of(context)!.settings.arguments as Map<String, Duration>;
-    _duration ??= durations['duration'];
-    _breakDuration ??= durations['break'];
+    Map<String, dynamic> durations = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    session = durations['session'] as Session;
+    _duration ??= durations['duration'] as Duration;
+    _breakDuration ??= durations['break'] as Duration;
 
     _startTimer();
 
