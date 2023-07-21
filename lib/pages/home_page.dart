@@ -180,7 +180,6 @@ class _UserDataState extends State<UserData> {
                 child: _daytasks?[index].displayDayTask(context))));
   }
 
-  //TODO logic for late start
   IconButton _startSessionButton(BuildContext context, AppUser currentAppUser) {
     DateTime currentTime = DateTime.now();
 
@@ -222,7 +221,6 @@ class _UserDataState extends State<UserData> {
     Duration breakRemaining = taskAvail
         ? nextSession!.breakRemaining(currentTime.difference(startTime))
         : const Duration();
-    // Duration breakRemaining = Duration();
 
     if (duration.inSeconds < 0) {
       // endTime of 1st session is after currentTime

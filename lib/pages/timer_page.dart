@@ -141,7 +141,7 @@ class _TimerState extends State<TimerPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // stopButton(),
+                stopButton(),
                 const SizedBox(width: 105.0),
                 breakButton(),
               ],

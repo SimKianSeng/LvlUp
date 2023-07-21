@@ -130,26 +130,35 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
     );
   }
 
-
-  @override
-  Widget build(BuildContext context) {
-    
-
-    return AlertDialog(
-      title: Text(EditSessionDialog.actions[widget.action] ?? 'Error'),
-      content: Column(
-        children: <Widget>[
-          const Text('Module', style: TextStyle(fontWeight: FontWeight.bold),),
-          _moduleSelections(),
-          const SizedBox(height: 35.0,),
-          const Text('Time of session', style: TextStyle(fontWeight: FontWeight.bold),),
-          const SizedBox(height: 15.0,),
-          _selectedTime(),
-          _timePicker(),
-          Text(message, style: TextStyle(fontWeight: FontWeight.w400, color: Colors.red[900]),)
-        ],
-      ), 
-      actions: [
+  List<Widget> actionsBar() {
+    if (widget.action == 'Add') {
+      return <Widget>[
+        TextButton(
+          //Pops off the edit actiondialog and returns the newly added session
+          onPressed: () {
+            Navigator.pop(context, 
+            Session(
+              task: newTask, 
+              minutesDuration: newMinutesDuration, 
+              dateTime: newStartTime, 
+              child: Text(
+                newTask, 
+                style: const TextStyle(fontSize: 10.0),
+                ),
+              ));
+          },
+          child: const Text('Done')
+        ),
+        TextButton(
+          //Pops off the edit actiondialog and returns the newly edited session no matter whether it has been edited
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Cancel')
+        )
+      ];
+    } else if (widget.action == 'Edit') {
+      return <Widget>[
         TextButton(
           //Pops off the edit actiondialog and returns the newly edited session no matter whether it has been edited
           onPressed: () {
@@ -173,7 +182,35 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
           }, 
           icon: const Icon(Icons.delete)
         )
-      ],
+      ];
+    }
+
+    return [
+      IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        }, icon: const Icon(Icons.close))
+    ];
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(EditSessionDialog.actions[widget.action] ?? 'Error'),
+      content: Column(
+        children: <Widget>[
+          const Text('Module', style: TextStyle(fontWeight: FontWeight.bold),),
+          _moduleSelections(),
+          const SizedBox(height: 35.0,),
+          const Text('Time of session', style: TextStyle(fontWeight: FontWeight.bold),),
+          const SizedBox(height: 15.0,),
+          _selectedTime(),
+          _timePicker(),
+          Text(message, style: TextStyle(fontWeight: FontWeight.w400, color: Colors.red[900]),)
+        ],
+      ), 
+      actions: actionsBar(),
     );
   }
 }
