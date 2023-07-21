@@ -244,11 +244,10 @@ class _UserDataState extends State<UserData> {
                     'duration': duration,
                     'break': breakRemaining
                   }) as Duration;
-
               setState(() {
                 updatedDayTask = false;
                 DatabaseService(uid: currentAppUser.uid)
-                    .updateXP(timeStudied, currentAppUser);
+                    .updateXPByDuration(timeStudied, currentAppUser);
                 _updateDayTask(currentAppUser);
               });
             }

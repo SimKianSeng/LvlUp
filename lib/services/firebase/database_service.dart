@@ -91,9 +91,9 @@ class DatabaseService {
   Future<Map<String, dynamic>> _retrieveInputs(
       DataSnapshot dataSnapShot) async {
     Map<dynamic, dynamic> data = dataSnapShot.value as Map<dynamic, dynamic>;
-    
-    List<Object?> moduleData = data['modules']?? [];
-    List<Object?> freePeriodData = data['freePeriods']?? [];
+
+    List<Object?> moduleData = data['modules'] ?? [];
+    List<Object?> freePeriodData = data['freePeriods'] ?? [];
 
     int intensity = data['intensity'];
 
@@ -142,17 +142,19 @@ class DatabaseService {
     return _database.child('quests/$uid').set(questMap);
   }
 
-  Future<void> updateXP(Duration duration, AppUser currentUser) {
+  Future<void> updateXPByDuration(Duration duration, AppUser currentUser) {
     final int newXp = Xp.incrXP(duration, currentUser);
 
     return _database.child('users/$uid').update({'xp': newXp});
   }
 
+  Future<void> updateXpByXp(int xp, AppUser currentUser) {
+    return _database.child('users/$uid').update({'xp': xp});
+  }
+
   Future<void> evolve(AppUser currentUser, String imagePath) {
     currentUser.evoState = currentUser.evoState! + 1;
-    // currentUser.evoImage = currentUser.evoImage!;
-    // currentUser.evoImage = currentUser.evoImage!;
-    // currentUser.characterName = currentUser.evoImage!;
+
     return _database.child('users/$uid').update(currentUser.toJson());
   }
 }

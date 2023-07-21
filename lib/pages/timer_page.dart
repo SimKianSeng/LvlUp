@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
+import 'package:lvlup/services/game_logic/xp.dart';
 
 class TimerPage extends StatefulWidget {
   const TimerPage({super.key});
@@ -18,6 +19,7 @@ class _TimerState extends State<TimerPage> {
   Timer? _timer;
   Duration? _breakDuration;
   bool _resting = false;
+  int xpGain = 0;
 
   @override
   void initState() {
@@ -38,8 +40,12 @@ class _TimerState extends State<TimerPage> {
       } else {
         _duration = Duration(seconds: _duration!.inSeconds - 1);
 
+        xpGain = Xp.studyTimeToXp(DateTime.now().difference(_start));
+
         //TODO when _breakDuration passes 0seconds, it resets to 1minute
-        _breakDuration = _resting ? Duration(seconds: _breakDuration!.inSeconds - 1) : _breakDuration; //Countdown
+        _breakDuration = _resting
+            ? Duration(seconds: _breakDuration!.inSeconds - 1)
+            : _breakDuration; //Countdown
       }
     });
   }
@@ -49,13 +55,31 @@ class _TimerState extends State<TimerPage> {
     _resting = !_resting;
   }
 
-
   void _stopTimer() {
     //TODO end the study session and remove it from study sessions for the day in home
     setState(() => _timer!.cancel());
 
-    
-    Navigator.pop(context, DateTime.now().difference(_start));
+    Navigator.pop(context, xpGain);
+    // Navigator.pop(context, DateTime.now().difference(_start));
+  }
+
+  Widget xpDisplay() {
+    return Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          const Text(
+            "XP gained:",
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(
+            width: 20,
+          ),
+          Text(
+            xpGain.toString(),
+            style: const TextStyle(fontSize: 20),
+          ),
+        ]);
   }
 
   Widget time() {
@@ -63,9 +87,9 @@ class _TimerState extends State<TimerPage> {
     int min = _duration!.inMinutes % 60;
     int seconds = _duration!.inSeconds % 60;
 
-    return Text("${hour.toString().padLeft(2, '0')} : ${min.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')}",
-      style: const TextStyle(fontSize: 45.0)
-    );
+    return Text(
+        "${hour.toString().padLeft(2, '0')} : ${min.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')}",
+        style: const TextStyle(fontSize: 45.0));
   }
 
   Widget breakTime() {
@@ -87,33 +111,47 @@ class _TimerState extends State<TimerPage> {
       min = _breakDuration!.inMinutes % 60;
       seconds = _breakDuration!.inSeconds % 60;
     }
-    
+
     return hasExceededBreak
-      ? Text("Exceeded break time: ${hour.toString().padLeft(2, '0')} : ${min.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')}",
-      style: TextStyle(fontSize: 25.0, color: Colors.red[900]))
-      : Text("Remaining break time: ${hour.toString().padLeft(2, '0')} : ${min.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')}",
-      style: TextStyle(fontSize: 25.0, color: Colors.green[800])
-    );
+        ? Text(
+            "Exceeded break time: ${hour.toString().padLeft(2, '0')} : ${min.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')}",
+            style: TextStyle(fontSize: 25.0, color: Colors.red[900]))
+        : Text(
+            "Remaining break time: ${hour.toString().padLeft(2, '0')} : ${min.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')}",
+            style: TextStyle(fontSize: 25.0, color: Colors.green[800]));
   }
 
   Widget breakButton() {
     //TODO find and replace with a better icon to illustrate taking a break and resume study
     return IconButton(
-      onPressed: _pauseResumeTimer,
-      icon: _resting ? const Icon(Icons.play_arrow_rounded, size: 75.0, color: Colors.green,) : const Icon(Icons.pause_circle_rounded, size: 75.0, color: Colors.red,));
+        onPressed: _pauseResumeTimer,
+        icon: _resting
+            ? const Icon(
+                Icons.play_arrow_rounded,
+                size: 75.0,
+                color: Colors.green,
+              )
+            : const Icon(
+                Icons.pause_circle_rounded,
+                size: 75.0,
+                color: Colors.red,
+              ));
   }
 
   //TODO monitor, does not seem entirely responsive
   Widget stopButton() {
     return IconButton(
-      onPressed: _stopTimer,
-      icon: const Icon(Icons.stop_circle_rounded, size: 75.0,));
+        onPressed: _stopTimer,
+        icon: const Icon(
+          Icons.stop_circle_rounded,
+          size: 75.0,
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
-    
-    Map<String, Duration> durations = ModalRoute.of(context)!.settings.arguments as Map<String, Duration>;
+    Map<String, Duration> durations =
+        ModalRoute.of(context)!.settings.arguments as Map<String, Duration>;
     _duration ??= durations['duration'];
     _breakDuration ??= durations['break'];
 
@@ -127,27 +165,42 @@ class _TimerState extends State<TimerPage> {
           },
         ),
         title: const Text('Timer'),
-        centerTitle: true,),
+        centerTitle: true,
+      ),
       body: Container(
         decoration: bgColour,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            time(),
-            const SizedBox(height: 35.0,),
-            breakTime(),
-            const SizedBox(width: double.infinity,height: 150.0,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // stopButton(),
-                const SizedBox(width: 105.0),
-                breakButton(),
-              ],
-            )
-
-          ]),
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: xpDisplay(),
+                ),
+              ),
+              const SizedBox(
+                height: 100,
+              ),
+              time(),
+              const SizedBox(
+                height: 35.0,
+              ),
+              breakTime(),
+              const SizedBox(
+                width: double.infinity,
+                height: 150.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // stopButton(),
+                  const SizedBox(width: 105.0),
+                  breakButton(),
+                ],
+              )
+            ]),
       ),
     );
   }
