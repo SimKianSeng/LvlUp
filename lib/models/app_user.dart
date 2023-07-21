@@ -1,3 +1,4 @@
+import 'package:lvlup/models/quest.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/firebase/database_service.dart';
 
@@ -10,8 +11,8 @@ class AppUser {
   int? xp;
   int? evoState;
   String? evoImage;
-  List<Session>? _quest;
-
+  Quest newQuest = Quest();
+  
   AppUser.newUser({
     required this.username,
     this.characterName = 'White Man',
@@ -53,11 +54,11 @@ class AppUser {
 
   void acceptQuest(List<Session> quest) async {
     updateQuest(quest);
-    await DatabaseService(uid: uid).updateQuest(quest); //Issue updating Session
+    await DatabaseService(uid: uid).updateQuest(quest);
   }
 
   void updateQuest(List<Session> quest) {
-    _quest = quest;
+    newQuest.set(quest);
   }
 
   Future<Map<String, dynamic>> retrievePreviousGenInputs() {
@@ -65,7 +66,7 @@ class AppUser {
   }
 
   List<Session> getSavedQuest() {
-    return _quest ?? [];
+    return newQuest.retrieveQuest();
   }
 
   String get imagePath {

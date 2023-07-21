@@ -5,8 +5,10 @@ import 'package:lvlup/services/generator.dart';
 class ModuleRow extends StatefulWidget {
   final int index;
   final Generator generator = Generator();
+  final String originalInput;
+  final FocusNode? focusNode;
 
-  ModuleRow({required this.index, super.key});
+  ModuleRow({required this.index, required this.focusNode, this.originalInput = '', super.key});
 
   @override
   State<ModuleRow> createState() => _ModuleRowState();
@@ -16,7 +18,7 @@ class _ModuleRowState extends State<ModuleRow> {
   String module = '';
 
   bool hasNoInput() {
-    return module == '';
+    return module == '' && widget.originalInput == '';
   }
 
  void updateModule(String module) {
@@ -44,6 +46,7 @@ class _ModuleRowState extends State<ModuleRow> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Row(
@@ -58,10 +61,11 @@ class _ModuleRowState extends State<ModuleRow> {
             //we can use textformfield to accomplish the task of auto populating the input
             child: TextFormField(
               textAlign: TextAlign.center,
+              focusNode: widget.focusNode,
               autofocus: true,
               onChanged: (value) => updateModule(value),
               decoration: customTextField(),
-              initialValue: module,
+              initialValue: widget.originalInput,
             ),
           ),
         ],

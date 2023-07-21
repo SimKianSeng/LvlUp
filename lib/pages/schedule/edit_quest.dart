@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lvlup/constants.dart';
+import 'package:lvlup/models/quest.dart';
 import 'package:lvlup/models/session.dart';
+import 'package:lvlup/services/generator.dart';
+import 'package:lvlup/widgets/session_add_edit.dart';
+import 'package:time_planner/time_planner.dart';
 
-
-//TODO update quest_page with the newly updated quest from this page, pass back through navigator?
-//TODO add in edit session actiondialog
-//TODO add in a session, but not clash timing with other sessions
 class EditQuest extends StatefulWidget {
   const EditQuest({super.key});
 
@@ -17,6 +17,13 @@ class _EditQuestState extends State<EditQuest> {
   final List<String> _days = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
   int _currentIndex = 0;
   List<Session> _quest = [];
+  bool edited = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _quest = Quest().retrieveQuest();
+  }
 
   Widget _day(String heroTag, int index) {
     if (index < 0 || index > 6) {
@@ -57,9 +64,55 @@ class _EditQuestState extends State<EditQuest> {
     );
   }
 
+  ///Converts the session information into a listTile that we can interact with to edit
+  Widget _displayEditQuest(Session session) {
+    return ListTile(
+      title: Text(session.task?? 'No assigned task'),
+      subtitle: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          Text("Start: ${session.startTime().format(context).padLeft(8, '0')}"),
+          Text("End: ${session.endTime().format(context).padLeft(8, '0')}"),
+        ],
+      ),
+      trailing: IconButton(
+        onPressed: () async {
+          Session? newSession = await showDialog(
+            context: context, 
+            builder: (_) => EditSessionDialog(
+                action: 'Edit',
+                originalTask: session.task ?? '',
+                originalMinutesDuration: session.minutesDuration,
+                startTime: session.dateTime
+              ),
+            barrierDismissible: false
+          );
+
+          if (newSession == null) {
+            //Delete
+            setState(() {
+              Quest().removeSession(session);
+              _quest.clear();
+              _quest.addAll(Quest().retrieveQuest());
+            });
+          } else {
+            //Replace this session with newSession            
+            setState(() {
+              Quest().replaceSession(session, newSession);
+              _quest.clear();
+              _quest.addAll(Quest().retrieveQuest());
+            });
+          }
+
+          edited = true;
+        }, 
+        icon: const Icon(Icons.edit)),
+    );
+  }
+
   Widget _daySessions() {
     List<Widget> currentDaySession = _quest.where((session) => session.dateTime.day == _currentIndex)
-    .map((session) => session.displayEditQuest(context))
+    .map((session) => _displayEditQuest(session))
     .toList();
 
     return Expanded(
@@ -73,20 +126,65 @@ class _EditQuestState extends State<EditQuest> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    _quest = ModalRoute.of(context)!.settings.arguments as List<Session>;
+  Widget _addTask() {
+    return FloatingActionButton(
+      onPressed: () async {
+        Session? newSession = await showDialog(
+          context: context, 
+          builder: (_) => EditSessionDialog(
+            action: 'Add',
+            originalTask: Generator().modules[0], 
+            originalMinutesDuration: 30, //Min interval
+            startTime: TimePlannerDateTime(day: _currentIndex, hour: 0, minutes: 0)),
+          barrierDismissible: false
+          );
 
+        if (newSession != null) {
+          setState(() {
+            Quest().add(newSession);
+            _quest.clear();
+              _quest.addAll(Quest().retrieveQuest());
+            // _quest.add(newSession);
+          });
+        }
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Edit quest')),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          _daysOption(),
-          _daySessions(),
-        ],
-        ),
+        edited = true;
+      },
+      child: const Icon(Icons.add),
       );
+  }
+
+  @override
+  Widget build(BuildContext context) {    
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Edit quest'), 
+          centerTitle: true,
+          actions: const <Widget>[
+            Tooltip(
+              message: 'To be able to change to a certain module, do ensure that it has been inputted into generator',
+              triggerMode: TooltipTriggerMode.tap,
+              child: Padding(
+                padding: EdgeInsets.only(right: 5.0),
+                child: Icon(Icons.tips_and_updates),
+              ),
+            )
+          ],),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            _daysOption(),
+            _daySessions(),
+          ],
+          ),
+        floatingActionButton: _addTask(),
+        ), 
+      onWillPop: () async {
+        //Returns the updated quest to quest_page
+        Navigator.pop(context, edited);
+        return false;
+      }
+    );
   }
 }

@@ -1,5 +1,4 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/game_logic/xp.dart';
@@ -74,7 +73,6 @@ class DatabaseService {
 
   ///Retrieve previous inputs from firebase
   Future<Map<String, dynamic>> retrieveGeneratorInputs() async {
-    //TODO retrieve from database modules, list of freeperiods and intensity
     final String userBranch = '${directory[2]}/$uid';
 
     return _database.child(userBranch).get().then((snapshot) {
@@ -93,9 +91,9 @@ class DatabaseService {
   Future<Map<String, dynamic>> _retrieveInputs(
       DataSnapshot dataSnapShot) async {
     Map<dynamic, dynamic> data = dataSnapShot.value as Map<dynamic, dynamic>;
-
-    List<Object?> moduleData = data['modules'];
-    List<Object?> freePeriodData = data['freePeriods'];
+    
+    List<Object?> moduleData = data['modules']?? [];
+    List<Object?> freePeriodData = data['freePeriods']?? [];
 
     int intensity = data['intensity'];
 

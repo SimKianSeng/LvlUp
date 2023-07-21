@@ -14,35 +14,38 @@ class ScheduleInput extends StatefulWidget {
   State<ScheduleInput> createState() => _ScheduleInputState();
 }
 
-//TODO link up UI with whatever is in generator upon building
 class _ScheduleInputState extends State<ScheduleInput>{
   final Generator _generator = Generator();
+  List<String> _modules = [];
   int _moduleCount = 1;
   int _intensity = 5;
   List<Session> sessions = [];
+  FocusNode? focusNode;
+  final scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    //TODO replace _generator.reset() with _populateFields
-    // _generator.reset();
+    _populateFields();
   }
 
-  //TODO _populateFields based on current generator inputs
-  /*
-  ///Ensures that the page is displaying the same inputs that generator already has  
-  void _populateFields(String uid) async {
-    sessions.clear;
-    sessions.addAll(inputs['freePeriods']);
+  ///Ensures that the page is displaying the same inputs that generator already has
+  void _populateFields() {
+    //Update modules
+    _modules = _generator.modules;
+    _moduleCount = _modules.length;
 
-    _intensity = inputs['intensity'];
+    //TODO feature to make input more inuitive - bug encountered is that initValue for the textform is not cleared
+    //What this does is that if there are no modules input during set up of the page, it will show only 1 moduleRow with initValue ''
+    // _moduleCount = _modules.isEmpty ? 1: _modules.length;
+    
+    //Update sessions
+    sessions.clear();
+    sessions.addAll(_generator.periods());
 
-    List<String> modules = inputs['modules'];
-    _moduleCount = modules.length;
-
-    //TODO update moduleRows with modules
+    //Update intensity
+    _intensity = _generator.intensity;    
   }
-  */
 
   ///Update freeperiods on the page
   void _updateSession() {
@@ -52,18 +55,16 @@ class _ScheduleInputState extends State<ScheduleInput>{
     });
   }
 
+  ///Reset generator and input fields
   Widget resetButton() {
     return TextButton(
       onPressed: () {
         _generator.reset();
         setState(() {
-          //TODO implement smth so that _populateField won't be called when we reset
-          _moduleCount = 1;
-          _intensity = 5;
-          sessions.clear();
+          _populateFields();
         });
       }, 
-      child: const Text('Reset'));
+      child: const Text('Reset generator', style: TextStyle(color: Colors.black),));
   }
  
 
@@ -104,7 +105,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
     return Expanded(
       child: Container(
         decoration: contentContainerColour(),
-        //TODO: after settling other main stuff
+        //TODO: refinement
 
         // child: Column(
         //   children: [
@@ -132,14 +133,13 @@ class _ScheduleInputState extends State<ScheduleInput>{
           children: [
             Expanded(
               flex: 6,
-              child: 
-              // ListView(
-              //   children: modules,
-              // )
-              //Listview.builder used as ListView does not seem to update when we add modules
-              ListView.builder(
+              child: ListView.builder(
+                controller: scrollController,
                 itemCount: _moduleCount,
-                itemBuilder: (context, index) => ModuleRow(index: index + 1,)),
+                itemBuilder: (context, index) => ModuleRow(
+                  index: index + 1, 
+                  originalInput: _modules.length > index ? _modules[index] : '',
+                  focusNode: index == _moduleCount - 1 ? focusNode : null)),
             ),
             Expanded(
               child: _addModuleButton()
@@ -155,6 +155,19 @@ class _ScheduleInputState extends State<ScheduleInput>{
       onPressed: () {
         setState(() {
           _moduleCount += 1;
+
+          //Switch focus to newly added moduleRow
+          if (focusNode != null) {
+            focusNode!.unfocus();
+          }
+          focusNode = FocusNode();
+          focusNode!.requestFocus();
+
+          //Scroll to newly added moduleRow
+          scrollController.animateTo(
+            scrollController.position.maxScrollExtent, 
+            duration: const Duration(milliseconds: 300), 
+            curve: Curves.easeOut);
         });
       },
       icon: const Icon(Icons.add)
@@ -199,6 +212,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
       child: Scaffold(
         appBar: AppBar(
           actions: [
+            resetButton(),
             _saveInputs(user),
           ],
         ),
@@ -221,7 +235,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
                       'Add free period',
                       style: TextStyle(
                         color: Colors.blue[100]
-                      ),)),
+                      ))),
                 ],
               ),
               _weeklyInput(),
@@ -236,7 +250,6 @@ class _ScheduleInputState extends State<ScheduleInput>{
                   )
                   ]),
               _intensityScale(),
-              // _check(),
             ],
           ),
         ),
