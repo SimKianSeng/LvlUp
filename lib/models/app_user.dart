@@ -12,6 +12,7 @@ class AppUser {
   int? evoState;
   String? evoImage;
   Quest newQuest = Quest();
+  Map<dynamic, dynamic>? stoppedSessionInfo;
   
   AppUser.newUser({
     required this.username,
@@ -40,7 +41,8 @@ class AppUser {
         tierName = json['tierName'],
         xp = json['xp'],
         evoState = json['evoState'],
-        evoImage = json['evoImage'];
+        evoImage = json['evoImage'],
+        stoppedSessionInfo = json['stoppedSession'];
 
   // Produce JSON
   Map<String, dynamic> toJson() => {
@@ -71,5 +73,38 @@ class AppUser {
 
   String get imagePath {
     return evoImage ?? "";
+  }
+
+  ///Take note of the given session to avoid including it in the dayTasks for home page
+  void noteStoppedSession(Session session) async {
+    stoppedSessionInfo = {
+      'Module': session.task,
+      'day': session.dateTime.day,
+      'startTimeHour': session.dateTime.hour,
+      'startTimeMin': session.dateTime.minutes
+    };
+
+    //Update database too
+    await DatabaseService(uid: uid).updateStoppedSession(stoppedSessionInfo!);
+  }
+
+  void removeStoppedSession() async {
+    stoppedSessionInfo = null;
+    
+    await DatabaseService(uid: uid).removeStoppedSession();
+  }
+
+  ///Checks if the given session matches that of the stoppedSession
+  bool isStoppedSession(Session session) {
+    if (stoppedSessionInfo == null) {
+      return false;
+    }
+
+    bool isSameModule = stoppedSessionInfo!['Module'] == session.task;
+    bool isSameStartTime = stoppedSessionInfo!['day'] == session.dateTime.day 
+      && stoppedSessionInfo!['startTimeHour'] == session.dateTime.hour 
+      && stoppedSessionInfo!['startTimeMin'] == session.dateTime.minutes;
+
+    return isSameModule && isSameStartTime;
   }
 }
