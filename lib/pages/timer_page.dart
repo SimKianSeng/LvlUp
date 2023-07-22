@@ -11,8 +11,7 @@ class TimerPage extends StatefulWidget {
   State<TimerPage> createState() => _TimerState();
 }
 
-//TODO implement gamified features, pausing feature and ability to change page without destroying current page and progress earned
-//TODO add in a stopwatch to track time spent studying
+//TODO find ways to navigate app without removing progress and session
 class _TimerState extends State<TimerPage> {
   late Session session;
   late DateTime _start;
@@ -59,7 +58,7 @@ class _TimerState extends State<TimerPage> {
   void _stopTimer() {
     setState(() => _timer!.cancel());
 
-    Navigator.pop(context, [xpGain, session]); //TODO update home page return value
+    Navigator.pop(context, [xpGain, session]);
     // Navigator.pop(context, DateTime.now().difference(_start));
   }
 
@@ -122,7 +121,6 @@ class _TimerState extends State<TimerPage> {
   }
 
   Widget breakButton() {
-    //TODO find and replace with a better icon to illustrate taking a break and resume study
     return _resting
       ? TextButton(
         onPressed: _pauseResumeTimer, 
@@ -196,11 +194,12 @@ class _TimerState extends State<TimerPage> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(
-          onPressed: () {
-            _stopTimer();
-          },
-        ),
+        automaticallyImplyLeading: false,
+        // leading: BackButton(
+        //   onPressed: () {
+        //     _stopTimer();
+        //   },
+        // ),
         title: const Text('Timer'),
         centerTitle: true,
         elevation: 0.0,

@@ -157,6 +157,8 @@ class DatabaseService {
   }
   
   Future<void> updateXpByXp(int xp, AppUser currentUser) {
+    xp = Xp.incrXp(xp, currentUser);
+
     return _database.child('users/$uid').update({'xp': xp});
   }
 

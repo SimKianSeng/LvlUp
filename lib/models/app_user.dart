@@ -78,7 +78,6 @@ class AppUser {
   ///Take note of the given session to avoid including it in the dayTasks for home page
   void noteStoppedSession(Session session) async {
     stoppedSessionInfo = {
-      'Module': session.task,
       'day': session.dateTime.day,
       'startTimeHour': session.dateTime.hour,
       'startTimeMin': session.dateTime.minutes
@@ -100,11 +99,10 @@ class AppUser {
       return false;
     }
 
-    bool isSameModule = stoppedSessionInfo!['Module'] == session.task;
     bool isSameStartTime = stoppedSessionInfo!['day'] == session.dateTime.day 
       && stoppedSessionInfo!['startTimeHour'] == session.dateTime.hour 
       && stoppedSessionInfo!['startTimeMin'] == session.dateTime.minutes;
 
-    return isSameModule && isSameStartTime;
+    return isSameStartTime;
   }
 }

@@ -245,6 +245,7 @@ class _UserDataState extends State<UserData> {
                   }) as List<Object?>;
 
               final xpEarned = infoReturned[0] as int;
+              
               currentAppUser.noteStoppedSession(infoReturned[1] as Session);
 
               setState(() {

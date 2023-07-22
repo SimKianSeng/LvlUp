@@ -30,4 +30,8 @@ class Xp {
   static int incrXP(Duration duration, AppUser currentUser) {
     return currentUser.xp! + studyTimeToXp(duration);
   }
+
+  static int incrXp(int earnedXp, AppUser currentUser) {
+    return currentUser.xp! + earnedXp;
+  }
 }
