@@ -237,7 +237,6 @@ class _UserDataState extends State<UserData> {
       iconSize: 30.0,
       onPressed: isStudyTime
           ? () async {
-              //TODO: remove the task when timer is stop
               final infoReturned = await Navigator.pushNamed(context, '/timer',
                   arguments: {
                     'session': nextSession,
@@ -245,13 +244,13 @@ class _UserDataState extends State<UserData> {
                     'break': breakRemaining
                   }) as List<Object?>;
 
-              final timeStudied = infoReturned[0] as Duration;
+              final xpEarned = infoReturned[0] as int;
               currentAppUser.noteStoppedSession(infoReturned[1] as Session);
 
               setState(() {
                 updatedDayTask = false;
                 DatabaseService(uid: currentAppUser.uid)
-                    .updateXP(timeStudied, currentAppUser);
+                    .updateXpByXp(xpEarned, currentAppUser);
                 _updateDayTask(currentAppUser);
               });
             }
@@ -304,7 +303,6 @@ class _UserDataState extends State<UserData> {
       );
     }
 
-    //TODO this is causing us to update so many times
     if (!updatedDayTask) {
       updatedDayTask = !updatedDayTask;
       currentAppUser.updateQuest(quest);

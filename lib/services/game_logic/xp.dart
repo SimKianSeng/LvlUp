@@ -20,14 +20,14 @@ class Xp {
     return hiXp - loXp;
   }
 
-  static int incrXP(Duration duration, AppUser currentUser) {
+  static int studyTimeToXp(Duration duration) {
     const rate = 25; // 100 exp per hour
-    const unitTime = 15; // 15mins per unit Time
+    const unitTime = 15; // 15 mins per unit \
 
-    int xp = currentUser.xp!;
+    return (duration.inMinutes ~/ unitTime) * rate;
+  }
 
-    xp = xp + (duration.inMinutes ~/ unitTime) * rate;
-
-    return xp;
+  static int incrXP(Duration duration, AppUser currentUser) {
+    return currentUser.xp! + studyTimeToXp(duration);
   }
 }
