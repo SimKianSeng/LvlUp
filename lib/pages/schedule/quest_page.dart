@@ -18,6 +18,7 @@ class _QuestPageState extends State<QuestPage> {
   List<Session> _task = [];
   final Generator _generator = Generator();
   late bool _acceptedQuest;
+  bool generated = false;
 
   @override
   void initState() {
@@ -88,6 +89,7 @@ class _QuestPageState extends State<QuestPage> {
             _task.addAll(_generator.generateSchedule());
             Quest().set(_task);
             _acceptedQuest = false;
+            generated = true;
           });
         }
       },
@@ -127,8 +129,9 @@ class _QuestPageState extends State<QuestPage> {
       _setUpGenerator(user);
     }
 
-    if (_task.isEmpty) {
-      //TODO bug - when 'generate' generates 0 tasks, will revert back to the one in database
+    if (_task.isEmpty && !generated) {
+      //Retrieving saved quest
+      //TODO Can place under initState if not for the need to retrieve user first
       _task.addAll(user.getSavedQuest());
     }
     
