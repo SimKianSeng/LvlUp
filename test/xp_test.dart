@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lvlup/models/app_user.dart';
 import 'package:lvlup/services/game_logic/xp.dart';
@@ -53,8 +55,10 @@ void main() {
 
   test("Getting level of user", () {
     const int testXP = 15328;
-    final int result = Xp.getCurXp(testXP);
+    int expectedLevel = 1 + sqrt(testXP / 5).floor();
 
-    expect(328, result);
+    final int result = Xp.getLevel(testXP);
+
+    expect(expectedLevel, result);
   });
 }

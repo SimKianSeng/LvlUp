@@ -63,4 +63,35 @@ void main() {
       expect(const Duration(minutes: 5 - 15), breakRemainingMinutes);
     });
   });
+
+  group('Splitting sessions into blocks of 30 minutes', () {
+    test('Splitting a 1h session', () {
+      Session session = Session(dateTime: TimePlannerDateTime(day: 0, hour: 0, minutes: 0), minutesDuration: 60,);
+      final List<Session> splittedSession = session.splitIntoBlocks();
+
+      expect(splittedSession.length, 2);
+    });
+
+    test('Splitting a 1.5h session', () {
+      Session session = Session(dateTime: TimePlannerDateTime(day: 0, hour: 0, minutes: 0), minutesDuration: 90,);
+      final List<Session> splittedSession = session.splitIntoBlocks();
+
+      expect(splittedSession.length, 3);
+    });
+
+    test('Splitting a session that ends at 2359H', () {
+      Session session = Session(dateTime: TimePlannerDateTime(day: 0, hour: 23, minutes: 30), minutesDuration: 29,);
+      final List<Session> splittedSession = session.splitIntoBlocks();
+
+      expect(splittedSession.length, 1);
+    });
+
+    test('Splitting a 59mins session that ends at 2359H', () {
+      Session session = Session(dateTime: TimePlannerDateTime(day: 0, hour: 23, minutes: 00), minutesDuration: 59,);
+      final List<Session> splittedSession = session.splitIntoBlocks();
+
+      expect(splittedSession.length, 2);
+    });
+
+  });
 }

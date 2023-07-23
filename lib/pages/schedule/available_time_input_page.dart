@@ -143,6 +143,13 @@ class _WeeklyInputState extends State<WeeklyInput> {
       appBar: AppBar(
         title: const Text('Add free periods'),
         centerTitle: true,
+        actions: const <Widget>[
+          Tooltip(
+            message: 'Free periods are periods of time whereby you are available for your study session to be generated at',
+            triggerMode: TooltipTriggerMode.tap,
+            child: Icon(Icons.help),
+          )
+        ],
         ),
       body: _body(_index),
       bottomNavigationBar: _bottomNavigationBar(_index),

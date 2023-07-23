@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/generator.dart';
@@ -49,5 +51,22 @@ void main() {
 
 
     expect(0, uniqueSessions.length);
+  });
+
+
+  test("Generator prevents overlapping sessions", () {
+    Generator gen = Generator();
+
+    List<Session> overlappingSessions = [
+      Session(dateTime: TimePlannerDateTime(day: 0, hour: 5, minutes: 30), minutesDuration: 60,),
+      Session(dateTime: TimePlannerDateTime(day: 0, hour: 5, minutes: 30), minutesDuration: 120,),
+      Session(dateTime: TimePlannerDateTime(day: 0, hour: 4, minutes: 30), minutesDuration: 150,),
+      Session(dateTime: TimePlannerDateTime(day: 0, hour: 5, minutes: 00), minutesDuration: 120,),
+      Session(dateTime: TimePlannerDateTime(day: 0, hour: 4, minutes: 00), minutesDuration: 120,),
+    ];
+
+    List<Session> uniqueSessions = gen.removeDuplicateSessions(overlappingSessions.expand((element) => element.splitIntoBlocks()).toList()).toList();
+
+    expect(uniqueSessions.length, 6);
   });
 }

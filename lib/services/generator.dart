@@ -18,6 +18,7 @@ class Generator {
   List<String> _modules = [];
   int _intensity = 5;
   List<List<Session>> _sessions = List.generate(7, (index) => []);
+  late List<Session> _uniqueSessions;
   bool retrievedPreviousData = false; //To track if generator is currently using saved inputs from database
 
   factory Generator() {
@@ -123,6 +124,8 @@ class Generator {
   @visibleForTesting
   ///Remove sessions that share the same time periods, ie same start time and duration
   List<Session> removeDuplicateSessions(List<Session> sessions) {
+    //TODO bug here is due to the fact that for overlapping sessions, nextSession is not going to have same time
+    
     int current = 0;
 
     while (current < sessions.length - 1) {
@@ -150,11 +153,7 @@ class Generator {
   ///Insert the generated modules into the respective timeslots available
   List<Session> _slotTasks(List<String> allocations) {
     //split input sessions into blocks of 30minutes interval and chain into a single list instead of nesting them
-    List<Session> sessionsExpanded = _sessions
-        .expand(
-            (element) => element.expand((session) => session.splitIntoBlocks()))
-        .toSet()
-        .toList();
+    List<Session> sessionsExpanded = _uniqueSessions;
 
     List<Session> slottedTasks = [];
 
@@ -208,11 +207,16 @@ class Generator {
   }
 
   List<Session> generateSchedule() {
-    List<Session> uniqueSessions = removeDuplicateSessions(_sessions
+    _uniqueSessions = removeDuplicateSessions(_sessions
         .expand(
-            (element) => element.expand((session) => session.splitIntoBlocks()))
+            (daySessions) {
+              List<Session> splittedDaySessions = daySessions.expand((session) => session.splitIntoBlocks()).toList();
+              splittedDaySessions.sort((a, b) => a.compareTo(b));
+
+              return splittedDaySessions;
+              })
         .toList());
-    int numberOfFreeSessions = uniqueSessions.length;
+    int numberOfFreeSessions = _uniqueSessions.length;
 
     List<String> allocations = [];
     List<String> modulesNoDup = List.from(_modules);
