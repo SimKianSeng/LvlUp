@@ -210,9 +210,13 @@ class Generator {
     _uniqueSessions = removeDuplicateSessions(_sessions
         .expand(
             (daySessions) {
+              //split the freePeriod sessions in each day into blocks of 30mins
               List<Session> splittedDaySessions = daySessions.expand((session) => session.splitIntoBlocks()).toList();
+
+              // Sort the blocks of freePeriod sessions so that we can handle overlapping free periods in removeDuplicateSessions
               splittedDaySessions.sort((a, b) => a.compareTo(b));
 
+              // Return the splittedDaySessions after 
               return splittedDaySessions;
               })
         .toList());
