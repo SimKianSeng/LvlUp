@@ -24,6 +24,7 @@ class Session extends TimePlannerTask {
 
   @visibleForTesting
   int breakDuration() {
+    //TODO does not account for sessions till 2359H
     int breakDurationMinutes= super.minutesDuration ~/ _interval * breakRate;
 
     return breakDurationMinutes;

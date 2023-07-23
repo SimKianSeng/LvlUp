@@ -55,6 +55,13 @@ class _UserDataState extends State<UserData> {
   bool updatedDayTask = false;
   AppUser? currentAppUser;
   List<Session>? _daytasks;
+  late StreamSubscription<dynamic> timerSubscriber;
+
+  @override
+  void dispose() {
+    super.dispose();
+    timerSubscriber.cancel();
+  }
 
   void _updateDayTask(AppUser currentAppUser) {
     //For android emulator, take note that DateTime.now() is based on the virtual device
@@ -211,7 +218,7 @@ class _UserDataState extends State<UserData> {
       return currentTime;
     });
 
-    final timerSubscriber = timer.listen((data) {
+    timerSubscriber = timer.listen((data) {
       setState(() {
         isStudyTime =
             currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
