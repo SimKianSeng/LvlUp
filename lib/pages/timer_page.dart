@@ -42,10 +42,10 @@ class _TimerState extends State<TimerPage> {
 
         xpGain = Xp.studyTimeToXp(DateTime.now().difference(_start));
 
-        //TODO when _breakDuration passes 0seconds, it resets to 1minute
         _breakDuration = _resting
             ? Duration(seconds: _breakDuration!.inSeconds - 1)
             : _breakDuration; //Countdown
+
       }
     });
   }

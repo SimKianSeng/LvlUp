@@ -157,7 +157,8 @@ class _UserDataState extends State<UserData> {
   ///shows the upcoming tasks for today
   Widget dayTasks() {
     if (_daytasks == null) {
-      return Center(
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.0),
         child: Text(
           "There are no study sessions today",
           style: TextStyle(
@@ -168,7 +169,8 @@ class _UserDataState extends State<UserData> {
         ),
       );
     } else if (_daytasks!.isEmpty) {
-      return Center(
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.0),
           child: Text(
         "There are no remaining study sessions today",
         style: TextStyle(
