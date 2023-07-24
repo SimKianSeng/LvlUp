@@ -23,19 +23,19 @@ void main() {
 
   group('Retrieval of level and displaying tierName', () {
     test('Getting level of user at exp 32533', () {
-      const xp = 32533;
+      const xp = 500;
 
       final int level = Xp.getLevel(xp);
 
-      expect(33, level);
+      expect(11, level);
     });
 
     test('Displaying tierName of user with exp 32533', () {
-      const int level = 32;
+      const int level = 11;
 
       final tierName = Tier.getTierName(level);
 
-      expect("Rising Rookie", tierName);
+      expect("Little Boi", tierName);
 
     });
   });
