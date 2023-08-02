@@ -71,7 +71,6 @@ class _WeeklyInputState extends State<WeeklyInput> {
                     },
                   ),
                 );
-                // return sessions[index].displayTime(context);
               },
             ),
         ),
