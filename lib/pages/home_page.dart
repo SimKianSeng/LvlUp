@@ -71,9 +71,8 @@ class _UserDataState extends State<UserData> {
         .getSavedQuest()
         .where((session) =>
             session.dateTime.day == now.weekday - 1 &&
-            session.dateTime.hour >= now.hour && 
-            !(currentAppUser.isStoppedSession(session))
-            )
+            session.dateTime.hour >= now.hour &&
+            !(currentAppUser.isStoppedSession(session)))
         .toList();
   }
 
@@ -254,7 +253,7 @@ class _UserDataState extends State<UserData> {
                   }) as List<Object?>;
 
               final xpEarned = infoReturned[0] as int;
-              
+
               currentAppUser.noteStoppedSession(infoReturned[1] as Session);
 
               setState(() {
