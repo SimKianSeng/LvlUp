@@ -56,6 +56,11 @@ class _QuestPageState extends State<QuestPage> {
               setState(() {
                 _acceptedQuest = !_acceptedQuest;
               });
+
+               const SnackBar message = SnackBar(content: Text('Quest saved!'));
+          
+          ScaffoldMessenger.of(context).showSnackBar(message);
+
             },
       icon: const Icon(Icons.save),
       color: Colors.black,
