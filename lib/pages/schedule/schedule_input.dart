@@ -86,13 +86,26 @@ class _ScheduleInputState extends State<ScheduleInput>{
           _populateFields();
           currentStep = 0; //Brings user back to the first step
         });
+
       }, 
       child: const Text('RESET', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),));
   }
 
   
   Widget _moduleInput(BuildContext context, ) {
-    return SingleChildScrollView(
+    bool hasNoModuleRow = _moduleCount == 0;
+
+    return hasNoModuleRow
+      ? Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          const Text('Please click on the add button to begin filling in your modules', 
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 17.0),),
+          _addModuleButton()
+        ],
+      )
+      : SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
         children: <Widget>[
@@ -101,7 +114,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
             itemCount: _moduleCount,
             itemBuilder: (context, index) => ModuleRow(
               index: index + 1, 
-              originalInput: _modules.length > index ? _modules[index] : '',
+              originalInput: index >= _modules.length ? '' : _modules[index],
               focusNode: index == _moduleCount - 1 ? focusNode : null
             )
           ),
