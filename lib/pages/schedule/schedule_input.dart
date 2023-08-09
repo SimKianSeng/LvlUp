@@ -79,8 +79,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
 
   ///Reset generator and input fields
   Widget resetButton() {
-    return FloatingActionButton(
-      heroTag: 'Reset input page',
+    return TextButton(
       onPressed: () {
         _generator.reset();
         setState(() {
@@ -88,10 +87,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
           currentStep = 0; //Brings user back to the first step
         });
       }, 
-      elevation: 0.0,
-      shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
-      child: const Text('Reset')
-      );
+      child: const Text('RESET', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),));
   }
 
   
@@ -243,11 +239,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
         currentNode.unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          actions: [
-            resetButton(),
-          ],
-        ),
+        appBar: AppBar(),
         body: Container(
           decoration: bgColour,
           child: Stepper(
@@ -259,21 +251,15 @@ class _ScheduleInputState extends State<ScheduleInput>{
                 children: <Widget>[
                   SizedBox(
                     height: 37.5,
-                    child: FloatingActionButton(
-                      heroTag: 'Continue button',
-                      onPressed: details.onStepContinue,
-                      elevation: 0.0,
-                      shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
-                      child: const Text('NEXT')),
+                    child: TextButton(
+                      onPressed: details.onStepContinue, 
+                      child: const Text('NEXT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),)),
                   ),
                   SizedBox(
                     height: 37.5,
-                    child: FloatingActionButton(
-                      heroTag: 'Cancel button',
+                    child: TextButton(
                       onPressed: details.onStepCancel, 
-                      elevation: 0.0,
-                      shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
-                      child: const Text('BACK')),
+                      child: const Text('BACK', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),)),
                   ),
                   SizedBox(
                     height: 37.5,
