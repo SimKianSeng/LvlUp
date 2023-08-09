@@ -181,7 +181,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
 
     //TODO stick to this UI?
     return SizedBox(
-      width: 600,
+      width: 300,
       height: 800,
       child: TimePlanner(
         startHour: startHour,
@@ -259,11 +259,9 @@ class _ScheduleInputState extends State<ScheduleInput>{
             onStepContinue: () {
               bool isLastStep = (currentStep == steps().length - 1);
 
-              //TODO ensure that user do not leave the current page empty for step 0 and 1, which are the only steps apart from the last step
-              //TODO module list not working
               if (!isLastStep) {
                 bool hasNoInputs = currentStep == 0
-                ? _modules.isEmpty //Check that module list contains at least 1 module
+                ? _generator.modules.isEmpty //Check that module list contains at least 1 module
                 : sessions.isEmpty;//Check that free Periods list has at least 1 session in it
 
                 if (hasNoInputs) {
@@ -289,9 +287,13 @@ class _ScheduleInputState extends State<ScheduleInput>{
               //Exit input page
               Navigator.pop(context);
            },
-            onStepTapped: (newStep) => setState(() {
-              currentStep = newStep;
-            }),
+            onStepTapped: (newStep) {
+              if (steps()[newStep].isActive) {
+                setState(() {
+                  currentStep = newStep;
+                });
+              }
+            },
             steps: steps(),
             currentStep: currentStep,
             )
