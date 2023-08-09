@@ -54,10 +54,10 @@ ButtonStyle customButtonStyle(
 }
 
 
-Tooltip useHint(String hint) {
+Tooltip useHint(String hint, {Color color = Colors.grey}) {
   return Tooltip(
     message: hint,
     triggerMode: TooltipTriggerMode.tap,
-    child: Icon(Icons.help, color: Colors.grey,),
+    child: Icon(Icons.help, color: color),
   );
 }
