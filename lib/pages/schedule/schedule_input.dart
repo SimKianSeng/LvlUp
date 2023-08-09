@@ -79,7 +79,8 @@ class _ScheduleInputState extends State<ScheduleInput>{
 
   ///Reset generator and input fields
   Widget resetButton() {
-    return TextButton(
+    return FloatingActionButton(
+      heroTag: 'Reset input page',
       onPressed: () {
         _generator.reset();
         setState(() {
@@ -87,7 +88,10 @@ class _ScheduleInputState extends State<ScheduleInput>{
           currentStep = 0; //Brings user back to the first step
         });
       }, 
-      child: const Text('Reset', style: TextStyle(color: Colors.black),));
+      elevation: 0.0,
+      shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
+      child: const Text('Reset')
+      );
   }
 
   
@@ -249,9 +253,38 @@ class _ScheduleInputState extends State<ScheduleInput>{
           child: Stepper(
             type: StepperType.horizontal,
             elevation: 0.0,
+            controlsBuilder: (context, details) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  SizedBox(
+                    height: 37.5,
+                    child: FloatingActionButton(
+                      heroTag: 'Continue button',
+                      onPressed: details.onStepContinue,
+                      elevation: 0.0,
+                      shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
+                      child: const Text('NEXT')),
+                  ),
+                  SizedBox(
+                    height: 37.5,
+                    child: FloatingActionButton(
+                      heroTag: 'Cancel button',
+                      onPressed: details.onStepCancel, 
+                      elevation: 0.0,
+                      shape: const BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
+                      child: const Text('BACK')),
+                  ),
+                  SizedBox(
+                    height: 37.5,
+                    child: resetButton()
+                  )
+                ],
+              );
+            },
             onStepCancel: () {
               return currentStep == 0
-                ? Navigator.pop(context)
+                ? Navigator.pop(context, null)
                 : setState(() {
                   currentStep--;
                 });
@@ -285,7 +318,8 @@ class _ScheduleInputState extends State<ScheduleInput>{
               _generator.saveToDatabase(user);
 
               //Exit input page
-              Navigator.pop(context);
+              const String generatorUpdatedMessage = 'Generator has been updated!';
+              Navigator.pop(context, generatorUpdatedMessage);
            },
             onStepTapped: (newStep) {
               if (steps()[newStep].isActive) {

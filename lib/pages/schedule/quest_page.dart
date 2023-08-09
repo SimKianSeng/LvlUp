@@ -67,8 +67,16 @@ class _QuestPageState extends State<QuestPage> {
   Widget _generatorButton(AppUser user) {
     return ElevatedButton(
       style: customButtonStyle(),
-      onPressed: () {
-        Navigator.pushNamed(context, '/scheduleInput', arguments: user);
+      onPressed: () async {
+        String? message = await Navigator.pushNamed(context, '/scheduleInput', arguments: user) as String?;
+
+        if (message != null) {
+          SnackBar updatedNotification = SnackBar(
+            content: Text(message),
+          );
+          
+          ScaffoldMessenger.of(context).showSnackBar(updatedNotification);
+        }
       },
       child: const Text("Generator"),
     );
