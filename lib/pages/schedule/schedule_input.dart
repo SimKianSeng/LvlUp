@@ -6,7 +6,6 @@ import 'package:lvlup/widgets/module_row.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
 
-
 class ScheduleInput extends StatefulWidget {
   const ScheduleInput({super.key});
 
@@ -21,12 +20,130 @@ class _ScheduleInputState extends State<ScheduleInput>{
   int _intensity = 5;
   List<Session> sessions = [];
   FocusNode? focusNode;
-  final scrollController = ScrollController();
 
+  int currentStep = 0;
+         
   @override
   void initState() {
     super.initState();
     _populateFields();
+  }
+
+
+  List<Step> steps() {
+    return <Step>[
+      Step(
+        state: currentStep > 0 ? StepState.complete : StepState.indexed,
+        isActive: currentStep >= 0,
+        title: const Text('Modules', style: TextStyle(fontSize: 10.0),),
+        content: _moduleInput(context)
+      ),
+      Step(
+        state: currentStep > 1 ? StepState.complete : StepState.indexed,
+        isActive: currentStep >= 1,
+        title: const Text('Weekly Free Time', style: TextStyle(fontSize: 10.0),), 
+        content: Column(
+          children: <Widget>[
+            TextButton(
+              onPressed: () async {
+                await Navigator.pushNamed(context, '/weeklyInput');
+                _updateSession();
+              },
+              child: Text(
+                'Add free period',
+                style: TextStyle(
+                  color: Colors.blue[100]
+                )
+              )
+            ),
+            _weeklyInput()
+          ],
+        )
+      ),
+      Step(
+        state: currentStep > 2 ? StepState.complete : StepState.indexed,
+        isActive: currentStep >= 2,
+        title: const Text('Intensity', style: TextStyle(fontSize: 10.0),), 
+        content: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text('Intensity scale', 
+                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+                ),
+                useHint("Intensity determines the proportion of free sessions that will be assigned."),
+              ],
+            ),
+            const SizedBox(height: 40.0,),
+            _intensityScale()
+          ],
+        )
+      )
+    ];
+  }
+
+  
+  Widget _moduleInput(BuildContext context, ) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Column(
+        children: <Widget>[
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: _moduleCount,
+            itemBuilder: (context, index) => ModuleRow(
+              index: index + 1, 
+              originalInput: _modules.length > index ? _modules[index] : '',
+              focusNode: index == _moduleCount - 1 ? focusNode : null
+            )
+          ),
+          _addModuleButton()
+        ],
+      ),
+    );
+      //TODO: refinement
+
+      // child: Column(
+      //   children: [
+      //     Expanded(
+      //       flex: 6,
+      //       child: ReorderableListView.builder(
+      //         itemCount: _moduleCount,
+      //         onReorder: (oldIndex, newIndex) {
+      //           //todo: order is updated in generator, but not in UI
+      //           setState(() {
+      //             if (oldIndex < newIndex) {
+      //               newIndex -= 1;
+      //             }
+      //           });
+      //           generator.swapModules(oldIndex, newIndex);
+      //         },
+      //         itemBuilder: (context, index) => ModuleRow(key: Key(index.toString()), index: index + 1,)),
+      //     ),
+      //     Expanded(
+      //       child: _addModuleButton()
+      //     ),
+      //   ]
+      // ),
+  }
+
+  IconButton _addModuleButton() {
+    return IconButton(
+      onPressed: () {
+        setState(() {
+          _moduleCount += 1;
+
+          //Switch focus to newly added moduleRow
+          if (focusNode != null) {
+            focusNode!.unfocus();
+          }
+          focusNode = FocusNode();
+          focusNode!.requestFocus();
+        });
+      },
+      icon: const Icon(Icons.add)
+    );
   }
 
   ///Ensures that the page is displaying the same inputs that generator already has
@@ -89,90 +206,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
         });
       }
     );
-  }
-
-  Text _heading(String header) {
-    return Text(
-      header,
-      style: const TextStyle(
-        fontSize: 18.0,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-
-  Widget _moduleInput(BuildContext context, ) {
-    return Expanded(
-      child: Container(
-        decoration: contentContainerColour(),
-        //TODO: refinement
-
-        // child: Column(
-        //   children: [
-        //     Expanded(
-        //       flex: 6,
-        //       child: ReorderableListView.builder(
-        //         itemCount: _moduleCount,
-        //         onReorder: (oldIndex, newIndex) {
-        //           //todo: order is updated in generator, but not in UI
-        //           setState(() {
-        //             if (oldIndex < newIndex) {
-        //               newIndex -= 1;
-        //             }
-        //           });
-        //           generator.swapModules(oldIndex, newIndex);
-        //         },
-        //         itemBuilder: (context, index) => ModuleRow(key: Key(index.toString()), index: index + 1,)),
-        //     ),
-        //     Expanded(
-        //       child: _addModuleButton()
-        //     ),
-        //   ]
-        // ),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 6,
-              child: ListView.builder(
-                controller: scrollController,
-                itemCount: _moduleCount,
-                itemBuilder: (context, index) => ModuleRow(
-                  index: index + 1, 
-                  originalInput: _modules.length > index ? _modules[index] : '',
-                  focusNode: index == _moduleCount - 1 ? focusNode : null)),
-            ),
-            Expanded(
-              child: _addModuleButton()
-            ),
-          ]
-        ),
-      ),
-    );
-  }
-
-  IconButton _addModuleButton() {
-    return IconButton(
-      onPressed: () {
-        setState(() {
-          _moduleCount += 1;
-
-          //Switch focus to newly added moduleRow
-          if (focusNode != null) {
-            focusNode!.unfocus();
-          }
-          focusNode = FocusNode();
-          focusNode!.requestFocus();
-
-          //Scroll to newly added moduleRow
-          scrollController.animateTo(
-            scrollController.position.maxScrollExtent, 
-            duration: const Duration(milliseconds: 300), 
-            curve: Curves.easeOut);
-        });
-      },
-      icon: const Icon(Icons.add)
-    );
-  }
+  }  
 
   Widget _weeklyInput() {
     const int startHour = 0;
@@ -183,20 +217,16 @@ class _ScheduleInputState extends State<ScheduleInput>{
       cellWidth: 45,
     );
 
-    return Expanded(
-      child: Container(
-        decoration: contentContainerColour(),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TimePlanner(
-            startHour: startHour,
-            endHour: lastHour,
-            headers: header,
-            style: style,
-            tasks: sessions,
-          )
-        )
-      )
+    //TODO stick to this UI?
+    return SizedBox(
+      height: 800,
+      child: TimePlanner(
+        startHour: startHour,
+        endHour: lastHour,
+        headers: header,
+        style: style,
+        tasks: sessions,
+      ),
     );
   }
 
@@ -218,42 +248,38 @@ class _ScheduleInputState extends State<ScheduleInput>{
         ),
         body: Container(
           decoration: bgColour,
-          child: Column(
-            children: <Widget>[
-              _heading('Module Ranking'),
-              _moduleInput(context),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _heading('Weekly Available Time'),
-                  TextButton(
-                    onPressed: () async {
-                      await Navigator.pushNamed(context, '/weeklyInput');
-                      _updateSession();
-                    },
-                    child: Text(
-                      'Add free period',
-                      style: TextStyle(
-                        color: Colors.blue[100]
-                      ))),
-                ],
-              ),
-              _weeklyInput(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _heading('Intensity'),
-                  Tooltip(
-                    message: "Intensity determines the proportion of free sessions that will be assigned.",
-                    triggerMode: TooltipTriggerMode.tap,
-                    child: Icon(Icons.help, color: Colors.grey[800],),
-                  )
-                  ]),
-              _intensityScale(),
-            ],
-          ),
-        ),
-      ),
-    );
+          child: Stepper(
+            type: StepperType.horizontal,
+            elevation: 0.0,
+            onStepCancel: () {
+              return currentStep == 0
+                ? Navigator.pop(context)
+                : setState(() {
+                  currentStep--;
+                });
+            },
+            onStepContinue: () {
+              //TODO Update database and generator, move on afterwards
+              bool isLastStep = (currentStep == steps().length - 1);
+
+              if (isLastStep) {
+                //Exit input page
+                Navigator.pop(context);
+              } else {
+                //Move to the next step
+                setState(() {
+                  currentStep++;
+                });
+              }
+            },
+            onStepTapped: (newStep) => setState(() {
+              currentStep = newStep;
+            }),
+            steps: steps(),
+            currentStep: currentStep,
+            )
+          )
+        )
+      );
   }
 }

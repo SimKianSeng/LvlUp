@@ -52,3 +52,12 @@ ButtonStyle customButtonStyle(
       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius))));
 }
+
+
+Tooltip useHint(String hint) {
+  return Tooltip(
+    message: hint,
+    triggerMode: TooltipTriggerMode.tap,
+    child: Icon(Icons.help, color: Colors.grey,),
+  );
+}
