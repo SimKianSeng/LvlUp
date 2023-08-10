@@ -71,8 +71,8 @@ class _EditQuestState extends State<EditQuest> {
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          Text("Start: ${session.startTime().format(context).padLeft(8, '0')}"),
-          Text("End: ${session.endTime().format(context).padLeft(8, '0')}"),
+          Text("Start: ${session.startTime().format(context).padLeft(5, '0')}"),
+          Text("End: ${session.endTime().format(context).padLeft(5, '0')}"),
         ],
       ),
       trailing: IconButton(
