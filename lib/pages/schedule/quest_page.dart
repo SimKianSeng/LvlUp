@@ -19,6 +19,7 @@ class _QuestPageState extends State<QuestPage> {
   final Generator _generator = Generator();
   late bool _acceptedQuest;
   bool generated = false;
+  bool allowedToEdit = false;
 
   @override
   void initState() {
@@ -27,15 +28,15 @@ class _QuestPageState extends State<QuestPage> {
   }
 
   Future<void> _setUpGenerator(AppUser user) async {
-    await user.retrievePreviousGenInputs().then((value) => _generator.retrievePreviousData(value));
+    await user.retrievePreviousGenInputs().then((value) => _generator.retrievePreviousData(value)).then((value) => allowedToEdit = _generator.modules.isNotEmpty);
   }
 
   
-  Widget _editQuestButton() {
+  Widget _editQuestButton(AppUser user) {
     //TODO  the 'OR' logic operator seems buggy
-    bool allowedToEnter = _generator.modules.isNotEmpty || _task.isNotEmpty;
+    //Suspect is due to setstate
 
-    return allowedToEnter
+    return allowedToEdit
       ? IconButton(
       onPressed: () async {
         bool edited = await Navigator.pushNamed(context, '/questEdit') as bool;
@@ -46,13 +47,18 @@ class _QuestPageState extends State<QuestPage> {
         });
 
         if (edited) {
-          const SnackBar message = SnackBar(content: Text('Quest has been updated. Do remember to save your quest before exiting!'));
+          //Auto save edited quest
+          user.acceptQuest(_task);
+          setState(() {
+            _acceptedQuest = !_acceptedQuest;
+          });
+
+          const SnackBar message = SnackBar(content: Text('Quest updated!'));
 
           ScaffoldMessenger.of(context).showSnackBar(message);
         }
 
-        //If not yet accept, do not depend on edited. Else check if there are edits
-        _acceptedQuest = !_acceptedQuest ? _acceptedQuest : !edited;
+        _acceptedQuest = true;
       }, 
       icon: const Icon(Icons.edit))
       : IconButton(
@@ -99,6 +105,8 @@ class _QuestPageState extends State<QuestPage> {
           
           ScaffoldMessenger.of(context).showSnackBar(updatedNotification);
         }
+
+        setState(() {});
       },
       child: const Text("Generator"),
     );
@@ -191,7 +199,11 @@ class _QuestPageState extends State<QuestPage> {
 
     if (!(_generator.retrievedPreviousData)) {
       //Update generator with the saved input if it has no input and page is build
-      _setUpGenerator(user);
+      _setUpGenerator(user).then((value) {
+        setState(() {
+          allowedToEdit = _generator.modules.isNotEmpty || _task.isNotEmpty;
+        });
+      });
     }
 
     if (_task.isEmpty && !generated) {
@@ -200,13 +212,14 @@ class _QuestPageState extends State<QuestPage> {
       _task.addAll(user.getSavedQuest());
     }
     
+    
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         title: const Text("Quest"),
         centerTitle: true,
         actions: [ 
-          _editQuestButton(),
+          _editQuestButton(user),
           _saveQuestButton(user)
         ],
       ),
