@@ -174,7 +174,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
       width: 400,
       height: 500,
       child: Container(
-        decoration: contentContainerColour(tlRadius: 0.0, trRadius: 0.0, blRadius: 0.0, brRadius: 0.0),
+        decoration: contentContainerColour(tlRadius: 15.0, trRadius: 15.0, blRadius: 15.0, brRadius: 15.0),
         child: TimePlanner(
           startHour: startHour,
           endHour: lastHour,
