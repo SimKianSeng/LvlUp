@@ -104,6 +104,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
       : SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           ListView.builder(
             shrinkWrap: true,
@@ -118,26 +119,6 @@ class _ScheduleInputState extends State<ScheduleInput>{
         ],
       ),
     );
-
-
-      //Extension
-      // child: Column(
-      //   children: <Widget>[
-      //     ReorderableListView.builder(
-      //         itemCount: _moduleCount,
-      //         onReorder: (oldIndex, newIndex) {
-      //           //todo: order is updated in generator, but not in UI
-      //           setState(() {
-      //             if (oldIndex < newIndex) {
-      //               newIndex -= 1;
-      //             }
-      //           });
-      //           _generator.swapModules(oldIndex, newIndex);
-      //         },
-      //         itemBuilder: (context, index) => ModuleRow(key: Key(index.toString()), index: index + 1,)),
-      //     _addModuleButton()
-      //   ]
-      // );
   }
 
   IconButton _addModuleButton() {
@@ -186,18 +167,21 @@ class _ScheduleInputState extends State<ScheduleInput>{
     final List<TimePlannerTitle> header = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'].map((day) => TimePlannerTitle(title: day)).toList();
     TimePlannerStyle style = TimePlannerStyle(
       //cellHeight formatting will not align time on left with their respective cells
-      cellWidth: 45,
+      cellWidth: 50,
     );
 
     return SizedBox(
-      width: 300,
-      height: 800,
-      child: TimePlanner(
-        startHour: startHour,
-        endHour: lastHour,
-        headers: header,
-        style: style,
-        tasks: sessions,
+      width: 400,
+      height: 500,
+      child: Container(
+        decoration: contentContainerColour(tlRadius: 0.0, trRadius: 0.0, blRadius: 0.0, brRadius: 0.0),
+        child: TimePlanner(
+          startHour: startHour,
+          endHour: lastHour,
+          headers: header,
+          style: style,
+          tasks: sessions,
+        ),
       ),
     );
   }
