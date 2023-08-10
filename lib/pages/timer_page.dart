@@ -100,7 +100,7 @@ class _TimerState extends State<TimerPage> {
       min = 60 - (_breakDuration!.inMinutes % 60);
       seconds = 60 - (_breakDuration!.inSeconds % 60);
 
-      //Fix formatting
+      //Formatting
       hour = hour == 24 ? 0 : hour;
       min = min == 60 ? 0 : min;
       seconds = seconds == 60 ? 0 : seconds;

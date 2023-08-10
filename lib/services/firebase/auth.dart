@@ -16,7 +16,6 @@ class Auth {
     return user == null ? null : AppUser(uid: user.uid);
   }
 
-  //authStateChanges() returns a stream of User; 'get' keyword is to declare as a getter
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
 
   Future<User?> signInWithEmailAndPassword({
@@ -31,7 +30,7 @@ class Auth {
     return result.user;
   }
 
-  //Todo: Create user also allows for accountname input
+
   Future<AppUser?> createUserWithEmailAndPassword({
     required String email,
     required String password,
@@ -49,8 +48,6 @@ class Auth {
         password: password,
       );
 
-
-      //Changed
       return _userToAppUser(userCredential.user);
 
     } on FirebaseAuthException catch (e) {

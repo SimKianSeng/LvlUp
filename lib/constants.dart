@@ -8,10 +8,10 @@ BoxDecoration bgColour = const BoxDecoration(
         colors: [
       Color(0xFF7B5EFE),
       Color(0xFFB88CED),
-      // Color(0xFFCF9EE7),
       Color(0xFFE4AEE1),
     ]));
 
+///Provide the decoration for the background widget of contents in a container widget
 BoxDecoration contentContainerColour(
     {double tlRadius = 25.0,
     double trRadius = 25.0,
@@ -24,7 +24,7 @@ BoxDecoration contentContainerColour(
       topRight: Radius.circular(trRadius),
       bottomLeft: Radius.circular(blRadius),
       bottomRight: Radius.circular(brRadius),
-    ), //BorderRadius.all(Radius.circular(radius)),
+    ),
     color: color,
   );
 }
@@ -45,6 +45,7 @@ InputDecoration customTextField({String initText = ''}) {
       ));
 }
 
+///Customised button style for ElevatedButton
 ButtonStyle customButtonStyle(
     {Color? color = Colors.purple, double radius = 25.0}) {
   return ButtonStyle(
@@ -53,7 +54,7 @@ ButtonStyle customButtonStyle(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius))));
 }
 
-
+///Tooltip to inform user the purpose of that feature and/or how to use it
 Tooltip useHint(String hint, {Color color = Colors.grey}) {
   return Tooltip(
     message: hint,

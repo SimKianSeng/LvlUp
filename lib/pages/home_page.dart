@@ -84,7 +84,6 @@ class _UserDataState extends State<UserData> {
     int curLevel = Xp.getLevel(currentUser.xp!);
     int curXp = Xp.getCurXp(currentUser.xp!);
     int curXpCap = Xp.getCurXpCap(currentUser.xp!);
-    // int newEvoState = Evolution.getEvolutionStage(currentUser.xp!);
     AppUser updatedUser =
         AppUser.fromJson(currentUser.uid, currentUser.toJson());
     updatedUser.evoState = Evolution.getEvolutionStage(currentUser.xp!);
@@ -97,7 +96,7 @@ class _UserDataState extends State<UserData> {
       _evolving = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _evolving = true;
-        // currentUser.evoState = currentUser.evoState! + 1;
+        
         showDialog(
           barrierDismissible: false,
           context: context,
@@ -345,7 +344,6 @@ class _UserDataState extends State<UserData> {
           destinations: [
             _startSessionButton(context, currentAppUser),
             _scheduleGenButton(context, currentAppUser),
-            // _studyStatsButton(context), //Will uncomment after implementation
             _settingsButton(context),
           ],
         ));

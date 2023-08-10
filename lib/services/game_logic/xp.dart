@@ -22,7 +22,7 @@ class Xp {
 
   static int studyTimeToXp(Duration duration) {
     const rate = 25; // 100 exp per hour
-    const unitTime = 15; // 15 mins per unit \
+    const unitTime = 15; // 15 mins per unit
 
     return (duration.inMinutes ~/ unitTime) * rate;
   }
