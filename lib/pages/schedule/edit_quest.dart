@@ -143,8 +143,7 @@ class _EditQuestState extends State<EditQuest> {
           setState(() {
             Quest().add(newSession);
             _quest.clear();
-              _quest.addAll(Quest().retrieveQuest());
-            // _quest.add(newSession);
+            _quest.addAll(Quest().retrieveQuest());
           });
         }
 
