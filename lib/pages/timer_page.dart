@@ -59,26 +59,25 @@ class _TimerState extends State<TimerPage> {
     setState(() => _timer!.cancel());
 
     Navigator.pop(context, [xpGain, session]);
-    // Navigator.pop(context, DateTime.now().difference(_start));
   }
 
   Widget xpDisplay() {
     return Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          const Text(
-            "XP gained:",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(
-            width: 20,
-          ),
-          Text(
-            xpGain.toString(),
-            style: const TextStyle(fontSize: 20),
-          ),
-        ]);
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        const Text(
+          "XP gained:",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        Text(
+          xpGain.toString(),
+          style: const TextStyle(fontSize: 20),
+        ),
+      ]);
   }
 
   Widget time() {
@@ -194,11 +193,6 @@ class _TimerState extends State<TimerPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        // leading: BackButton(
-        //   onPressed: () {
-        //     _stopTimer();
-        //   },
-        // ),
         title: const Text('Timer'),
         centerTitle: true,
         elevation: 0.0,
