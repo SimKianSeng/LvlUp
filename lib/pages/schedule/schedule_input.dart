@@ -33,10 +33,6 @@ class _ScheduleInputState extends State<ScheduleInput>{
     //Update modules
     _modules = _generator.modules;
     _moduleCount = _modules.length;
-
-    //TODO feature to make input more inuitive - bug encountered is that initValue for the textform is not cleared
-    //What this does is that if there are no modules input during set up of the page, it will show only 1 moduleRow with initValue ''
-    // _moduleCount = _modules.isEmpty ? 1: _modules.length;
     
     //Update sessions
     sessions.clear();
@@ -122,8 +118,9 @@ class _ScheduleInputState extends State<ScheduleInput>{
         ],
       ),
     );
-      //TODO: refinement
 
+
+      //Extension
       // child: Column(
       //   children: <Widget>[
       //     ReorderableListView.builder(
@@ -192,7 +189,6 @@ class _ScheduleInputState extends State<ScheduleInput>{
       cellWidth: 45,
     );
 
-    //TODO stick to this UI?
     return SizedBox(
       width: 300,
       height: 800,
@@ -371,13 +367,6 @@ class _ModuleRowState extends State<ModuleRow> {
     
     widget.generator.updateModule(module, widget.index);  
   }
-
-  //TODO removing the module input
-  // Widget _removeModuleInput() {
-  //   return GestureDetector(
-  //     child: const Icon(Icons.menu, color: Colors.black,),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,6 @@ import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
 import 'package:time_range_picker/time_range_picker.dart';
 
-//TODO: additional feature - edit sessions time if wrongly input, rn can just delete
 class WeeklyInput extends StatefulWidget {
   final List<String> days = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
   final Generator generator = Generator();

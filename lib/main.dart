@@ -4,7 +4,6 @@ import 'package:lvlup/pages/schedule/quest_page.dart';
 import 'package:lvlup/pages/schedule/schedule_input.dart';
 import 'package:lvlup/pages/schedule/available_time_input_page.dart';
 import 'package:lvlup/pages/settings_page.dart';
-import 'package:lvlup/pages/study_stats_page.dart';
 import 'package:lvlup/pages/timer_page.dart';
 import 'package:lvlup/widget_tree.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +36,6 @@ class MyApp extends StatelessWidget {
           '/settings': (context) => const Settings(),
           '/scheduleGen': (context) => const QuestPage(),
           '/questEdit':(context) => const EditQuest(),
-          '/studyStats': (context) => const StudyStats(),
           '/scheduleInput': (context) => const ScheduleInput(),
           '/weeklyInput': (context) => WeeklyInput(),
           '/timer': (context) => const TimerPage()

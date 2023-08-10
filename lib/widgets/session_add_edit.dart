@@ -65,7 +65,7 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
     int startTimeInt = newTime.hour * 60 + newTime.minute;
     int endTimeInt = endTime.hour * 60 + endTime.minute;
     int minutesDuration = endTimeInt - startTimeInt;
-
+    
     if (minutesDuration <= 0) {
       setState(() {
         message = 'End time must be after Start time!';

@@ -15,7 +15,7 @@ class QuestPage extends StatefulWidget {
 }
 
 class _QuestPageState extends State<QuestPage> {
-  List<Session> _task = [];
+  final List<Session> _task = [];
   final Generator _generator = Generator();
   late bool _acceptedQuest;
   bool generated = false;
@@ -33,9 +33,6 @@ class _QuestPageState extends State<QuestPage> {
 
   
   Widget _editQuestButton(AppUser user) {
-    //TODO  the 'OR' logic operator seems buggy
-    //Suspect is due to setstate
-
     return allowedToEdit
       ? IconButton(
       onPressed: () async {
@@ -210,7 +207,7 @@ class _QuestPageState extends State<QuestPage> {
 
     if (_task.isEmpty && !generated) {
       //Retrieving saved quest
-      //TODO Can place under initState if not for the need to retrieve user first
+      //Can place under initState if not for the need to retrieve user first
       _task.addAll(user.getSavedQuest());
     }
     

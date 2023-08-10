@@ -86,15 +86,9 @@ class Quest {
       int sessionEnd = interval[1];
 
       bool startInBetween = sessionStart <= newStart && newStart < sessionEnd;
-      print('startInBetween: $startInBetween');
       bool endInBetween = sessionStart < newEnd && newEnd <= sessionEnd;
-      print('endInBetween: $endInBetween');
       bool sessionInBetween = newStart < sessionStart  && sessionEnd < newEnd;
-      print('sessionInBetween: $sessionInBetween');
-
-      //TODO start b4 and end same time?
-      //TODO 
-
+      
       if (startInBetween || endInBetween || sessionInBetween) {
         return true;
       }

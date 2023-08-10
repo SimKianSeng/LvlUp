@@ -11,7 +11,7 @@ class TimerPage extends StatefulWidget {
   State<TimerPage> createState() => _TimerState();
 }
 
-//TODO find ways to navigate app without removing progress and session
+//Extension: find ways to navigate app without removing progress and session
 class _TimerState extends State<TimerPage> {
   late Session session;
   late DateTime _start;
@@ -160,7 +160,6 @@ class _TimerState extends State<TimerPage> {
         );
   }
 
-  //TODO monitor, does not seem entirely responsive
   Widget stopButton() {
     return TextButton(
         onPressed: _stopTimer,

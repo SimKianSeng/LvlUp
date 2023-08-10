@@ -96,8 +96,8 @@ class Evolution {
           Image.asset(imagePath),
           ElevatedButton(
             onPressed: () {
-              DatabaseService _db = DatabaseService(uid: currentUser.uid);
-              _db.evolve(appUser, imagePath);
+              DatabaseService db = DatabaseService(uid: currentUser.uid);
+              db.evolve(appUser, imagePath);
               Navigator.pop(context);
             },
             child: Text(appUser.characterName!),
