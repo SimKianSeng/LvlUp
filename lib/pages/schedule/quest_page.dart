@@ -41,6 +41,12 @@ class _QuestPageState extends State<QuestPage> {
           _task.addAll(Quest().retrieveQuest());
         });
 
+        if (edited) {
+          const SnackBar message = SnackBar(content: Text('Quest has been updated. Do remember to save your quest before exiting!'));
+
+          ScaffoldMessenger.of(context).showSnackBar(message);
+        }
+
         //If not yet accept, do not depend on edited. Else check if there are edits
         _acceptedQuest = !_acceptedQuest ? _acceptedQuest : !edited;
       }, 
@@ -97,13 +103,48 @@ class _QuestPageState extends State<QuestPage> {
               content: Text(
                   "Please input your modules and free periods in generator")));
         } else {
-          setState(() {
-            _task.clear();
-            _task.addAll(_generator.generateSchedule());
-            Quest().set(_task);
-            _acceptedQuest = false;
-            generated = true;
-          });
+          if (_task.isNotEmpty) {
+            showDialog(
+            context: context, 
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Warning'),
+                content: const Text('Do you wish to overwrite the current existing quest?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                     Navigator.pop(context);
+                    }, 
+                    child: const Text('Cancel')
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      //Proceed to update quest
+                      setState(() {
+                        _task.clear();
+                        _task.addAll(_generator.generateSchedule());
+                        Quest().set(_task);
+                        _acceptedQuest = false;
+                        generated = true;
+                      });
+
+                      //Close the alertdialog
+                      Navigator.pop(context);
+                    }, 
+                    child: const Text('Yes'))
+                ],
+              );
+            });
+          } else {
+            setState(() {
+              _task.clear();
+              _task.addAll(_generator.generateSchedule());
+              Quest().set(_task);
+              _acceptedQuest = false;
+              generated = true;
+            });
+          }
+          
         }
       },
       child: const Text("Generate"),

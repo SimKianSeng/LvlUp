@@ -199,6 +199,7 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
     return AlertDialog(
       title: Text(EditSessionDialog.actions[widget.action] ?? 'Error'),
       content: Column(
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           const Text('Module', style: TextStyle(fontWeight: FontWeight.bold),),
           _moduleSelections(),
