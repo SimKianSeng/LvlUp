@@ -70,12 +70,14 @@ class _EditSessionDialogState extends State<EditSessionDialog> {
       setState(() {
         message = 'End time must be after Start time!';
       });
-    } else if (Quest().timeOverlaps(newTime, endTime, widget.startTime, widget.originalMinutesDuration)) {
+    } else if (Quest().timeOverlaps(newTime, endTime, widget.startTime, originalMinutesDuration: widget.action == 'Add' ? 0 : widget.originalMinutesDuration)) {
       setState(() {
         message = 'Chosen timing collide with other tasks!';
       });
     } else {
       setState(() {
+        message = ''; //Reset message
+
         //Same day
         newStartTime = TimePlannerDateTime(day: newStartTime.day, hour: newTime.hour, minutes: newTime.minute);
         newMinutesDuration = minutesDuration;
