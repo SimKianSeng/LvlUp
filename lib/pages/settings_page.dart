@@ -61,8 +61,10 @@ void _deleteAccountConfirmation(BuildContext context) {
         return AlertDialog(
           title: const Text("Delete Account"),
           content: Column(
-            children: [
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
               const Text("All progress will be lost"),
+              const SizedBox(height: 25.0),
               TextField(
                 decoration: customTextField(initText: 'password'),
                 controller: controllerPassword,

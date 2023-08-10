@@ -24,7 +24,7 @@ class Session extends TimePlannerTask {
 
   @visibleForTesting
   int breakDuration() {
-    //TODO does not account for sessions till 2359H
+    //Does not account for sessions till 2359H
     int breakDurationMinutes= super.minutesDuration ~/ _interval * breakRate;
 
     return breakDurationMinutes;
@@ -103,49 +103,10 @@ class Session extends TimePlannerTask {
     return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text('Start: ${start.format(context).padLeft(8, '0')}'),
+          Text('Start: ${start.format(context).padLeft(5, '0')}'),
           const SizedBox(width: 50.0,),
-          Text('End: ${end.format(context).padLeft(8, '0')}'),
+          Text('End: ${end.format(context).padLeft(5, '0')}'),
         ],
       );
   }
-
-  ///Display quest sessions in editable mode for edit_quest page
-  // Widget displayEditQuest(BuildContext context, List<Session> quest) {
-  //   return ListTile(
-  //     title: Text(task?? 'No assigned task'),
-  //     subtitle: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //       children: [
-  //         Text("Start: ${startTime().format(context).padLeft(8, '0')}"),
-  //         Text("End: ${endTime().format(context).padLeft(8, '0')}"),
-  //       ],
-  //     ),
-  //     trailing: IconButton(
-  //       onPressed: () async {
-  //         Session? newSession = await showDialog(
-  //           context: context, 
-  //           builder: (_) => EditSessionDialog(
-  //               originalTask: task ?? '',
-  //               originalMinutesDuration: minutesDuration,
-  //               startTime: dateTime
-  //             ),
-  //           barrierDismissible: false
-  //         );
-
-  //         if (newSession == null) {
-  //           //Delete
-  //           print('deleting');
-  //           quest.remove(this); //need setstate in the page to see updates
-  //         } else {
-  //           //Replace this session with newSession
-  //           print(quest[quest.indexOf(this)] == this);
-  //           quest.replaceRange(quest.indexOf(this), quest.indexOf(this) + 1, [newSession]);
-  //           // quest[quest.indexOf(this)] = newSession;
-  //           //Seems like changing the session will change this
-  //         }
-  //       }, 
-  //       icon: const Icon(Icons.edit)),
-  //   );
-  // }
 }

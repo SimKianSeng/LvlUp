@@ -71,8 +71,8 @@ class _EditQuestState extends State<EditQuest> {
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          Text("Start: ${session.startTime().format(context).padLeft(8, '0')}"),
-          Text("End: ${session.endTime().format(context).padLeft(8, '0')}"),
+          Text("Start: ${session.startTime().format(context).padLeft(5, '0')}"),
+          Text("End: ${session.endTime().format(context).padLeft(5, '0')}"),
         ],
       ),
       trailing: IconButton(
@@ -161,15 +161,11 @@ class _EditQuestState extends State<EditQuest> {
         appBar: AppBar(
           title: const Text('Edit quest'), 
           centerTitle: true,
-          actions: const <Widget>[
-            Tooltip(
-              message: 'To be able to change to a certain module, do ensure that it has been inputted into generator',
-              triggerMode: TooltipTriggerMode.tap,
-              child: Padding(
-                padding: EdgeInsets.only(right: 5.0),
-                child: Icon(Icons.tips_and_updates),
-              ),
-            )
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: useHint('To be able to change to a certain module, do ensure that it has been inputted into generator'),
+            ),
           ],),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

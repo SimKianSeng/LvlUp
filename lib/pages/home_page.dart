@@ -58,9 +58,9 @@ class _UserDataState extends State<UserData> {
   late StreamSubscription<dynamic> timerSubscriber;
 
   @override
-  void dispose() {
+  void dispose() async {
     super.dispose();
-    timerSubscriber.cancel();
+    await timerSubscriber.cancel();
   }
 
   void _updateDayTask(AppUser currentAppUser) {
@@ -157,7 +157,7 @@ class _UserDataState extends State<UserData> {
   Widget dayTasks() {
     if (_daytasks == null) {
       return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Text(
           "There are no study sessions today",
           style: TextStyle(
@@ -169,7 +169,7 @@ class _UserDataState extends State<UserData> {
       );
     } else if (_daytasks!.isEmpty) {
       return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Text(
         "There are no remaining study sessions today",
         style: TextStyle(
@@ -290,14 +290,6 @@ class _UserDataState extends State<UserData> {
           });
         },
         icon: const Icon(Icons.calendar_month));
-  }
-
-  IconButton _studyStatsButton(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/studyStats');
-        },
-        icon: const Icon(Icons.wysiwyg));
   }
 
   @override

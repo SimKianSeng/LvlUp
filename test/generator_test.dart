@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/generator.dart';

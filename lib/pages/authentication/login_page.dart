@@ -104,7 +104,7 @@ class _LoginPageState extends ParentState {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              const RegisterPage()), //TODO make use of authentication page
+                              const RegisterPage()), //Can make use of authentication page
                     );
                   }
                 },

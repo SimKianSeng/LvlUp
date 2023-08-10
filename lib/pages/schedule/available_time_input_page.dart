@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:lvlup/constants.dart';
 import 'package:lvlup/models/session.dart';
 import 'package:lvlup/services/generator.dart';
 import 'package:time_planner/time_planner.dart';
 import 'package:time_range_picker/time_range_picker.dart';
 
-//TODO: additional feature - edit sessions time if wrongly input, rn can just delete
 class WeeklyInput extends StatefulWidget {
   final List<String> days = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
   final Generator generator = Generator();
@@ -142,12 +142,11 @@ class _WeeklyInputState extends State<WeeklyInput> {
       appBar: AppBar(
         title: const Text('Add free periods'),
         centerTitle: true,
-        actions: const <Widget>[
-          Tooltip(
-            message: 'Free periods are periods of time whereby you are available for your study session to be generated at',
-            triggerMode: TooltipTriggerMode.tap,
-            child: Icon(Icons.help),
-          )
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: useHint('Free periods are periods of time whereby you are available for your study session to be generated at'),
+          ),
         ],
         ),
       body: _body(_index),

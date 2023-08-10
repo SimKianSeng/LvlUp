@@ -92,7 +92,7 @@ class Generator {
       _modules.removeAt(rank - 1);
     }
 
-    //TODO debug, not touching previous ModuleRows and filling the latest one will only result in error
+    //To debug, not touching previous ModuleRows and filling the latest one will only result in error
     //Maybe if there is nothing inserted yet, we can just put a placeholder in there that will also be removed from the generating/ saving etc
     _modules.insert(rank - 1, module.toUpperCase());
   }
@@ -124,8 +124,6 @@ class Generator {
   @visibleForTesting
   ///Remove sessions that share the same time periods, ie same start time and duration
   List<Session> removeDuplicateSessions(List<Session> sessions) {
-    //TODO bug here is due to the fact that for overlapping sessions, nextSession is not going to have same time
-    
     int current = 0;
 
     while (current < sessions.length - 1) {

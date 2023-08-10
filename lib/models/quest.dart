@@ -56,14 +56,17 @@ class Quest {
   }
 
   ///Check through the day tasks for that particular dayIndex and check if there is any overlapping time periods
-  bool timeOverlaps(TimeOfDay startTime, TimeOfDay endTime, TimePlannerDateTime originalStartTime, int minutesDuration) {
+  bool timeOverlaps(TimeOfDay startTime, TimeOfDay endTime, TimePlannerDateTime originalStartTime, {int originalMinutesDuration = 0}) {
+    //To check if the session in daySessions is the original session that we are currently editing in session_add_edit
     int originalStart = (originalStartTime.hour * 60) + originalStartTime.minutes;
-    int originalEnd = originalStart + minutesDuration;
+    int originalEnd = originalStart + originalMinutesDuration;
 
     //Retrieve list of Sessions for that particular day
     List<Session> daySessions = _quest[originalStartTime.day];
-    int start = (startTime.hour * 60) + startTime.minute;
-    int end = (endTime.hour * 60) + endTime.minute;
+    int newStart = (startTime.hour * 60) + startTime.minute;
+    int newEnd = (endTime.hour * 60) + endTime.minute;
+
+    List<List<int>> sessionIntervals = [];
 
     for (Session session in daySessions) {
       int sessionStart = (session.dateTime.hour * 60) + session.dateTime.minutes;
@@ -74,11 +77,18 @@ class Quest {
         continue;
       }
 
-      //To not overlap, startTime and endTime must not be between sessionStart and sessionEnd exclusive
-      bool startInBetween = start > sessionStart && start < sessionEnd;
-      bool endInBetween = end > sessionStart && end < sessionEnd;
-      bool sessionInBetween = sessionStart > start && sessionStart < sessionEnd;
+      sessionIntervals.add([sessionStart, sessionEnd]);
+    }
 
+    for (List<int> interval in sessionIntervals) {
+      //Check that startTime and endTime must not be between sessionStart and sessionEnd exclusive
+      int sessionStart = interval[0];
+      int sessionEnd = interval[1];
+
+      bool startInBetween = sessionStart <= newStart && newStart < sessionEnd;
+      bool endInBetween = sessionStart < newEnd && newEnd <= sessionEnd;
+      bool sessionInBetween = newStart < sessionStart  && sessionEnd < newEnd;
+      
       if (startInBetween || endInBetween || sessionInBetween) {
         return true;
       }

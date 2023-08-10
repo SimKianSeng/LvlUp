@@ -15,10 +15,11 @@ class QuestPage extends StatefulWidget {
 }
 
 class _QuestPageState extends State<QuestPage> {
-  List<Session> _task = [];
+  final List<Session> _task = [];
   final Generator _generator = Generator();
   late bool _acceptedQuest;
   bool generated = false;
+  bool allowedToEdit = false;
 
   @override
   void initState() {
@@ -27,12 +28,13 @@ class _QuestPageState extends State<QuestPage> {
   }
 
   Future<void> _setUpGenerator(AppUser user) async {
-    await user.retrievePreviousGenInputs().then((value) => _generator.retrievePreviousData(value));
+    await user.retrievePreviousGenInputs().then((value) => _generator.retrievePreviousData(value)).then((value) => allowedToEdit = _generator.modules.isNotEmpty);
   }
 
   
-  Widget _editQuestButton() {
-    return IconButton(
+  Widget _editQuestButton(AppUser user) {
+    return allowedToEdit
+      ? IconButton(
       onPressed: () async {
         bool edited = await Navigator.pushNamed(context, '/questEdit') as bool;
 
@@ -41,10 +43,28 @@ class _QuestPageState extends State<QuestPage> {
           _task.addAll(Quest().retrieveQuest());
         });
 
-        //If not yet accept, do not depend on edited. Else check if there are edits
-        _acceptedQuest = !_acceptedQuest ? _acceptedQuest : !edited;
+        if (edited) {
+          //Auto save edited quest
+          user.acceptQuest(_task);
+          setState(() {
+            _acceptedQuest = !_acceptedQuest;
+          });
+
+          const SnackBar message = SnackBar(content: Text('Quest updated!'));
+
+          ScaffoldMessenger.of(context).showSnackBar(message);
+        }
+
+        _acceptedQuest = true;
       }, 
-      icon: const Icon(Icons.edit));
+      icon: const Icon(Icons.edit))
+      : IconButton(
+        onPressed: () {
+          const SnackBar message = SnackBar(content: Text('Please input your modules into the generator'));
+
+          ScaffoldMessenger.of(context).showSnackBar(message);
+        },
+        icon: const Icon(Icons.edit));
   }
 
   Widget _saveQuestButton(AppUser user) {
@@ -56,6 +76,11 @@ class _QuestPageState extends State<QuestPage> {
               setState(() {
                 _acceptedQuest = !_acceptedQuest;
               });
+
+               const SnackBar message = SnackBar(content: Text('Quest saved!'));
+          
+          ScaffoldMessenger.of(context).showSnackBar(message);
+
             },
       icon: const Icon(Icons.save),
       color: Colors.black,
@@ -67,8 +92,20 @@ class _QuestPageState extends State<QuestPage> {
   Widget _generatorButton(AppUser user) {
     return ElevatedButton(
       style: customButtonStyle(),
-      onPressed: () {
-        Navigator.pushNamed(context, '/scheduleInput', arguments: user);
+      onPressed: () async {
+        String? message = await Navigator.pushNamed(context, '/scheduleInput', arguments: user) as String?;
+
+        if (message != null) {
+          SnackBar updatedNotification = SnackBar(
+            content: Text(message),
+          );
+          
+          ScaffoldMessenger.of(context).showSnackBar(updatedNotification);
+        }
+
+        setState(() {
+          allowedToEdit = _generator.modules.isNotEmpty || _task.isNotEmpty;
+        });
       },
       child: const Text("Generator"),
     );
@@ -84,13 +121,48 @@ class _QuestPageState extends State<QuestPage> {
               content: Text(
                   "Please input your modules and free periods in generator")));
         } else {
-          setState(() {
-            _task.clear();
-            _task.addAll(_generator.generateSchedule());
-            Quest().set(_task);
-            _acceptedQuest = false;
-            generated = true;
-          });
+          if (_task.isNotEmpty) {
+            showDialog(
+            context: context, 
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Warning'),
+                content: const Text('Do you wish to overwrite the current existing quest?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                     Navigator.pop(context);
+                    }, 
+                    child: const Text('Cancel')
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      //Proceed to update quest
+                      setState(() {
+                        _task.clear();
+                        _task.addAll(_generator.generateSchedule());
+                        Quest().set(_task);
+                        _acceptedQuest = false;
+                        generated = true;
+                      });
+
+                      //Close the alertdialog
+                      Navigator.pop(context);
+                    }, 
+                    child: const Text('Yes'))
+                ],
+              );
+            });
+          } else {
+            setState(() {
+              _task.clear();
+              _task.addAll(_generator.generateSchedule());
+              Quest().set(_task);
+              _acceptedQuest = false;
+              generated = true;
+            });
+          }
+          
         }
       },
       child: const Text("Generate"),
@@ -126,14 +198,19 @@ class _QuestPageState extends State<QuestPage> {
 
     if (!(_generator.retrievedPreviousData)) {
       //Update generator with the saved input if it has no input and page is build
-      _setUpGenerator(user);
+      _setUpGenerator(user).then((value) {
+        setState(() {
+          allowedToEdit = _generator.modules.isNotEmpty || _task.isNotEmpty;
+        });
+      });
     }
 
     if (_task.isEmpty && !generated) {
       //Retrieving saved quest
-      //TODO Can place under initState if not for the need to retrieve user first
+      //Can place under initState if not for the need to retrieve user first
       _task.addAll(user.getSavedQuest());
     }
+    
     
     return Scaffold(
       appBar: AppBar(
@@ -141,7 +218,7 @@ class _QuestPageState extends State<QuestPage> {
         title: const Text("Quest"),
         centerTitle: true,
         actions: [ 
-          _editQuestButton(),
+          _editQuestButton(user),
           _saveQuestButton(user)
         ],
       ),
