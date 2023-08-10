@@ -252,7 +252,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
         currentNode.unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(automaticallyImplyLeading: false),
         body: Container(
           decoration: bgColour,
           child: Stepper(
