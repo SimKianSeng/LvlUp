@@ -32,7 +32,11 @@ class _QuestPageState extends State<QuestPage> {
 
   
   Widget _editQuestButton() {
-    return IconButton(
+    //TODO  the 'OR' logic operator seems buggy
+    bool allowedToEnter = _generator.modules.isNotEmpty || _task.isNotEmpty;
+
+    return allowedToEnter
+      ? IconButton(
       onPressed: () async {
         bool edited = await Navigator.pushNamed(context, '/questEdit') as bool;
 
@@ -50,7 +54,14 @@ class _QuestPageState extends State<QuestPage> {
         //If not yet accept, do not depend on edited. Else check if there are edits
         _acceptedQuest = !_acceptedQuest ? _acceptedQuest : !edited;
       }, 
-      icon: const Icon(Icons.edit));
+      icon: const Icon(Icons.edit))
+      : IconButton(
+        onPressed: () {
+          const SnackBar message = SnackBar(content: Text('Please input your modules into the generator'));
+
+          ScaffoldMessenger.of(context).showSnackBar(message);
+        },
+        icon: const Icon(Icons.edit));
   }
 
   Widget _saveQuestButton(AppUser user) {

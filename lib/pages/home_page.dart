@@ -58,9 +58,9 @@ class _UserDataState extends State<UserData> {
   late StreamSubscription<dynamic> timerSubscriber;
 
   @override
-  void dispose() {
+  void dispose() async {
     super.dispose();
-    timerSubscriber.cancel();
+    await timerSubscriber.cancel();
   }
 
   void _updateDayTask(AppUser currentAppUser) {
