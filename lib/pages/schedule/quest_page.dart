@@ -106,7 +106,9 @@ class _QuestPageState extends State<QuestPage> {
           ScaffoldMessenger.of(context).showSnackBar(updatedNotification);
         }
 
-        setState(() {});
+        setState(() {
+          allowedToEdit = _generator.modules.isNotEmpty || _task.isNotEmpty;
+        });
       },
       child: const Text("Generator"),
     );
