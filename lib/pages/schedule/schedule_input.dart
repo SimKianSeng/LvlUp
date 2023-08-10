@@ -264,9 +264,7 @@ class _ScheduleInputState extends State<ScheduleInput>{
                 children: <Widget>[
                   SizedBox(
                     height: 37.5,
-                    child: TextButton(
-                      onPressed: details.onStepContinue, 
-                      child: const Text('NEXT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),)),
+                    child: resetButton()
                   ),
                   SizedBox(
                     height: 37.5,
@@ -276,7 +274,9 @@ class _ScheduleInputState extends State<ScheduleInput>{
                   ),
                   SizedBox(
                     height: 37.5,
-                    child: resetButton()
+                    child: TextButton(
+                      onPressed: details.onStepContinue, 
+                      child: const Text('NEXT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),)),
                   )
                 ],
               );
